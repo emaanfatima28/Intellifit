@@ -12,6 +12,7 @@ const workoutRoutes = require("./routes/workoutRoutes");
 const feedbackRoutes = require("./routes/feedbackRoutes");
 const progressRoutes = require("./routes/progressRoutes");
 const chatbotRoutes = require("./routes/chatbotRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 
 app.use(express.json());
 
@@ -22,6 +23,7 @@ app.use('/workout',workoutRoutes)
 app.use('/feedback', feedbackRoutes);
 app.use('/progress', progressRoutes);
 app.use('/chatbot', chatbotRoutes);
+app.use('/admin', adminRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server is running on ${PORT}.`);

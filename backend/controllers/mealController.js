@@ -1,6 +1,6 @@
 const MealPlan = require('../models/Meal');
 const Profile = require('../models/Profile');
-const generateMealPlan = require('../utils/geminiMeal');
+const generateMealPlan = require('../prompts/geminiMeal');
 
 const createMealPlan = async (req, res) => {
   const userId = req.user.id;

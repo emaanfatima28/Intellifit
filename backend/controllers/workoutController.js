@@ -1,6 +1,6 @@
 const WorkoutPlan = require('../models/Workout');
 const Profile = require('../models/Profile');
-const generateWorkoutPlan = require('../utils/geminiWorkout');
+const generateWorkoutPlan = require('../prompts/geminiWorkout');
 
 const createWorkoutPlan = async (req, res) => {
   const userId = req.user.id;

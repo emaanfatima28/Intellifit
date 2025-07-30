@@ -35,31 +35,44 @@ const registerUser = async(req,res) => {
 };
 
 const userLogin = async (req, res) => {
+  const adminEmail = process.env.ADMIN_EMAIL;
+  const adminPassword = process.env.ADMIN_PASSWORD;
+
+  const { email, password } = req.body;
+
   try {
-    const { email, password } = req.body;
-    
+    if (email === adminEmail && password === adminPassword) {
+      const token = generateToken('admin');
+      return res.status(200).json({
+        _id: 'admin',
+        name: 'Admin',
+        email: adminEmail,
+        token: token
+      });
+    }
+
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(401).json({ message: 'Authentication failed' });
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    const passwordMatch = await bcrypt.compare(password, user.password);
-    if (!passwordMatch) {
-      return res.status(401).json({ message: 'Authentication failed' });
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    const token = generateToken(user._id);
-    res.status(200).json({
+    return res.status(200).json({
       _id: user._id,
       name: user.name,
       email: user.email,
-      token: token
+      token: generateToken(user._id)
     });
-    
+
   } catch (error) {
     res.status(500).json({ message: 'Login failed' });
   }
 };
+
 
 const forgotPassword = async (req, res) => {
   try {
