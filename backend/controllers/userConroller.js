@@ -7,8 +7,7 @@ const sendEmail = require("../utils/sendEmail");
 const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-    console.log("Registration attempt:", { name, email }); // Add logging
-
+   
     if (!name || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
@@ -34,7 +33,6 @@ const registerUser = async (req, res) => {
       });
     }
   } catch (err) {
-    console.error("Registration error:", err); // Add error logging
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
@@ -46,7 +44,6 @@ const userLogin = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Update your login form to use these exact credentials
     const adminCredentials = {
       email: "emaanfatima0613@gmail.com",
       password: "12345678",

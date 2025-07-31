@@ -1,5 +1,5 @@
 # Create a .env file in backend folder and place the following in it
-# MONGO_URI=your_mongodb_uri
+# MONGODB_URI=your_mongodb_uri
 # PORT=your_port
 # JWT_SECRET=your_jwt_secret_key
 # GEMINI_API_KEY=your_gemini_api_key

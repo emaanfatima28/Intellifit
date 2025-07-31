@@ -2,6 +2,8 @@ const User = require("../models/User");
 const MealPlan = require("../models/Meal");
 const WorkoutPlan = require("../models/Workout");
 const Profile = require("../models/Profile");
+const Feedback = require("../models/Feedback");
+const Progress = require("../models/Progress")
 
 const getAllUsers = async (req, res) => {
   try {
@@ -33,6 +35,8 @@ const deleteUser = async (req, res) => {
     await Profile.findOneAndDelete({ user: userId });
     await MealPlan.deleteMany({ userId });
     await WorkoutPlan.deleteMany({ userId });
+    await Feedback.deleteMany({ userId });
+    await Progress.deleteMany({ userId });
 
     await User.findByIdAndDelete(userId);
 
@@ -98,10 +102,4 @@ const getUserStats = async (req, res) => {
   }
 };
 
-module.exports = {
-  getAllUsers,
-  deleteUser,
-  getAllMealPlans,
-  getAllWorkoutPlans,
-  getUserStats,
-};
+module.exports = {getAllUsers,deleteUser,getAllMealPlans,getAllWorkoutPlans,getUserStats,};
