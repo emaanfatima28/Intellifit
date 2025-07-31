@@ -1,32 +1,33 @@
-const User = require('../models/User');
-const MealPlan = require('../models/Meal');
-const WorkoutPlan = require('../models/Workout');
-const Profile = require('../models/Profile');
+const User = require("../models/User");
+const MealPlan = require("../models/Meal");
+const WorkoutPlan = require("../models/Workout");
+const Profile = require("../models/Profile");
 
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find({}).select('-password -resetPasswordToken -resetPasswordExpires');
+    const users = await User.find({}).select(
+      "-password -resetPasswordToken -resetPasswordExpires"
+    );
     res.json({
       success: true,
       count: users.length,
-      users
+      users,
     });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch users' });
+    res.status(500).json({ error: "Failed to fetch users" });
   }
 };
 
 const deleteUser = async (req, res) => {
   try {
     const { userId } = req.params;
-    
-    if (userId === req.user.id) {
-      return res.status(400).json({ error: 'Cannot delete your own account' });
-    }
 
+    if (userId === req.user.id) {
+      return res.status(400).json({ error: "Cannot delete your own account" });
+    }
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ error: "User not found" });
     }
 
     await Profile.findOneAndDelete({ user: userId });
@@ -35,44 +36,44 @@ const deleteUser = async (req, res) => {
 
     await User.findByIdAndDelete(userId);
 
-    res.json({ 
-      success: true, 
-      message: 'User and associated data deleted successfully' 
+    res.json({
+      success: true,
+      message: "User and associated data deleted successfully",
     });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to delete user' });
+    res.status(500).json({ error: "Failed to delete user" });
   }
 };
 
 const getAllMealPlans = async (req, res) => {
   try {
     const mealPlans = await MealPlan.find({})
-      .populate('userId', 'name email')
+      .populate("userId", "name email")
       .sort({ createdAt: -1 });
 
     res.json({
       success: true,
       count: mealPlans.length,
-      mealPlans
+      mealPlans,
     });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch meal plans' });
+    res.status(500).json({ error: "Failed to fetch meal plans" });
   }
 };
 
 const getAllWorkoutPlans = async (req, res) => {
   try {
     const workoutPlans = await WorkoutPlan.find({})
-      .populate('userId', 'name email')
+      .populate("userId", "name email")
       .sort({ createdAt: -1 });
 
     res.json({
       success: true,
       count: workoutPlans.length,
-      workoutPlans
+      workoutPlans,
     });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch workout plans' });
+    res.status(500).json({ error: "Failed to fetch workout plans" });
   }
 };
 
@@ -89,12 +90,18 @@ const getUserStats = async (req, res) => {
         totalUsers,
         totalMealPlans,
         totalWorkoutPlans,
-        totalProfiles
-      }
+        totalProfiles,
+      },
     });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch statistics' });
+    res.status(500).json({ error: "Failed to fetch statistics" });
   }
 };
 
-module.exports = {getAllUsers,deleteUser,getAllMealPlans,getAllWorkoutPlans,getUserStats}; 
+module.exports = {
+  getAllUsers,
+  deleteUser,
+  getAllMealPlans,
+  getAllWorkoutPlans,
+  getUserStats,
+};
