@@ -18,9 +18,8 @@ body {
 .bg-cover.bg-center {
   background-size: cover;
   background-position: center;
-  background-image: url('/image.png');
+  background-image: url('/image1.png');
 }
-
 .w-full.max-w-md.space-y-8 {
   width: 100%;
   max-width: 28rem;
