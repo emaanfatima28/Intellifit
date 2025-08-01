@@ -1,7 +1,6 @@
 "use client"
 
 import './login.css'
-
 import type React from "react"
 import { useState } from "react"
 import { useAuth } from "@/contexts/AuthContext"
@@ -60,14 +59,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-cover bg-center">
       <div className="w-full max-w-md space-y-8">
         {/* Logo */}
-        <div className="text-center">
-          <div className="flex items-center justify-center space-x-2 mb-8">
-            <div className="w-10 h-10 bg-gradient-to-r from-orange-400 to-orange-600 rounded-lg"></div>
-            <span className="text-3xl font-bold text-white">FitLux</span>
-          </div>
-          <h1 className="text-3xl font-bold text-white mb-2">Welcome Back</h1>
-          <p className="text-gray-400">Enter your credentials to access your account</p>
-        </div>
+        {/* Removed header text as per user request */}
 
         <Card className="bg-white/20 backdrop-blur-md border-none shadow-lg">
           <CardHeader>

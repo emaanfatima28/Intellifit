@@ -19,13 +19,15 @@ body {
   background-size: cover;
   background-position: center;
   background-attachment: fixed; /* Make background image static */
-  background-image: url('/image1.png');
+  background-image: url('/loginimage.png');
 }
-
 .w-full.max-w-md.space-y-8 {
   width: 100%;
-  max-width: 28rem;
+  max-width: 20rem; /* Reduced container max width */
   margin-bottom: 2rem;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 3rem; /* Added top margin */
 }
 
 .text-center {
@@ -76,6 +78,8 @@ body {
 .bg-transparent.border-gray-600.text-white.placeholder\:text-gray-400 {
   box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.5); /* black shadow */
   border-radius: 0.25rem;
+  padding: 0.25rem 0.5rem; /* Reduced padding */
+  font-size: 0.875rem; /* Smaller font size */
 }
 
 .pr-10 {
