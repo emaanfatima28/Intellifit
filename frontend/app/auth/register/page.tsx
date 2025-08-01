@@ -66,17 +66,14 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-2 gap-12">
+    <div className="min-h-screen flex">
       {/* Left side - Register Form */}
-      <div className="flex items-center justify-center p-8 bg-slate-900">
-        <div className="w-full max-w-lg space-y-8">
-          {/* Logo */}
+      <div className="fixed inset-y-0 left-0 flex items-center justify-center p-8 bg-gradient-to-b from-gray-900 to-black w-1/2">
+        <div className="w-full max-w-md space-y-6 bg-gray-900 bg-opacity-90 p-8 rounded-lg shadow-lg mx-auto">
+          {/* Removed Logo */}
           <div className="text-center">
-            <div className="flex items-center justify-center space-x-2 mb-8">
-              <div className="w-10 h-10 bg-gradient-to-r from-orange-400 to-orange-600 rounded-lg"></div>
-              <span className="text-3xl font-bold text-white">FitLux</span>
-            </div>
-            <h1 className="text-3xl font-bold text-white mb-2">Create an Account</h1>
+            {/* Removed FitLux icon and text */}
+            <h1 className="text-2xl font-bold text-white mb-2">Create an Account</h1>
             <p className="text-gray-400">Join thousands on their fitness journey</p>
           </div>
 
@@ -180,11 +177,10 @@ export default function RegisterPage() {
           </Card>
         </div>
       </div>
-
       {/* Right side - Image */}
-      <div className="hidden lg:block relative p-8">
-        <Image src="/placeholder.svg?height=800&width=600" alt="Yoga meditation" fill className="object-cover rounded-lg shadow-lg" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-lg"></div>
+      <div className="fixed inset-y-0 right-0 w-1/2 p-0">
+        <Image src="/ImageGenerator_A full background illust (1).png?height=800&width=600" alt="Yoga meditation" fill className="object-cover rounded-l-lg shadow-lg" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-l-lg"></div>
       </div>
     </div>
   )
