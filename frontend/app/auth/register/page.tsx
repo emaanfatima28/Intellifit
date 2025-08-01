@@ -1,7 +1,5 @@
 "use client"
-
 import type React from "react"
-
 import { useState } from "react"
 import { useAuth } from "@/contexts/AuthContext"
 import { useRouter } from "next/navigation"
@@ -68,10 +66,10 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-2">
+    <div className="min-h-screen grid lg:grid-cols-2 gap-12">
       {/* Left side - Register Form */}
       <div className="flex items-center justify-center p-8 bg-slate-900">
-        <div className="w-full max-w-md space-y-8">
+        <div className="w-full max-w-lg space-y-8">
           {/* Logo */}
           <div className="text-center">
             <div className="flex items-center justify-center space-x-2 mb-8">
@@ -184,9 +182,9 @@ export default function RegisterPage() {
       </div>
 
       {/* Right side - Image */}
-      <div className="hidden lg:block relative">
-        <Image src="/placeholder.svg?height=800&width=600" alt="Yoga meditation" fill className="object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+      <div className="hidden lg:block relative p-8">
+        <Image src="/placeholder.svg?height=800&width=600" alt="Yoga meditation" fill className="object-cover rounded-lg shadow-lg" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-lg"></div>
       </div>
     </div>
   )
