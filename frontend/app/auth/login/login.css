@@ -14,12 +14,16 @@ body {
   align-items: center;
   justify-content: center;
 }
-
 .bg-cover.bg-center {
-  background-size: cover;
-  background-position: center;
+  background-size: cover; /* Fill full screen */
+  background-position: center center; /* Center the image */
+  background-repeat: no-repeat; /* Prevent repeating */
   background-attachment: fixed; /* Make background image static */
   background-image: url('/loginimage.png');
+  height: 100vh; /* Ensure full viewport height */
+  width: 100vw; /* Ensure full viewport width */
+  margin: 0; /* Remove any margin */
+  padding: 0; /* Remove any padding */
 }
 .w-full.max-w-md.space-y-8 {
   position: fixed; /* Make container fixed */
@@ -40,7 +44,6 @@ body {
   justify-content: center;
   margin-bottom: 2rem;
 }
-
 .w-10.h-10.bg-gradient-to-r.from-orange-400.to-orange-600.rounded-lg {
   width: 2.5rem;
   height: 2.5rem;
@@ -125,14 +128,9 @@ body {
   border-color: rgba(239, 68, 68, 0.2);
 }
 
-.text-red-400 {
-  color: #f87171;
-}
-
 .text-sm {
   font-size: 0.875rem;
 }
-
 .text-xs {
   font-size: 0.75rem;
 }
