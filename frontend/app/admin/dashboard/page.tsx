@@ -93,6 +93,7 @@ export default function AdminDashboard() {
               </div>
             </CardContent>
           </Card>
+
           <Card className="bg-gradient-to-br from-orange-500/20 to-orange-600/20 border-orange-500/30">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -146,6 +147,7 @@ export default function AdminDashboard() {
                     </div>
                     <Badge className="bg-green-500/20 text-green-400">Healthy</Badge>
                   </div>
+
                   <div className="flex items-center justify-between p-4 bg-slate-700 rounded-lg">
                     <div className="flex items-center space-x-3">
                       <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
@@ -156,6 +158,7 @@ export default function AdminDashboard() {
                     </div>
                     <Badge className="bg-blue-500/20 text-blue-400">Excellent</Badge>
                   </div>
+
                   <div className="flex items-center justify-between p-4 bg-slate-700 rounded-lg">
                     <div className="flex items-center space-x-3">
                       <div className="w-3 h-3 bg-orange-500 rounded-full"></div>

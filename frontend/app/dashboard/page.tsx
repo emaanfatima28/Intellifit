@@ -42,7 +42,6 @@ export default function Dashboard() {
         console.error("Error fetching profile:", error);
       }
     }
-
     fetchProfile()
   }, [user, token, router])
 
