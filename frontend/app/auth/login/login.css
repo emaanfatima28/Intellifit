@@ -18,8 +18,10 @@ body {
 .bg-cover.bg-center {
   background-size: cover;
   background-position: center;
+  background-attachment: fixed; /* Make background image static */
   background-image: url('/image1.png');
 }
+
 .w-full.max-w-md.space-y-8 {
   width: 100%;
   max-width: 28rem;
@@ -58,23 +60,22 @@ body {
   color: #9ca3af;
 }
 
+/* Remove container background and blur */
 .bg-white\/20.backdrop-blur-md.border-none.shadow-lg {
-  background-color: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(8px);
+  background-color: transparent;
+  backdrop-filter: none;
   border: none;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: none;
 }
 
 .border-gray-600 {
   border-color: #4b5563;
 }
 
-.text-white {
-  color: #ffffff;
-}
-
-.placeholder\:text-gray-400::placeholder {
-  color: #9ca3af;
+/* Add shadow effect to input fields */
+.bg-transparent.border-gray-600.text-white.placeholder\:text-gray-400 {
+  box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.5); /* black shadow */
+  border-radius: 0.25rem;
 }
 
 .pr-10 {
