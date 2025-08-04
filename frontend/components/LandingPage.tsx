@@ -1,21 +1,19 @@
 "use client"
-
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Star, ArrowRight, CheckCircle } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       {/* Navigation */}
       <nav className="flex items-center justify-between p-6 max-w-7xl mx-auto">
-        <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-gradient-to-r from-orange-400 to-orange-600 rounded-lg"></div>
-          <span className="text-2xl font-bold text-white">FitLux</span>
-        </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-gradient-to-r from-orange-400 to-orange-600 rounded-lg"></div>
+              <span className="text-2xl font-bold text-white">IntelliFit</span>
+            </div>
         <div className="hidden md:flex items-center space-x-8">
           <Link href="#features" className="text-gray-300 hover:text-white transition-colors">
             Features
