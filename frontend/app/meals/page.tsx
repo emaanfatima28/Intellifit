@@ -129,16 +129,16 @@ export default function MealsPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-white">Food Diary</h1>
-            <p className="text-gray-400 mt-1">07-20 July 2024</p>
+            <h1 className="text-3xl font-bold text-foreground">Food Diary</h1>
+            <p className="text-foreground/80 mt-1">07-20 July 2024</p>
           </div>
           <div className="flex items-center space-x-4">
             {profile?.goal && (
-              <Badge className="bg-orange-500/20 text-orange-400 border-orange-500/30">
+              <Badge className="bg-primary/20 text-primary border-primary/30">
                 Goal: {profile.goal.replace("_", " ").toUpperCase()}
               </Badge>
             )}
-            <Button className="bg-orange-500 hover:bg-orange-600 text-white">
+            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
               <Plus className="h-4 w-4 mr-2" />
               Add Meal
             </Button>
@@ -148,21 +148,21 @@ export default function MealsPage() {
         <div className="grid lg:grid-cols-4 gap-8">
           {/* Weekly Schedule */}
           <div className="lg:col-span-3">
-            <Card className="bg-gradient-to-r from-orange-500/20 to-orange-600/20 border-orange-500/30 mb-6">
+            <Card className="bg-primary/20 border-primary/30 mb-6">
               <CardHeader>
-                <CardTitle className="text-white">Weekly Schedule</CardTitle>
+                <CardTitle className="text-foreground">Weekly Schedule</CardTitle>
               </CardHeader>
             </Card>
 
-            <Card className="bg-slate-800 border-slate-700">
+            <Card className="bg-card border-border">
               <CardContent className="p-0">
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b border-slate-700">
-                        <th className="text-left p-4 text-gray-400 font-medium">Time</th>
+                      <tr className="border-b border-border">
+                        <th className="text-left p-4 text-foreground/70 font-medium">Time</th>
                         {weekDays.map((day) => (
-                          <th key={day} className="text-center p-4 text-gray-400 font-medium min-w-[120px]">
+                          <th key={day} className="text-center p-4 text-foreground/70 font-medium min-w-[120px]">
                             {day}
                           </th>
                         ))}
@@ -170,18 +170,18 @@ export default function MealsPage() {
                     </thead>
                     <tbody>
                       {mealTimes.map(({ time, type }) => (
-                        <tr key={`${time}-${type}`} className="border-b border-slate-700/50">
-                          <td className="p-4 text-white font-medium">{time}</td>
+                        <tr key={`${time}-${type}`} className="border-b border-border/50">
+                          <td className="p-4 text-foreground font-medium">{time}</td>
                           {weekDays.map((day) => {
                             const meal = getMealsByGoal(profile?.goal || "maintenance", day, type)
                             return (
                               <td key={day} className="p-2">
                                 <div
-                                  className={`${meal?.color || "bg-slate-600"} rounded-lg p-3 text-center cursor-pointer hover:opacity-80 transition-opacity`}
+                                  className={`${meal?.color || "bg-muted"} rounded-lg p-3 text-center cursor-pointer hover:opacity-80 transition-opacity`}
                                 >
-                                  <div className="text-white text-xs font-medium mb-1">{type}</div>
-                                  <div className="text-white text-xs mb-1">{meal?.name || "Not planned"}</div>
-                                  <div className="text-white text-xs opacity-75">{meal?.calories || 0} kcal</div>
+                                  <div className="text-foreground text-xs font-medium mb-1">{type}</div>
+                                  <div className="text-foreground text-xs mb-1">{meal?.name || "Not planned"}</div>
+                                  <div className="text-foreground text-xs opacity-75">{meal?.calories || 0} kcal</div>
                                 </div>
                               </td>
                             )
@@ -198,16 +198,16 @@ export default function MealsPage() {
           {/* Right Sidebar */}
           <div className="space-y-6">
             {/* Today's Result */}
-            <Card className="bg-slate-800 border-slate-700">
+            <Card className="bg-card border-border">
               <CardHeader>
-                <CardTitle className="text-white">Today's Result</CardTitle>
+                <CardTitle className="text-foreground">Today's Result</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {Object.entries(todayNutrition).map(([meal, data]) => (
                   <div key={meal} className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-white capitalize">{meal}</span>
-                      <span className="text-gray-400 text-sm">{data.calories} kcal</span>
+                      <span className="text-foreground capitalize">{meal}</span>
+                      <span className="text-foreground/70 text-sm">{data.calories} kcal</span>
                     </div>
                     <div className="relative">
                       <div className="w-16 h-16 mx-auto">
@@ -215,19 +215,19 @@ export default function MealsPage() {
                           <path
                             d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                             fill="none"
-                            stroke="#374151"
+                            stroke="hsl(var(--muted))"
                             strokeWidth="2"
                           />
                           <path
                             d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                             fill="none"
-                            stroke="#f97316"
+                            stroke="hsl(var(--primary))"
                             strokeWidth="2"
                             strokeDasharray={`${data.percentage}, 100`}
                           />
                         </svg>
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <span className="text-white text-xs font-bold">{data.percentage}%</span>
+                          <span className="text-foreground text-xs font-bold">{data.percentage}%</span>
                         </div>
                       </div>
                     </div>
@@ -237,38 +237,38 @@ export default function MealsPage() {
             </Card>
 
             {/* Daily Summary */}
-            <Card className="bg-slate-800 border-slate-700">
+            <Card className="bg-card border-border">
               <CardHeader>
-                <CardTitle className="text-white">Daily Summary</CardTitle>
+                <CardTitle className="text-foreground">Daily Summary</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-400">Total Calories</span>
-                  <span className="text-white font-bold">{dailySummary.totalCalories} kcal</span>
+                  <span className="text-foreground/70">Total Calories</span>
+                  <span className="text-foreground font-bold">{dailySummary.totalCalories} kcal</span>
                 </div>
 
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Protein</span>
-                    <span className="text-white">{dailySummary.protein}g</span>
+                    <span className="text-foreground/70">Protein</span>
+                    <span className="text-foreground">{dailySummary.protein}g</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Carbs</span>
-                    <span className="text-white">{dailySummary.carbs}g</span>
+                    <span className="text-foreground/70">Carbs</span>
+                    <span className="text-foreground">{dailySummary.carbs}g</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Fat</span>
-                    <span className="text-white">{dailySummary.fat}g</span>
+                    <span className="text-foreground/70">Fat</span>
+                    <span className="text-foreground">{dailySummary.fat}g</span>
                   </div>
                 </div>
 
-                <div className="border-t border-slate-700 pt-4">
+                <div className="border-t border-border pt-4">
                   <div className="flex justify-between items-center">
                     <div className="flex items-center">
-                      <Droplets className="h-4 w-4 text-blue-400 mr-2" />
-                      <span className="text-gray-400">Water</span>
+                      <Droplets className="h-4 w-4 text-secondary mr-2" />
+                      <span className="text-foreground/70">Water</span>
                     </div>
-                    <span className="text-white">
+                    <span className="text-foreground">
                       {dailySummary.water}L / {dailySummary.targetWater}L
                     </span>
                   </div>
@@ -278,27 +278,29 @@ export default function MealsPage() {
             </Card>
 
             {/* AI Recommendations */}
-            <Card className="bg-gradient-to-br from-purple-500/20 to-purple-600/20 border-purple-500/30">
+            <Card className="bg-primary/20 border-primary/30">
               <CardHeader>
-                <CardTitle className="text-white flex items-center">
+                <CardTitle className="text-foreground flex items-center">
                   <Target className="h-5 w-5 mr-2" />
                   AI Recommendations
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  <div className="text-sm text-gray-300">Based on your {profile?.goal?.replace("_", " ")} goal:</div>
-                  <ul className="space-y-2 text-sm text-gray-300">
+                  <div className="text-sm text-foreground/80">
+                    Based on your {profile?.goal?.replace("_", " ")} goal:
+                  </div>
+                  <ul className="space-y-2 text-sm text-foreground/80">
                     <li className="flex items-start">
-                      <span className="text-green-400 mr-2">•</span>
+                      <span className="text-primary mr-2">•</span>
                       Add more protein to your breakfast
                     </li>
                     <li className="flex items-start">
-                      <span className="text-blue-400 mr-2">•</span>
+                      <span className="text-secondary mr-2">•</span>
                       Increase water intake by 0.4L
                     </li>
                     <li className="flex items-start">
-                      <span className="text-orange-400 mr-2">•</span>
+                      <span className="text-accent mr-2">•</span>
                       Consider a post-workout snack
                     </li>
                   </ul>
