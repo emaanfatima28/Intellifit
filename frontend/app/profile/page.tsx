@@ -524,5 +524,6 @@ export default function ProfilePage() {
         </Tabs>
       </div>
     </DashboardLayout>
-  )
+    )
 }
+
