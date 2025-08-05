@@ -197,22 +197,22 @@ export default function ChatbotPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-white flex items-center">
-              <Bot className="h-8 w-8 mr-3 text-purple-400" />
+            <h1 className="text-3xl font-bold text-foreground flex items-center">
+              <Bot className="h-8 w-8 mr-3 text-primary" />
               AI Fitness Assistant
             </h1>
-            <p className="text-gray-400 mt-1">Get personalized fitness and nutrition advice</p>
+            <p className="text-foreground/80 mt-1">Get personalized fitness and nutrition advice</p>
           </div>
-          <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30 flex items-center">
+          <Badge className="bg-primary/20 text-primary border-primary/30 flex items-center">
             <Sparkles className="h-4 w-4 mr-1" />
             AI Powered
           </Badge>
         </div>
 
         {/* Chat Interface */}
-        <Card className="bg-slate-800 border-slate-700 h-[600px] flex flex-col">
-          <CardHeader className="border-b border-slate-700">
-            <CardTitle className="text-white flex items-center">
+        <Card className="bg-card border-border h-[600px] flex flex-col">
+          <CardHeader className="border-b border-border">
+            <CardTitle className="text-foreground flex items-center">
               <MessageCircle className="h-5 w-5 mr-2" />
               Chat with AI Assistant
             </CardTitle>
@@ -225,12 +225,14 @@ export default function ChatbotPage() {
                 <div key={message.id} className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}>
                   <div
                     className={`max-w-[80%] rounded-lg p-4 ${
-                      message.sender === "user" ? "bg-orange-500 text-white" : "bg-slate-700 text-gray-100"
+                      message.sender === "user" ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"
                     }`}
                   >
                     <div className="flex items-start space-x-2">
-                      {message.sender === "ai" && <Bot className="h-5 w-5 text-purple-400 mt-0.5 flex-shrink-0" />}
-                      {message.sender === "user" && <User className="h-5 w-5 text-white mt-0.5 flex-shrink-0" />}
+                      {message.sender === "ai" && <Bot className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />}
+                      {message.sender === "user" && (
+                        <User className="h-5 w-5 text-primary-foreground mt-0.5 flex-shrink-0" />
+                      )}
                       <div className="flex-1">
                         <p className="text-sm leading-relaxed">{message.content}</p>
                         <p className="text-xs opacity-70 mt-2">{message.timestamp.toLocaleTimeString()}</p>
@@ -242,17 +244,17 @@ export default function ChatbotPage() {
 
               {isLoading && (
                 <div className="flex justify-start">
-                  <div className="bg-slate-700 text-gray-100 rounded-lg p-4 max-w-[80%]">
+                  <div className="bg-muted text-foreground rounded-lg p-4 max-w-[80%]">
                     <div className="flex items-center space-x-2">
-                      <Bot className="h-5 w-5 text-purple-400" />
+                      <Bot className="h-5 w-5 text-primary" />
                       <div className="flex space-x-1">
-                        <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
                         <div
-                          className="w-2 h-2 bg-purple-400 rounded-full animate-bounce"
+                          className="w-2 h-2 bg-primary rounded-full animate-bounce"
                           style={{ animationDelay: "0.1s" }}
                         ></div>
                         <div
-                          className="w-2 h-2 bg-purple-400 rounded-full animate-bounce"
+                          className="w-2 h-2 bg-primary rounded-full animate-bounce"
                           style={{ animationDelay: "0.2s" }}
                         ></div>
                       </div>
@@ -266,8 +268,8 @@ export default function ChatbotPage() {
 
             {/* Quick Suggestions */}
             {messages.length <= 1 && (
-              <div className="p-6 border-t border-slate-700">
-                <p className="text-gray-400 text-sm mb-3">Quick suggestions:</p>
+              <div className="p-6 border-t border-border">
+                <p className="text-foreground/70 text-sm mb-3">Quick suggestions:</p>
                 <div className="grid grid-cols-2 gap-2">
                   {quickSuggestions.map((suggestion, index) => (
                     <Button
@@ -275,7 +277,7 @@ export default function ChatbotPage() {
                       variant="outline"
                       size="sm"
                       onClick={() => handleSuggestionClick(suggestion.text)}
-                      className="border-slate-600 text-gray-300 hover:bg-slate-700 bg-transparent justify-start"
+                      className="border-border text-foreground/80 hover:bg-muted bg-transparent justify-start"
                     >
                       <suggestion.icon className="h-4 w-4 mr-2" />
                       {suggestion.text}
@@ -286,20 +288,20 @@ export default function ChatbotPage() {
             )}
 
             {/* Input */}
-            <div className="p-6 border-t border-slate-700">
+            <div className="p-6 border-t border-border">
               <div className="flex space-x-2">
                 <Input
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Ask me anything about fitness, nutrition, or health..."
-                  className="flex-1 bg-slate-700 border-slate-600 text-white placeholder:text-gray-400"
+                  className="flex-1 bg-muted border-border text-foreground placeholder:text-foreground/60"
                   disabled={isLoading}
                 />
                 <Button
                   onClick={() => sendMessage(inputMessage)}
                   disabled={isLoading || !inputMessage.trim()}
-                  className="bg-orange-500 hover:bg-orange-600 text-white"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground"
                 >
                   <Send className="h-4 w-4" />
                 </Button>
@@ -310,31 +312,31 @@ export default function ChatbotPage() {
 
         {/* AI Features */}
         <div className="grid md:grid-cols-3 gap-6">
-          <Card className="bg-gradient-to-br from-purple-500/20 to-purple-600/20 border-purple-500/30">
+          <Card className="bg-primary/20 border-primary/30 transition-all duration-300 hover:scale-[1.02]">
             <CardContent className="p-6 text-center">
-              <Dumbbell className="h-8 w-8 text-purple-400 mx-auto mb-3" />
-              <h3 className="text-white font-semibold mb-2">Workout Plans</h3>
-              <p className="text-gray-300 text-sm">
+              <Dumbbell className="h-8 w-8 text-primary mx-auto mb-3" />
+              <h3 className="text-foreground font-semibold mb-2">Workout Plans</h3>
+              <p className="text-foreground/80 text-sm">
                 Get personalized workout routines based on your goals and fitness level
               </p>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-green-500/20 to-green-600/20 border-green-500/30">
+          <Card className="bg-secondary/20 border-secondary/30 transition-all duration-300 hover:scale-[1.02]">
             <CardContent className="p-6 text-center">
-              <Apple className="h-8 w-8 text-green-400 mx-auto mb-3" />
-              <h3 className="text-white font-semibold mb-2">Nutrition Advice</h3>
-              <p className="text-gray-300 text-sm">
+              <Apple className="h-8 w-8 text-secondary mx-auto mb-3" />
+              <h3 className="text-foreground font-semibold mb-2">Nutrition Advice</h3>
+              <p className="text-foreground/80 text-sm">
                 Receive meal suggestions and dietary recommendations tailored to you
               </p>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-blue-500/20 to-blue-600/20 border-blue-500/30">
+          <Card className="bg-accent/20 border-accent/30 transition-all duration-300 hover:scale-[1.02]">
             <CardContent className="p-6 text-center">
-              <Target className="h-8 w-8 text-blue-400 mx-auto mb-3" />
-              <h3 className="text-white font-semibold mb-2">Goal Tracking</h3>
-              <p className="text-gray-300 text-sm">
+              <Target className="h-8 w-8 text-accent mx-auto mb-3" />
+              <h3 className="text-foreground font-semibold mb-2">Goal Tracking</h3>
+              <p className="text-foreground/80 text-sm">
                 Monitor your progress and get insights on achieving your fitness goals
               </p>
             </CardContent>
