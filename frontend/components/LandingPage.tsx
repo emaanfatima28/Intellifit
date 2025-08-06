@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge"
 import { Star, ArrowRight, CheckCircle } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import { Inter } from 'next/font/google'
+import './globals.css '
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">

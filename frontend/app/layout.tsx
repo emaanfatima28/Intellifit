@@ -1,16 +1,13 @@
-import type React from "react"
-import type { Metadata } from "next"
-import { Inter } from "next/font/google"
-import "./globals.css"
-import { AuthProvider } from "@/contexts/AuthContext"
-import { Toaster } from "@/components/ui/toaster"
+import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
+import './globals.css'
+import { AuthProvider } from '@/contexts/AuthContext' // Corrected import path
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: "FitLux - Your Fitness Journey",
-  description: "Personalized fitness and nutrition plans",
-    generator: 'v0.dev'
+  title: 'FitnessPro - Your Personal Fitness Companion',
+  description: 'AI-powered fitness and nutrition platform for personalized meal plans, workout routines, and progress tracking.',
 }
 
 export default function RootLayout({
@@ -23,7 +20,6 @@ export default function RootLayout({
       <body className={inter.className}>
         <AuthProvider>
           {children}
-          <Toaster />
         </AuthProvider>
       </body>
     </html>
