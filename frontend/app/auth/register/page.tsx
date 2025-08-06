@@ -68,31 +68,25 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex">
       {/* Left side - Register Form */}
-      <div className="fixed inset-y-0 left-0 flex items-center justify-center p-8 bg-gradient-to-b from-gray-900 to-black w-1/2">
-        <div className="w-full max-w-md space-y-6 bg-gray-900 bg-opacity-90 p-8 rounded-lg shadow-lg mx-auto">
-          {/* Removed Logo */}
+      <div className="flex flex-col justify-center items-center w-full md:w-1/2 p-8 bg-white">
+        <div className="w-full max-w-md space-y-6 bg-white p-8 rounded-lg shadow-lg mx-auto">
           <div className="text-center">
-            {/* Removed FitLux icon and text */}
-            <h1 className="text-2xl font-bold text-white mb-2">Create an Account</h1>
-            <p className="text-gray-400">Join thousands on their fitness journey</p>
+            <h1 className="text-2xl font-bold text-[#1e293b] mb-2">Create an Account</h1>
+            <p className="text-[#64748b]">Join thousands on their fitness journey</p>
           </div>
-
-          <Card className="bg-slate-800 border-slate-700">
+          <Card className="bg-white border-[#e2e8f0]">
             <CardHeader>
-              <CardTitle className="text-white text-center">Sign Up</CardTitle>
+              <CardTitle className="text-[#1e293b] text-center">Sign Up</CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSignup} className="space-y-6">
                 {error && (
-                  <Alert className="bg-red-500/10 border-red-500/20 text-red-400">
+                  <Alert className="bg-[#ef4444]/10 border-[#ef4444]/20 text-[#ef4444]">
                     <AlertDescription>{error}</AlertDescription>
                   </Alert>
                 )}
-
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-gray-300">
-                    Full Name
-                  </Label>
+                  <Label htmlFor="name" className="text-[#1e293b]">Full Name</Label>
                   <Input
                     id="name"
                     type="text"
@@ -100,14 +94,11 @@ export default function RegisterPage() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
-                    className="bg-slate-700 border-slate-600 text-white placeholder:text-gray-400"
+                    className="bg-white border-[#e2e8f0] text-[#1e293b] placeholder:text-[#64748b]"
                   />
                 </div>
-
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-gray-300">
-                    Email
-                  </Label>
+                  <Label htmlFor="email" className="text-[#1e293b]">Email</Label>
                   <Input
                     id="email"
                     type="email"
@@ -115,14 +106,11 @@ export default function RegisterPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="bg-slate-700 border-slate-600 text-white placeholder:text-gray-400"
+                    className="bg-white border-[#e2e8f0] text-[#1e293b] placeholder:text-[#64748b]"
                   />
                 </div>
-
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-gray-300">
-                    Password
-                  </Label>
+                  <Label htmlFor="password" className="text-[#1e293b]">Password</Label>
                   <div className="relative">
                     <Input
                       id="password"
@@ -131,22 +119,19 @@ export default function RegisterPage() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
-                      className="bg-slate-700 border-slate-600 text-white placeholder:text-gray-400 pr-10"
+                      className="bg-white border-[#e2e8f0] text-[#1e293b] placeholder:text-[#64748b] pr-10"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#64748b] hover:text-[#2563eb]"
                     >
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
                 </div>
-
                 <div className="space-y-2">
-                  <Label htmlFor="confirmPassword" className="text-gray-300">
-                    Confirm Password
-                  </Label>
+                  <Label htmlFor="confirmPassword" className="text-[#1e293b]">Confirm Password</Label>
                   <Input
                     id="confirmPassword"
                     type="password"
@@ -154,21 +139,19 @@ export default function RegisterPage() {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
-                    className="bg-slate-700 border-slate-600 text-white placeholder:text-gray-400"
+                    className="bg-white border-[#e2e8f0] text-[#1e293b] placeholder:text-[#64748b]"
                   />
                 </div>
-
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-orange-500 hover:bg-orange-600 text-white"
+                  className="w-full bg-[#2563eb] hover:bg-[#f59e42] text-white font-semibold"
                 >
                   {loading ? "Creating account..." : "Create Account"}
                 </Button>
-
                 <div className="text-center">
-                  <span className="text-gray-400">Already have an account? </span>
-                  <Link href="/auth/login" className="text-orange-400 hover:text-orange-300">
+                  <span className="text-[#64748b]">Already have an account? </span>
+                  <Link href="/auth/login" className="text-[#2563eb] hover:text-[#f59e42] font-medium">
                     Sign in
                   </Link>
                 </div>
@@ -178,9 +161,9 @@ export default function RegisterPage() {
         </div>
       </div>
       {/* Right side - Image */}
-      <div className="fixed inset-y-0 right-0 w-1/2 p-0">
-        <Image src="/ImageGenerator_A full background illust (1).png?height=800&width=600" alt="Yoga meditation" fill className="object-cover rounded-l-lg shadow-lg" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-l-lg"></div>
+      <div className="hidden md:block w-1/2 relative">
+        <Image src="/ImageGenerator_A full background illust (1).png?height=800&width=600" alt="Signup Visual" fill className="object-cover rounded-l-lg shadow-lg" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#1e293b]/70 to-transparent rounded-l-lg"></div>
       </div>
     </div>
   )
