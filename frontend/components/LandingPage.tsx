@@ -12,6 +12,8 @@ export default function LandingPage() {
   // Refs for smooth scroll
   const aboutRef = useRef<HTMLDivElement>(null)
   const contactRef = useRef<HTMLDivElement>(null)
+  const featuresRef = useRef<HTMLDivElement>(null)
+  const howItWorksRef = useRef<HTMLDivElement>(null)
 
   const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => {
     if (ref.current) {
@@ -27,11 +29,9 @@ export default function LandingPage() {
           <div className="w-8 h-8 intellifit-gradient rounded-lg"></div>
           <span className="text-2xl font-bold intellifit-text">IntelliFit</span>
         </div>
-        <div className="hidden md:flex items-center space-x-8">
+        <div className="flex items-center space-x-8">
           <button onClick={() => scrollToSection(aboutRef)} className="intellifit-secondary-text hover:intellifit-text transition-colors font-medium">About</button>
           <button onClick={() => scrollToSection(contactRef)} className="intellifit-secondary-text hover:intellifit-text transition-colors font-medium">Contact</button>
-        </div>
-        <div className="flex items-center space-x-4">
           <Link href="/auth/login">
             <Button variant="ghost" className="intellifit-text hover:intellifit-accent-bg">Login</Button>
           </Link>
@@ -75,53 +75,47 @@ export default function LandingPage() {
         </div>
       </motion.section>
 
-      {/* Stats Section */}
-      <motion.section initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }} className="max-w-7xl mx-auto px-6 py-16">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-          {[{ label: "Lives saved", value: "200+" }, { label: "Happy clients", value: "150+" }, { label: "Years experience", value: "5+" }, { label: "Success rate", value: "98%" }].map((stat, i) => (
-            <motion.div key={stat.label} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 * i }}>
-              <Card className="bg-white/80 border-primary/10 shadow-md hover:shadow-xl transition-shadow duration-300">
-                <CardContent className="p-6 text-center">
-                  <div className="text-3xl font-bold intellifit-text mb-2">{stat.value}</div>
-                  <div className="intellifit-secondary-text">{stat.label}</div>
-                </CardContent>
+      {/* Feature Cards Section */}
+      <motion.section ref={featuresRef} id="features" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }} className="max-w-7xl mx-auto px-6 py-20">
+        <h2 className="text-4xl font-bold intellifit-text mb-12 text-center">Our Services</h2>
+        <div className="grid md:grid-cols-3 gap-8">
+          {[
+            { title: "Meal Plan", desc: "Personalized meal plans for your goals.", img: "/meal-placeholder.jpg" },
+            { title: "Workout", desc: "Custom workouts for every fitness level.", img: "/workout-placeholder.jpg" },
+            { title: "AI Assistant", desc: "Smart AI to guide your fitness journey.", img: "/ai-placeholder.jpg" },
+          ].map((feature, i) => (
+            <motion.div key={feature.title} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 * i }}>
+              <Card className="bg-white/80 border-primary/10 shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col items-center p-6">
+                <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-primary mb-6 flex items-center justify-center bg-gray-100">
+                  <Image src={feature.img} alt={feature.title} width={128} height={128} className="object-cover" />
+                </div>
+                <h3 className="text-2xl font-bold intellifit-text mb-2">{feature.title}</h3>
+                <p className="intellifit-secondary-text text-center">{feature.desc}</p>
               </Card>
             </motion.div>
           ))}
         </div>
       </motion.section>
 
-      {/* Features Section */}
-      <motion.section id="features" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }} className="max-w-7xl mx-auto px-6 py-20">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <motion.div initial={{ opacity: 0, x: -40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }} className="relative">
-            <Image
-              src="/placeholder.svg?height=400&width=400"
-              alt="Healthy meal"
-              width={400}
-              height={400}
-              className="rounded-2xl shadow-lg"
-            />
-          </motion.div>
-          <motion.div initial={{ opacity: 0, x: 40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: 0.3 }} className="space-y-8">
-            <div>
-              <h2 className="text-4xl font-bold intellifit-text mb-4">Wanna stay fit & healthy?</h2>
-              <p className="text-secondary text-lg">
-                As qualified diet consultants, we're dedicated to creating delightful, well-balanced meal experiences for you. We're dedicated to global more individual and healthier eating habits.
-              </p>
-            </div>
-            <div className="space-y-4">
-              <div className="flex items-center space-x-3">
-                <CheckCircle className="h-6 w-6 text-success" />
-                <span className="intellifit-text">Certified nutritionists</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <CheckCircle className="h-6 w-6 text-success" />
-                <span className="intellifit-text">Innovative meal plans</span>
-              </div>
-            </div>
-            <Button className="intellifit-bg hover:intellifit-accent-bg intellifit-light-text transition-transform duration-200 hover:scale-105">Explore</Button>
-          </motion.div>
+      {/* How It Works Section */}
+      <motion.section ref={howItWorksRef} id="how-it-works" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }} className="max-w-7xl mx-auto px-6 py-20">
+        <div className="text-center mb-12">
+          <Badge className="bg-primary/10 text-primary border-primary/30 mb-4">HOW IT WORKS</Badge>
+          <h2 className="text-4xl font-bold intellifit-text mb-4">Just Three Easy Steps</h2>
+          <p className="intellifit-secondary-text text-lg">We keep the process simple, so you can focus on what matters.</p>
+        </div>
+        <div className="grid md:grid-cols-3 gap-8">
+          {[
+            { step: 1, title: "FREE CONSULTATION", desc: "We meet and learn about your needs and goals." },
+            { step: 2, title: "PERSONAL PLAN", desc: "You get a plan tailored to your unique situation." },
+            { step: 3, title: "YOUR JOURNEY BEGINS", desc: "You receive support until you flourish on your own." },
+          ].map((item, i) => (
+            <motion.div key={item.step} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 * i }} className="flex flex-col items-center">
+              <div className="text-6xl font-bold text-primary mb-4">{item.step}.</div>
+              <h3 className="text-xl font-semibold intellifit-text mb-2">{item.title}</h3>
+              <p className="intellifit-secondary-text text-center">{item.desc}</p>
+            </motion.div>
+          ))}
         </div>
       </motion.section>
 
@@ -130,11 +124,11 @@ export default function LandingPage() {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <motion.div initial={{ opacity: 0, x: -40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
             <Image
-              src="/aboutus-illustration.svg"
+              src="/aboutus-placeholder.jpg"
               alt="About Us"
               width={400}
               height={400}
-              className="rounded-2xl shadow-lg"
+              className="rounded-2xl shadow-lg object-cover"
             />
           </motion.div>
           <motion.div initial={{ opacity: 0, x: 40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: 0.3 }}>
@@ -153,22 +147,38 @@ export default function LandingPage() {
 
       {/* Contact Section */}
       <motion.section ref={contactRef} id="contact" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }} className="max-w-7xl mx-auto px-6 py-20">
-        <div className="bg-white rounded-2xl shadow-xl p-10 max-w-2xl mx-auto">
-          <h2 className="text-3xl font-bold intellifit-text mb-6 text-center">Contact Us</h2>
+        <div className="bg-[#1e293b] rounded-2xl shadow-xl p-10 max-w-2xl mx-auto">
+          <h2 className="text-3xl font-bold text-white mb-6 text-center">Contact Us</h2>
           <form className="space-y-6">
-            <div>
-              <label className="block intellifit-text mb-2">Name</label>
-              <input type="text" className="w-full border border-primary rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary transition-all" placeholder="Your Name" required />
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-white mb-2">First Name*</label>
+                <input type="text" className="w-full border border-primary bg-transparent text-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-400" placeholder="First Name" required />
+              </div>
+              <div>
+                <label className="block text-white mb-2">Last Name*</label>
+                <input type="text" className="w-full border border-primary bg-transparent text-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-400" placeholder="Last Name" required />
+              </div>
             </div>
             <div>
-              <label className="block intellifit-text mb-2">Email</label>
-              <input type="email" className="w-full border border-primary rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary transition-all" placeholder="you@email.com" required />
+              <label className="block text-white mb-2">Email Address*</label>
+              <input type="email" className="w-full border border-primary bg-transparent text-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-400" placeholder="you@email.com" required />
+            </div>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-white mb-2">Phone*</label>
+                <input type="text" className="w-full border border-primary bg-transparent text-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-400" placeholder="Phone" required />
+              </div>
+              <div>
+                <label className="block text-white mb-2">Subject*</label>
+                <input type="text" className="w-full border border-primary bg-transparent text-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-400" placeholder="Subject" required />
+              </div>
             </div>
             <div>
-              <label className="block intellifit-text mb-2">Message</label>
-              <textarea className="w-full border border-primary rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary transition-all" rows={4} placeholder="How can we help you?" required />
+              <label className="block text-white mb-2">Message*</label>
+              <textarea className="w-full border border-primary bg-transparent text-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-400" rows={4} placeholder="How can we help you?" required />
             </div>
-            <Button type="submit" className="w-full intellifit-bg hover:intellifit-accent-bg intellifit-light-text py-3 text-lg transition-transform duration-200 hover:scale-105">Send Message</Button>
+            <Button type="submit" className="w-full intellifit-accent-bg hover:intellifit-bg text-white py-3 text-lg transition-transform duration-200 hover:scale-105">Send Message</Button>
           </form>
         </div>
       </motion.section>
