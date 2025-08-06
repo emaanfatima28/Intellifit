@@ -185,7 +185,7 @@ export default function MealsPage() {
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-orange-500/30 via-orange-600/20 to-orange-700/10 border border-orange-500/30 p-12"
+          className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-orange-500/30 via-orange-600/20 to-orange-700/10 border border-orange-500/30 p-8"
         >
           <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-transparent"></div>
           <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/5 rounded-full blur-3xl"></div>
@@ -196,24 +196,24 @@ export default function MealsPage() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1, delay: 0.2 }}
-              className="text-center space-y-8"
+              className="flex items-center justify-between"
             >
-              <div className="space-y-6">
+              <div className="flex items-center space-x-6">
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ duration: 0.8, delay: 0.4 }}
-                  className="w-32 h-32 mx-auto bg-gradient-to-br from-orange-500/30 to-orange-600/20 rounded-full flex items-center justify-center shadow-2xl"
+                  className="w-20 h-20 bg-gradient-to-br from-orange-500/30 to-orange-600/20 rounded-full flex items-center justify-center shadow-2xl"
                 >
-                  <Utensils className="h-16 w-16 text-orange-300" />
+                  <Utensils className="h-10 w-10 text-orange-300" />
                 </motion.div>
 
-                <div className="space-y-4">
+                <div className="space-y-2">
                   <motion.h1
-                    initial={{ opacity: 0, y: 30 }}
+                    initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.6 }}
-                    className="text-6xl font-black bg-gradient-to-r from-white via-orange-100 to-orange-200 bg-clip-text text-transparent leading-tight"
+                    className="text-5xl font-black text-black leading-tight"
                   >
                     AI-Powered Meal Plans
                   </motion.h1>
@@ -222,55 +222,54 @@ export default function MealsPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.8 }}
-                    className="text-orange-200/90 text-2xl font-medium max-w-3xl mx-auto leading-relaxed"
+                    className="text-black/80 text-lg font-medium"
                   >
                     Personalized weekly nutrition designed for your goals and lifestyle
                   </motion.p>
-                </div>
 
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 1 }}
-                  className="flex items-center justify-center space-x-6"
-                >
-                  {profile?.goal && (
-                    <Badge className="bg-orange-500/40 text-orange-200 border-orange-400/60 px-6 py-3 text-lg font-semibold">
-                      <Target className="h-5 w-5 mr-3" />
-                      Goal: {profile.goal.replace("_", " ").toUpperCase()}
-                    </Badge>
-                  )}
-                  <Badge className="bg-white/20 text-white/95 border-white/30 px-6 py-3 text-lg font-semibold">
-                    <Zap className="h-5 w-5 mr-3" />
-                    AI Generated
-                  </Badge>
-                </motion.div>
-
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 1.2 }}
-                  className="pt-4"
-                >
                   <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 1 }}
+                    className="flex items-center space-x-4"
                   >
-                    <Button
-                      onClick={generateWeeklyMealPlan}
-                      disabled={generating || !profile}
-                      className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-12 py-6 text-xl font-bold rounded-2xl shadow-2xl hover:shadow-orange-500/25 transition-all duration-300"
-                    >
-                      {generating ? (
-                        <RefreshCw className="h-6 w-6 mr-4 animate-spin" />
-                      ) : (
-                        <Sparkles className="h-6 w-6 mr-4" />
-                      )}
-                      {generating ? "Generating Your Plan..." : "Generate New Meal Plan"}
-                    </Button>
+                    {profile?.goal && (
+                      <Badge className="bg-orange-500/40 text-black border-orange-400/60 px-4 py-2 text-sm font-semibold">
+                        <Target className="h-4 w-4 mr-2" />
+                        Goal: {profile.goal.replace("_", " ").toUpperCase()}
+                      </Badge>
+                    )}
+                    <Badge className="bg-white/30 text-black border-white/40 px-4 py-2 text-sm font-semibold">
+                      <Zap className="h-4 w-4 mr-2" />
+                      AI Generated
+                    </Badge>
                   </motion.div>
-                </motion.div>
+                </div>
               </div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 1.2 }}
+              >
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button
+                    onClick={generateWeeklyMealPlan}
+                    disabled={generating || !profile}
+                    className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-4 text-lg font-bold rounded-xl shadow-2xl hover:shadow-orange-500/25 transition-all duration-300"
+                  >
+                    {generating ? (
+                      <RefreshCw className="h-5 w-5 mr-3 animate-spin" />
+                    ) : (
+                      <Sparkles className="h-5 w-5 mr-3" />
+                    )}
+                    {generating ? "Generating..." : "Generate New Meal Plan"}
+                  </Button>
+                </motion.div>
+              </motion.div>
             </motion.div>
           </div>
         </motion.div>
@@ -480,7 +479,7 @@ export default function MealsPage() {
                                   className={`${meal
                                     ? 'bg-gradient-to-br from-orange-500/25 to-orange-600/15 border-orange-500/40 shadow-xl'
                                     : 'bg-slate-700/40 border-slate-600/60'
-                                    } border-2 rounded-2xl p-6 text-center cursor-pointer hover:shadow-2xl transition-all duration-300 min-h-[160px] flex flex-col justify-center relative overflow-hidden`}
+                                    } border-2 rounded-2xl p-4 text-center cursor-pointer hover:shadow-2xl transition-all duration-300 min-h-[120px] max-h-[120px] flex flex-col justify-center relative overflow-hidden`}
                                 >
                                   {meal && (
                                     <div className="absolute top-3 right-3">
