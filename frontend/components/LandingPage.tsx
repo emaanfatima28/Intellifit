@@ -5,257 +5,209 @@ import { Badge } from "@/components/ui/badge"
 import { Star, ArrowRight, CheckCircle } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { Inter } from 'next/font/google'
+import { motion } from "framer-motion"
+import { useRef } from "react"
+
 export default function LandingPage() {
+  // Refs for smooth scroll
+  const aboutRef = useRef<HTMLDivElement>(null)
+  const contactRef = useRef<HTMLDivElement>(null)
+
+  const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => {
+    if (ref.current) {
+      ref.current.scrollIntoView({ behavior: "smooth" })
+    }
+  }
+
   return (
     <div className="min-h-screen intellifit-light-bg">
       {/* Navigation */}
-      <nav className="flex items-center justify-between p-6 max-w-7xl mx-auto">
+      <nav className="flex items-center justify-between p-6 max-w-7xl mx-auto sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-sm">
         <div className="flex items-center space-x-2">
           <div className="w-8 h-8 intellifit-gradient rounded-lg"></div>
           <span className="text-2xl font-bold intellifit-text">IntelliFit</span>
         </div>
         <div className="hidden md:flex items-center space-x-8">
-          <Link href="#features" className="intellifit-secondary-text hover:intellifit-text transition-colors">
-            Features
-          </Link>
-          <Link href="#about" className="intellifit-secondary-text hover:intellifit-text transition-colors">
-            About
-          </Link>
-          <Link href="#contact" className="intellifit-secondary-text hover:intellifit-text transition-colors">
-            Contact
-          </Link>
+          <button onClick={() => scrollToSection(aboutRef)} className="intellifit-secondary-text hover:intellifit-text transition-colors font-medium">About</button>
+          <button onClick={() => scrollToSection(contactRef)} className="intellifit-secondary-text hover:intellifit-text transition-colors font-medium">Contact</button>
         </div>
         <div className="flex items-center space-x-4">
           <Link href="/auth/login">
-            <Button variant="ghost" className="intellifit-text hover:intellifit-accent-bg">
-              Login
-            </Button>
+            <Button variant="ghost" className="intellifit-text hover:intellifit-accent-bg">Login</Button>
           </Link>
           <Link href="/auth/register">
-            <Button className="intellifit-bg hover:intellifit-secondary-bg intellifit-light-text">Sign Up</Button>
+            <Button className="intellifit-bg hover:intellifit-accent-bg intellifit-light-text">Sign Up</Button>
           </Link>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-6 py-20">
+      <motion.section initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="max-w-7xl mx-auto px-6 py-20">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div className="space-y-8">
+          <motion.div initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="space-y-8">
             <div className="space-y-4">
-              <Badge className="bg-orange-500/20 text-orange-400 border-orange-500/30">✨ AI-Powered Fitness</Badge>
+              <Badge className="bg-primary/10 text-primary border-primary/30 animate-pulse">✨ AI-Powered Fitness</Badge>
               <h1 className="text-5xl lg:text-6xl font-bold intellifit-text leading-tight">
                 Start eating
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">
-                  {" "}
-                  healthy
-                </span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent animate-gradient"> healthy</span>
               </h1>
               <p className="text-xl intellifit-secondary-text leading-relaxed">
                 Prioritize expert advice and personalized plans to help you achieve your health and wellness goals
               </p>
             </div>
             <Link href="/auth/register">
-              <Button size="lg" className="intellifit-bg hover:intellifit-secondary-bg intellifit-light-text px-8 py-4 text-lg">
+              <Button size="lg" className="intellifit-bg hover:intellifit-accent-bg intellifit-light-text px-8 py-4 text-lg transition-transform duration-200 hover:scale-105">
                 Contact us
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
-          </div>
-
-          <div className="relative">
-            <div className="relative w-full h-96 rounded-2xl overflow-hidden">
+          </motion.div>
+          <motion.div initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} className="relative">
+            <div className="relative w-full h-96 rounded-2xl overflow-hidden shadow-xl">
               <Image
                 src="/placeholder.svg?height=400&width=400"
                 alt="Healthy food arrangement"
                 fill
-                className="object-cover"
+                className="object-cover scale-105 hover:scale-110 transition-transform duration-700"
               />
             </div>
-          </div>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Stats Section */}
-      <section className="max-w-7xl mx-auto px-6 py-16">
+      <motion.section initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }} className="max-w-7xl mx-auto px-6 py-16">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-          <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
-            <CardContent className="p-6 text-center">
-              <div className="text-3xl font-bold intellifit-text mb-2">200+</div>
-              <div className="intellifit-secondary-text">Lives saved</div>
-            </CardContent>
-          </Card>
-          <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
-            <CardContent className="p-6 text-center">
-              <div className="text-3xl font-bold intellifit-text mb-2">150+</div>
-              <div className="intellifit-secondary-text">Happy clients</div>
-            </CardContent>
-          </Card>
-          <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
-            <CardContent className="p-6 text-center">
-              <div className="text-3xl font-bold intellifit-text mb-2">5+</div>
-              <div className="intellifit-secondary-text">Years experience</div>
-            </CardContent>
-          </Card>
-          <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
-            <CardContent className="p-6 text-center">
-              <div className="text-3xl font-bold intellifit-text mb-2">98%</div>
-              <div className="intellifit-secondary-text">Success rate</div>
-            </CardContent>
-          </Card>
+          {[{ label: "Lives saved", value: "200+" }, { label: "Happy clients", value: "150+" }, { label: "Years experience", value: "5+" }, { label: "Success rate", value: "98%" }].map((stat, i) => (
+            <motion.div key={stat.label} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 * i }}>
+              <Card className="bg-white/80 border-primary/10 shadow-md hover:shadow-xl transition-shadow duration-300">
+                <CardContent className="p-6 text-center">
+                  <div className="text-3xl font-bold intellifit-text mb-2">{stat.value}</div>
+                  <div className="intellifit-secondary-text">{stat.label}</div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
         </div>
-      </section>
+      </motion.section>
 
       {/* Features Section */}
-      <section id="features" className="max-w-7xl mx-auto px-6 py-20">
+      <motion.section id="features" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }} className="max-w-7xl mx-auto px-6 py-20">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <div className="relative">
+          <motion.div initial={{ opacity: 0, x: -40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }} className="relative">
             <Image
               src="/placeholder.svg?height=400&width=400"
               alt="Healthy meal"
               width={400}
               height={400}
-              className="rounded-2xl"
+              className="rounded-2xl shadow-lg"
             />
-          </div>
-
-          <div className="space-y-8">
+          </motion.div>
+          <motion.div initial={{ opacity: 0, x: 40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: 0.3 }} className="space-y-8">
             <div>
               <h2 className="text-4xl font-bold intellifit-text mb-4">Wanna stay fit & healthy?</h2>
-              <p className="text-gray-300 text-lg">
-                As qualified diet consultants, we're dedicated to creating delightful, well-balanced meal experiences
-                for you. We're dedicated to global more individual and healthier eating habits.
+              <p className="text-secondary text-lg">
+                As qualified diet consultants, we're dedicated to creating delightful, well-balanced meal experiences for you. We're dedicated to global more individual and healthier eating habits.
               </p>
             </div>
-
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
-                <CheckCircle className="h-6 w-6 text-green-500" />
+                <CheckCircle className="h-6 w-6 text-success" />
                 <span className="intellifit-text">Certified nutritionists</span>
               </div>
               <div className="flex items-center space-x-3">
-                <CheckCircle className="h-6 w-6 text-green-500" />
+                <CheckCircle className="h-6 w-6 text-success" />
                 <span className="intellifit-text">Innovative meal plans</span>
               </div>
             </div>
-
-            <Button className="intellifit-bg hover:intellifit-secondary-bg intellifit-light-text">Explore</Button>
-          </div>
+            <Button className="intellifit-bg hover:intellifit-accent-bg intellifit-light-text transition-transform duration-200 hover:scale-105">Explore</Button>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
-      {/* Services Section */}
-      <section className="max-w-7xl mx-auto px-6 py-20">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold intellifit-text mb-4">How we can help you</h2>
-          <p className="text-gray-300 text-lg">Here are the services we offer to help you</p>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-8">
-          <Card className="bg-gradient-to-br from-green-600/20 to-green-800/20 border-green-500/30 backdrop-blur-sm">
-            <CardContent className="p-8">
-              <h3 className="text-2xl font-bold intellifit-text mb-4">Detox and cleanse programs</h3>
-              <p className="text-gray-300 mb-6">
-                Boost your well-being with our detox programs designed to reset your eating habits and enhance overall
-                health.
-              </p>
-              <Button
-                variant="outline"
-                className="border-green-500 text-green-400 hover:bg-green-500 hover:text-white bg-transparent"
-              >
-                Learn more
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-gradient-to-br from-blue-600/20 to-blue-800/20 border-blue-500/30 backdrop-blur-sm">
-            <CardContent className="p-8">
-              <h3 className="text-2xl font-bold intellifit-text mb-4">Personalized meal plans</h3>
-              <p className="text-gray-300 mb-6">
-                Get customized meal plans tailored to your specific dietary needs, preferences, and health goals for
-                optimal results.
-              </p>
-              <Button
-                variant="outline"
-                className="border-blue-500 text-blue-400 hover:bg-blue-500 hover:text-white bg-transparent"
-              >
-                Learn more
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
-      {/* Testimonial Section */}
-      <section className="max-w-7xl mx-auto px-6 py-20">
-        <Card className="bg-gradient-to-r from-teal-600/20 to-cyan-600/20 border-teal-500/30 backdrop-blur-sm">
-          <CardContent className="p-12 text-center">
-            <h3 className="text-2xl font-bold intellifit-text mb-6">We provide the most enjoyable experience</h3>
-            <p className="text-gray-300 text-lg mb-8 max-w-3xl mx-auto">
-              The personalized advice and support I received have dramatically improved my health and vitality. I've
-              never felt better, and the holistic approach was truly beyond my expectations.
+      {/* About Us Section */}
+      <motion.section ref={aboutRef} id="about" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }} className="max-w-7xl mx-auto px-6 py-20">
+        <div className="grid md:grid-cols-2 gap-12 items-center">
+          <motion.div initial={{ opacity: 0, x: -40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
+            <Image
+              src="/aboutus-illustration.svg"
+              alt="About Us"
+              width={400}
+              height={400}
+              className="rounded-2xl shadow-lg"
+            />
+          </motion.div>
+          <motion.div initial={{ opacity: 0, x: 40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: 0.3 }}>
+            <h2 className="text-4xl font-bold intellifit-text mb-4">About Us</h2>
+            <p className="text-lg intellifit-secondary-text mb-4">
+              IntelliFit is a passionate team of certified nutritionists, trainers, and technologists dedicated to helping you achieve your health and fitness goals. Our mission is to empower individuals with personalized, AI-driven wellness solutions that are both effective and enjoyable.
             </p>
-            <div className="flex items-center justify-center space-x-4">
-              <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold">AJ</span>
-              </div>
-              <div className="text-left">
-                <div className="text-white font-semibold">Maria</div>
-                <div className="flex items-center space-x-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                  ))}
-                </div>
-              </div>
+            <ul className="list-disc pl-6 text-secondary space-y-2">
+              <li>Expert guidance from real professionals</li>
+              <li>Cutting-edge AI for meal and workout plans</li>
+              <li>Supportive community and resources</li>
+            </ul>
+          </motion.div>
+        </div>
+      </motion.section>
+
+      {/* Contact Section */}
+      <motion.section ref={contactRef} id="contact" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }} className="max-w-7xl mx-auto px-6 py-20">
+        <div className="bg-white rounded-2xl shadow-xl p-10 max-w-2xl mx-auto">
+          <h2 className="text-3xl font-bold intellifit-text mb-6 text-center">Contact Us</h2>
+          <form className="space-y-6">
+            <div>
+              <label className="block intellifit-text mb-2">Name</label>
+              <input type="text" className="w-full border border-primary rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary transition-all" placeholder="Your Name" required />
             </div>
-            <Button className="mt-8 intellifit-bg hover:intellifit-secondary-bg intellifit-light-text">Go to FitLux</Button>
-          </CardContent>
-        </Card>
-      </section>
+            <div>
+              <label className="block intellifit-text mb-2">Email</label>
+              <input type="email" className="w-full border border-primary rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary transition-all" placeholder="you@email.com" required />
+            </div>
+            <div>
+              <label className="block intellifit-text mb-2">Message</label>
+              <textarea className="w-full border border-primary rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary transition-all" rows={4} placeholder="How can we help you?" required />
+            </div>
+            <Button type="submit" className="w-full intellifit-bg hover:intellifit-accent-bg intellifit-light-text py-3 text-lg transition-transform duration-200 hover:scale-105">Send Message</Button>
+          </form>
+        </div>
+      </motion.section>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 mt-20">
+      <footer className="border-t border-primary/10 mt-20">
         <div className="max-w-7xl mx-auto px-6 py-12">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center space-x-2 mb-4">
                 <div className="w-8 h-8 intellifit-gradient rounded-lg"></div>
-                <span className="text-2xl font-bold intellifit-text">FitLux</span>
+                <span className="text-2xl font-bold intellifit-text">IntelliFit</span>
               </div>
-              <p className="text-gray-400">Your journey to better health starts here.</p>
+              <p className="text-secondary">Your journey to better health starts here.</p>
             </div>
             <div>
-              <h4 className="text-white font-semibold mb-4">Product</h4>
+              <h4 className="text-primary font-semibold mb-4">Product</h4>
               <div className="space-y-2">
-                <Link href="#" className="block text-gray-400 hover:text-white transition-colors">
-                  Features
-                </Link>
-                <Link href="#" className="block text-gray-400 hover:text-white transition-colors">
-                  Pricing
-                </Link>
+                <a href="#features" className="block text-secondary hover:text-primary transition-colors">Features</a>
+                <a href="#" className="block text-secondary hover:text-primary transition-colors">Pricing</a>
               </div>
             </div>
             <div>
-              <h4 className="text-white font-semibold mb-4">Company</h4>
+              <h4 className="text-primary font-semibold mb-4">Company</h4>
               <div className="space-y-2">
-                <Link href="#" className="block text-gray-400 hover:text-white transition-colors">
-                  About
-                </Link>
-                <Link href="#" className="block text-gray-400 hover:text-white transition-colors">
-                  Contact
-                </Link>
+                <button onClick={() => scrollToSection(aboutRef)} className="block text-secondary hover:text-primary transition-colors">About</button>
+                <button onClick={() => scrollToSection(contactRef)} className="block text-secondary hover:text-primary transition-colors">Contact</button>
               </div>
             </div>
             <div>
-              <h4 className="text-white font-semibold mb-4">Contact</h4>
-              <div className="space-y-2 text-gray-400">
-                <p>Email: hello@fitlux.com</p>
+              <h4 className="text-primary font-semibold mb-4">Contact</h4>
+              <div className="space-y-2 text-secondary">
+                <p>Email: hello@intellifit.com</p>
                 <p>Phone: +1 (555) 123-4567</p>
               </div>
             </div>
           </div>
-          <div className="border-t border-white/10 mt-12 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 FitLux. All rights reserved.</p>
+          <div className="border-t border-primary/10 mt-12 pt-8 text-center text-secondary">
+            <p>&copy; 2024 IntelliFit. All rights reserved.</p>
           </div>
         </div>
       </footer>
