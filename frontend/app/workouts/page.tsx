@@ -211,7 +211,7 @@ export default function WorkoutsPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-white">Workouts</h1>
+            <h1 className="text-4xl font-extrabold text-[#1e293b]">Workouts</h1>
             <p className="text-gray-400 mt-1">Choose your workout type and start your fitness journey today</p>
           </div>
           {profile?.goal && (
@@ -223,7 +223,7 @@ export default function WorkoutsPage() {
 
         {/* Workout Categories */}
         <div>
-          <h2 className="text-xl font-semibold text-white mb-4">Select workout type</h2>
+          <h2 className="text-2xl font-bold text-[#1e293b] mb-4">Select workout type</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {workoutCategories.map((category) => (
               <Card
@@ -248,7 +248,7 @@ export default function WorkoutsPage() {
 
         {/* Recommended Workouts */}
         <div>
-          <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
+          <h2 className="text-2xl font-bold text-[#1e293b] mb-4 flex items-center">
             <Target className="h-5 w-5 mr-2 text-orange-400" />
             Recommended for You
           </h2>
@@ -276,13 +276,12 @@ export default function WorkoutsPage() {
                     <CardContent className="p-6">
                       <div className="flex items-center justify-between mb-4">
                         <Badge
-                          className={`${
-                            workout.difficulty === "beginner"
+                          className={`${workout.difficulty === "beginner"
                               ? "bg-green-500/20 text-green-400"
                               : workout.difficulty === "intermediate"
                                 ? "bg-yellow-500/20 text-yellow-400"
                                 : "bg-red-500/20 text-red-400"
-                          }`}
+                            }`}
                         >
                           {workout.difficulty}
                         </Badge>
@@ -322,7 +321,7 @@ export default function WorkoutsPage() {
 
         {/* Featured Trainers */}
         <div>
-          <h2 className="text-xl font-semibold text-white mb-4">Featured Trainers</h2>
+          <h2 className="text-2xl font-bold text-[#1e293b] mb-4">Featured Trainers</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {trainers.map((trainer) => (
               <Card key={trainer.id} className="bg-slate-800 border-slate-700">
@@ -375,9 +374,8 @@ export default function WorkoutsPage() {
                 return (
                   <div key={day} className="text-center">
                     <div
-                      className={`w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2 ${
-                        completed ? "bg-green-500" : today ? "bg-orange-500" : "bg-slate-700"
-                      }`}
+                      className={`w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2 ${completed ? "bg-green-500" : today ? "bg-orange-500" : "bg-slate-700"
+                        }`}
                     >
                       <span className="text-white text-sm font-medium">{day}</span>
                     </div>

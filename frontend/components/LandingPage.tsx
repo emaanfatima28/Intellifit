@@ -47,7 +47,7 @@ export default function LandingPage() {
           <motion.div initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="space-y-8">
             <div className="space-y-4">
               <Badge className="bg-primary/10 text-primary border-primary/30 animate-pulse">✨ AI-Powered Fitness</Badge>
-              <h1 className="text-5xl lg:text-6xl font-bold intellifit-text leading-tight">
+              <h1 className="text-6xl font-extrabold text-[#1e293b] leading-tight drop-shadow-lg">
                 Start eating
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent animate-gradient"> healthy</span>
               </h1>
@@ -77,7 +77,7 @@ export default function LandingPage() {
 
       {/* Feature Cards Section */}
       <motion.section ref={featuresRef} id="features" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }} className="max-w-7xl mx-auto px-6 py-20">
-        <h2 className="text-4xl font-bold intellifit-text mb-12 text-center">Our Services</h2>
+        <h2 className="text-4xl font-bold text-[#1e293b] mb-12 text-center">Our Services</h2>
         <div className="grid md:grid-cols-3 gap-8">
           {[
             { title: "Meal Plan", desc: "Personalized meal plans for your goals.", img: "/meal-placeholder.jpg" },
@@ -89,7 +89,7 @@ export default function LandingPage() {
                 <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-primary mb-6 flex items-center justify-center bg-gray-100">
                   <Image src={feature.img} alt={feature.title} width={128} height={128} className="object-cover" />
                 </div>
-                <h3 className="text-2xl font-bold intellifit-text mb-2">{feature.title}</h3>
+                <h3 className="text-2xl font-bold text-[#1e293b] mb-2">{feature.title}</h3>
                 <p className="intellifit-secondary-text text-center">{feature.desc}</p>
               </Card>
             </motion.div>
@@ -101,7 +101,7 @@ export default function LandingPage() {
       <motion.section ref={howItWorksRef} id="how-it-works" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }} className="max-w-7xl mx-auto px-6 py-20">
         <div className="text-center mb-12">
           <Badge className="bg-primary/10 text-primary border-primary/30 mb-4">HOW IT WORKS</Badge>
-          <h2 className="text-4xl font-bold intellifit-text mb-4">Just Three Easy Steps</h2>
+          <h2 className="text-4xl font-bold text-[#1e293b] mb-4">Just Three Easy Steps</h2>
           <p className="intellifit-secondary-text text-lg">We keep the process simple, so you can focus on what matters.</p>
         </div>
         <div className="grid md:grid-cols-3 gap-8">
@@ -112,7 +112,7 @@ export default function LandingPage() {
           ].map((item, i) => (
             <motion.div key={item.step} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 * i }} className="flex flex-col items-center">
               <div className="text-6xl font-bold text-primary mb-4">{item.step}.</div>
-              <h3 className="text-xl font-semibold intellifit-text mb-2">{item.title}</h3>
+              <h3 className="text-xl font-semibold text-[#1e293b] mb-2">{item.title}</h3>
               <p className="intellifit-secondary-text text-center">{item.desc}</p>
             </motion.div>
           ))}
@@ -132,7 +132,7 @@ export default function LandingPage() {
             />
           </motion.div>
           <motion.div initial={{ opacity: 0, x: 40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: 0.3 }}>
-            <h2 className="text-4xl font-bold intellifit-text mb-4">About Us</h2>
+            <h2 className="text-4xl font-bold text-[#1e293b] mb-4">About Us</h2>
             <p className="text-lg intellifit-secondary-text mb-4">
               IntelliFit is a passionate team of certified nutritionists, trainers, and technologists dedicated to helping you achieve your health and fitness goals. Our mission is to empower individuals with personalized, AI-driven wellness solutions that are both effective and enjoyable.
             </p>
