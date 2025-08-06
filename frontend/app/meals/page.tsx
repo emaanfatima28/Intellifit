@@ -412,16 +412,16 @@ export default function MealsPage() {
                   </motion.div>
                 </CardHeader>
                 <CardContent className="p-0">
-                  <div className="overflow-x-auto">
+                  <div className="overflow-x-auto meal-scrollbar">
                     <div className="min-w-full">
                       {/* Header Row */}
                       <motion.div
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.5 }}
-                        className="grid grid-cols-8 gap-6 p-8 border-b border-slate-700/50 bg-slate-800/30"
+                        className="grid grid-cols-8 gap-4 p-6 border-b border-slate-700/50 bg-slate-800/30 sticky top-0 z-10"
                       >
-                        <div className="text-gray-400 font-bold text-lg uppercase tracking-wider">
+                        <div className="text-gray-300 font-bold text-lg uppercase tracking-wider min-w-[140px]">
                           Meal Time
                         </div>
                         {weekDays.map((day, index) => (
@@ -430,9 +430,9 @@ export default function MealsPage() {
                             initial={{ opacity: 0, y: -20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6, delay: 0.6 + index * 0.1 }}
-                            className="text-center"
+                            className="text-center min-w-[180px]"
                           >
-                            <div className="text-white font-bold text-2xl mb-2">
+                            <div className="text-white font-bold text-xl mb-1">
                               {day.slice(0, 3)}
                             </div>
                             <div className="text-gray-400 text-sm font-medium">
@@ -449,17 +449,17 @@ export default function MealsPage() {
                           initial={{ opacity: 0, x: -30 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ duration: 0.8, delay: 0.7 + mealIndex * 0.1 }}
-                          className="grid grid-cols-8 gap-6 p-8 border-b border-slate-700/30 hover:bg-slate-700/10 transition-colors"
+                          className="grid grid-cols-8 gap-4 p-6 border-b border-slate-700/30 hover:bg-slate-700/10 transition-colors"
                         >
-                          <div className="flex items-center space-x-4">
-                            <div className="text-3xl">{icon}</div>
-                            <div className="flex items-center space-x-3">
+                          <div className="flex items-center space-x-3 min-w-[140px]">
+                            <div className="text-2xl">{icon}</div>
+                            <div className="flex items-center space-x-2">
                               <div className="p-2 bg-orange-500/20 rounded-lg">
-                                <LucideIcon className="h-5 w-5 text-orange-400" />
+                                <LucideIcon className="h-4 w-4 text-orange-400" />
                               </div>
                               <div>
-                                <div className="text-white font-bold text-lg capitalize">{type}</div>
-                                <div className="text-gray-400 text-base">{time}</div>
+                                <div className="text-white font-bold text-base capitalize">{type}</div>
+                                <div className="text-gray-400 text-sm">{time}</div>
                               </div>
                             </div>
                           </div>
@@ -468,9 +468,9 @@ export default function MealsPage() {
                             return (
                               <motion.div
                                 key={day}
-                                whileHover={{ scale: 1.03 }}
-                                whileTap={{ scale: 0.97 }}
-                                className="relative"
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                className="relative min-w-[180px]"
                               >
                                 <motion.div
                                   initial={{ opacity: 0, scale: 0.8 }}
@@ -479,25 +479,39 @@ export default function MealsPage() {
                                   className={`${meal
                                     ? 'bg-gradient-to-br from-orange-500/25 to-orange-600/15 border-orange-500/40 shadow-xl'
                                     : 'bg-slate-700/40 border-slate-600/60'
-                                    } border-2 rounded-2xl p-4 text-center cursor-pointer hover:shadow-2xl transition-all duration-300 min-h-[120px] max-h-[120px] flex flex-col justify-center relative overflow-hidden`}
+                                    } border-2 rounded-xl p-5 text-center cursor-pointer hover:shadow-2xl hover:scale-105 transition-all duration-300 min-h-[160px] flex flex-col justify-between relative overflow-hidden group`}
                                 >
                                   {meal && (
-                                    <div className="absolute top-3 right-3">
-                                      <div className="w-3 h-3 bg-green-400 rounded-full shadow-lg"></div>
+                                    <div className="absolute top-2 right-2">
+                                      <div className="w-2 h-2 bg-green-400 rounded-full shadow-lg animate-pulse"></div>
                                     </div>
                                   )}
-                                  <div className="text-white text-base font-bold mb-3 capitalize">
-                                    {meal?.name || "Not planned"}
+
+                                  <div className="flex-1 flex flex-col justify-center">
+                                    <div className="text-white text-base font-bold mb-3 capitalize leading-tight line-clamp-2">
+                                      {meal?.name || "Not planned"}
+                                    </div>
+                                    <div className="text-orange-400 text-xl font-bold mb-3">
+                                      {meal?.calories || 0} kcal
+                                    </div>
                                   </div>
-                                  <div className="text-orange-400 text-xl font-bold mb-3">
-                                    {meal?.calories || 0} kcal
-                                  </div>
+
                                   {meal?.ingredients && meal.ingredients.length > 0 && (
-                                    <div className="text-gray-300 text-sm mt-3">
-                                      <div className="font-semibold mb-2 text-orange-300">Ingredients:</div>
-                                      <div className="text-gray-400 leading-relaxed">
+                                    <div className="mt-auto">
+                                      <div className="text-orange-300 text-sm font-bold mb-2">
+                                        Ingredients:
+                                      </div>
+                                      <div className="text-gray-300 text-sm leading-relaxed line-clamp-2 font-medium">
                                         {meal.ingredients.slice(0, 3).join(", ")}
                                         {meal.ingredients.length > 3 && "..."}
+                                      </div>
+                                    </div>
+                                  )}
+
+                                  {!meal && (
+                                    <div className="mt-auto">
+                                      <div className="text-gray-400 text-sm font-medium">
+                                        Click to plan
                                       </div>
                                     </div>
                                   )}
@@ -511,7 +525,6 @@ export default function MealsPage() {
                   </div>
                 </CardContent>
               </Card>
-
               {/* Additional Sections Below - Grid Layout */}
               <div className="grid lg:grid-cols-3 gap-8">
                 {/* Meal Plan Info */}
