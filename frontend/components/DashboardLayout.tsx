@@ -42,7 +42,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen intellifit-light-bg">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
@@ -61,7 +61,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* Desktop sidebar */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
-        <div className="flex flex-col flex-grow bg-slate-800 border-r border-slate-700">
+        <div className="flex flex-col flex-grow intellifit-sidebar-bg">
           <SidebarContent navigation={navigation} pathname={pathname} user={user} onLogout={handleLogout} />
         </div>
       </div>
@@ -69,23 +69,23 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Main content */}
       <div className="lg:pl-64">
         {/* Top bar */}
-        <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-slate-700 bg-slate-800 px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+        <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b intellifit-accent-bg intellifit-bg px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
           <button type="button" className="-m-2.5 p-2.5 text-gray-400 lg:hidden" onClick={() => setSidebarOpen(true)}>
             <Menu className="h-6 w-6" />
           </button>
 
           <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
             <div className="flex flex-1 items-center">
-              <h1 className="text-xl font-semibold text-white">
+              <h1 className="text-xl font-semibold intellifit-light-text">
                 {navigation.find((item) => item.href === pathname)?.name || "Dashboard"}
               </h1>
             </div>
             <div className="flex items-center gap-x-4 lg:gap-x-6">
               <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-gradient-to-r from-orange-400 to-orange-600 rounded-full flex items-center justify-center">
-                  <span className="text-white text-sm font-bold">{user?.name?.charAt(0).toUpperCase()}</span>
+                <div className="w-8 h-8 intellifit-gradient rounded-full flex items-center justify-center">
+                  <span className="intellifit-light-text text-sm font-bold">{user?.name?.charAt(0).toUpperCase()}</span>
                 </div>
-                <span className="text-white text-sm">{user?.name}</span>
+                <span className="intellifit-light-text text-sm">{user?.name}</span>
               </div>
             </div>
           </div>
@@ -114,10 +114,10 @@ function SidebarContent({
   return (
     <>
       {/* Logo */}
-      <div className="flex h-16 shrink-0 items-center px-6 border-b border-slate-700">
+      <div className="flex h-16 shrink-0 items-center px-6 border-b intellifit-accent-bg" style={{ backgroundColor: '#1e293b' }}>
         <div className="flex items-center space-x-2">
           <div className="w-8 h-8 bg-gradient-to-r from-orange-400 to-orange-600 rounded-lg"></div>
-          <span className="text-2xl font-bold text-white">FitLux</span>
+          <span className="text-2xl font-bold intellifit-light-text">IntelliFit</span>
         </div>
         {onClose && (
           <button onClick={onClose} className="ml-auto lg:hidden text-gray-400 hover:text-white">
@@ -137,8 +137,8 @@ function SidebarContent({
                 className={cn(
                   "group flex gap-x-3 rounded-md p-3 text-sm leading-6 font-semibold transition-colors",
                   pathname === item.href
-                    ? "bg-orange-500 text-white"
-                    : "text-gray-300 hover:text-white hover:bg-slate-700",
+                    ? "intellifit-bg intellifit-light-text"
+                    : "intellifit-light-text hover:intellifit-accent-bg hover:intellifit-accent-text",
                 )}
               >
                 <item.icon className="h-5 w-5 shrink-0" />
@@ -153,7 +153,7 @@ function SidebarContent({
           <Link
             href="/settings"
             onClick={onClose}
-            className="group flex gap-x-3 rounded-md p-3 text-sm leading-6 font-semibold text-gray-300 hover:text-white hover:bg-slate-700 transition-colors"
+            className="group flex gap-x-3 rounded-md p-3 text-sm leading-6 font-semibold intellifit-light-text hover:intellifit-accent-bg hover:intellifit-accent-text transition-colors"
           >
             <Settings className="h-5 w-5 shrink-0" />
             Settings
@@ -163,7 +163,7 @@ function SidebarContent({
               onLogout()
               onClose?.()
             }}
-            className="group flex w-full gap-x-3 rounded-md p-3 text-sm leading-6 font-semibold text-gray-300 hover:text-white hover:bg-slate-700 transition-colors"
+            className="group flex w-full gap-x-3 rounded-md p-3 text-sm leading-6 font-semibold intellifit-light-text hover:intellifit-accent-bg hover:intellifit-accent-text transition-colors"
           >
             <LogOut className="h-5 w-5 shrink-0" />
             Sign out

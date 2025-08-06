@@ -6,35 +6,34 @@ import { Star, ArrowRight, CheckCircle } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { Inter } from 'next/font/google'
-import './globals.css '
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <div className="min-h-screen intellifit-light-bg">
       {/* Navigation */}
       <nav className="flex items-center justify-between p-6 max-w-7xl mx-auto">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-orange-400 to-orange-600 rounded-lg"></div>
-              <span className="text-2xl font-bold text-white">IntelliFit</span>
-            </div>
+        <div className="flex items-center space-x-2">
+          <div className="w-8 h-8 intellifit-gradient rounded-lg"></div>
+          <span className="text-2xl font-bold intellifit-text">IntelliFit</span>
+        </div>
         <div className="hidden md:flex items-center space-x-8">
-          <Link href="#features" className="text-gray-300 hover:text-white transition-colors">
+          <Link href="#features" className="intellifit-secondary-text hover:intellifit-text transition-colors">
             Features
           </Link>
-          <Link href="#about" className="text-gray-300 hover:text-white transition-colors">
+          <Link href="#about" className="intellifit-secondary-text hover:intellifit-text transition-colors">
             About
           </Link>
-          <Link href="#contact" className="text-gray-300 hover:text-white transition-colors">
+          <Link href="#contact" className="intellifit-secondary-text hover:intellifit-text transition-colors">
             Contact
           </Link>
         </div>
         <div className="flex items-center space-x-4">
           <Link href="/auth/login">
-            <Button variant="ghost" className="text-white hover:bg-white/10">
+            <Button variant="ghost" className="intellifit-text hover:intellifit-accent-bg">
               Login
             </Button>
           </Link>
           <Link href="/auth/register">
-            <Button className="bg-orange-500 hover:bg-orange-600 text-white">Sign Up</Button>
+            <Button className="intellifit-bg hover:intellifit-secondary-bg intellifit-light-text">Sign Up</Button>
           </Link>
         </div>
       </nav>
@@ -45,19 +44,19 @@ export default function LandingPage() {
           <div className="space-y-8">
             <div className="space-y-4">
               <Badge className="bg-orange-500/20 text-orange-400 border-orange-500/30">✨ AI-Powered Fitness</Badge>
-              <h1 className="text-5xl lg:text-6xl font-bold text-white leading-tight">
+              <h1 className="text-5xl lg:text-6xl font-bold intellifit-text leading-tight">
                 Start eating
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">
                   {" "}
                   healthy
                 </span>
               </h1>
-              <p className="text-xl text-gray-300 leading-relaxed">
+              <p className="text-xl intellifit-secondary-text leading-relaxed">
                 Prioritize expert advice and personalized plans to help you achieve your health and wellness goals
               </p>
             </div>
             <Link href="/auth/register">
-              <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 text-lg">
+              <Button size="lg" className="intellifit-bg hover:intellifit-secondary-bg intellifit-light-text px-8 py-4 text-lg">
                 Contact us
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
@@ -82,26 +81,26 @@ export default function LandingPage() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
             <CardContent className="p-6 text-center">
-              <div className="text-3xl font-bold text-white mb-2">200+</div>
-              <div className="text-gray-400">Lives saved</div>
+              <div className="text-3xl font-bold intellifit-text mb-2">200+</div>
+              <div className="intellifit-secondary-text">Lives saved</div>
             </CardContent>
           </Card>
           <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
             <CardContent className="p-6 text-center">
-              <div className="text-3xl font-bold text-white mb-2">150+</div>
-              <div className="text-gray-400">Happy clients</div>
+              <div className="text-3xl font-bold intellifit-text mb-2">150+</div>
+              <div className="intellifit-secondary-text">Happy clients</div>
             </CardContent>
           </Card>
           <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
             <CardContent className="p-6 text-center">
-              <div className="text-3xl font-bold text-white mb-2">5+</div>
-              <div className="text-gray-400">Years experience</div>
+              <div className="text-3xl font-bold intellifit-text mb-2">5+</div>
+              <div className="intellifit-secondary-text">Years experience</div>
             </CardContent>
           </Card>
           <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
             <CardContent className="p-6 text-center">
-              <div className="text-3xl font-bold text-white mb-2">98%</div>
-              <div className="text-gray-400">Success rate</div>
+              <div className="text-3xl font-bold intellifit-text mb-2">98%</div>
+              <div className="intellifit-secondary-text">Success rate</div>
             </CardContent>
           </Card>
         </div>
@@ -122,7 +121,7 @@ export default function LandingPage() {
 
           <div className="space-y-8">
             <div>
-              <h2 className="text-4xl font-bold text-white mb-4">Wanna stay fit & healthy?</h2>
+              <h2 className="text-4xl font-bold intellifit-text mb-4">Wanna stay fit & healthy?</h2>
               <p className="text-gray-300 text-lg">
                 As qualified diet consultants, we're dedicated to creating delightful, well-balanced meal experiences
                 for you. We're dedicated to global more individual and healthier eating habits.
@@ -132,15 +131,15 @@ export default function LandingPage() {
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
                 <CheckCircle className="h-6 w-6 text-green-500" />
-                <span className="text-white">Certified nutritionists</span>
+                <span className="intellifit-text">Certified nutritionists</span>
               </div>
               <div className="flex items-center space-x-3">
                 <CheckCircle className="h-6 w-6 text-green-500" />
-                <span className="text-white">Innovative meal plans</span>
+                <span className="intellifit-text">Innovative meal plans</span>
               </div>
             </div>
 
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white">Explore</Button>
+            <Button className="intellifit-bg hover:intellifit-secondary-bg intellifit-light-text">Explore</Button>
           </div>
         </div>
       </section>
@@ -148,14 +147,14 @@ export default function LandingPage() {
       {/* Services Section */}
       <section className="max-w-7xl mx-auto px-6 py-20">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-white mb-4">How we can help you</h2>
+          <h2 className="text-4xl font-bold intellifit-text mb-4">How we can help you</h2>
           <p className="text-gray-300 text-lg">Here are the services we offer to help you</p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-8">
           <Card className="bg-gradient-to-br from-green-600/20 to-green-800/20 border-green-500/30 backdrop-blur-sm">
             <CardContent className="p-8">
-              <h3 className="text-2xl font-bold text-white mb-4">Detox and cleanse programs</h3>
+              <h3 className="text-2xl font-bold intellifit-text mb-4">Detox and cleanse programs</h3>
               <p className="text-gray-300 mb-6">
                 Boost your well-being with our detox programs designed to reset your eating habits and enhance overall
                 health.
@@ -171,7 +170,7 @@ export default function LandingPage() {
 
           <Card className="bg-gradient-to-br from-blue-600/20 to-blue-800/20 border-blue-500/30 backdrop-blur-sm">
             <CardContent className="p-8">
-              <h3 className="text-2xl font-bold text-white mb-4">Personalized meal plans</h3>
+              <h3 className="text-2xl font-bold intellifit-text mb-4">Personalized meal plans</h3>
               <p className="text-gray-300 mb-6">
                 Get customized meal plans tailored to your specific dietary needs, preferences, and health goals for
                 optimal results.
@@ -191,7 +190,7 @@ export default function LandingPage() {
       <section className="max-w-7xl mx-auto px-6 py-20">
         <Card className="bg-gradient-to-r from-teal-600/20 to-cyan-600/20 border-teal-500/30 backdrop-blur-sm">
           <CardContent className="p-12 text-center">
-            <h3 className="text-2xl font-bold text-white mb-6">We provide the most enjoyable experience</h3>
+            <h3 className="text-2xl font-bold intellifit-text mb-6">We provide the most enjoyable experience</h3>
             <p className="text-gray-300 text-lg mb-8 max-w-3xl mx-auto">
               The personalized advice and support I received have dramatically improved my health and vitality. I've
               never felt better, and the holistic approach was truly beyond my expectations.
@@ -209,7 +208,7 @@ export default function LandingPage() {
                 </div>
               </div>
             </div>
-            <Button className="mt-8 bg-green-600 hover:bg-green-700 text-white">Go to FitLux</Button>
+            <Button className="mt-8 intellifit-bg hover:intellifit-secondary-bg intellifit-light-text">Go to FitLux</Button>
           </CardContent>
         </Card>
       </section>
@@ -220,8 +219,8 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center space-x-2 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-r from-orange-400 to-orange-600 rounded-lg"></div>
-                <span className="text-2xl font-bold text-white">FitLux</span>
+                <div className="w-8 h-8 intellifit-gradient rounded-lg"></div>
+                <span className="text-2xl font-bold intellifit-text">FitLux</span>
               </div>
               <p className="text-gray-400">Your journey to better health starts here.</p>
             </div>

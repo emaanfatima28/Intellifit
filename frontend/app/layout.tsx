@@ -6,8 +6,8 @@ import { AuthProvider } from '@/contexts/AuthContext' // Corrected import path
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'FitnessPro - Your Personal Fitness Companion',
-  description: 'AI-powered fitness and nutrition platform for personalized meal plans, workout routines, and progress tracking.',
+  title: 'IntelliFit - Your Personal Fitness Companion',
+  description: 'IntelliFit: AI-powered fitness and nutrition platform for personalized meal plans, workout routines, and progress tracking.',
 }
 
 export default function RootLayout({

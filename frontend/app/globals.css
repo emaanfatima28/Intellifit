@@ -1,36 +1,51 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 210 40% 98%;
+    /* #f8fafc */
+    --foreground: 222 47% 15%;
+    /* #1e293b */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    /* #ffffff */
+    --card-foreground: 222 47% 15%;
+    /* #1e293b */
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
+    --popover-foreground: 222 47% 15%;
+    --primary: 221 83% 53%;
+    /* #2563eb */
+    --primary-foreground: 0 0% 100%;
+    /* #ffffff */
+    --secondary: 24 94% 62%;
+    /* #f59e42 */
+    --secondary-foreground: 222 47% 15%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 20% 65%;
+    /* #64748b */
+    --accent: 24 94% 62%;
+    /* #f59e42 */
+    --accent-foreground: 222 47% 15%;
+    --success: 142 71% 45%;
+    /* #22c55e */
+    --warning: 48 96% 63%;
+    /* #facc15 */
+    --danger: 0 84% 60%;
+    /* #ef4444 */
+    --border: 210 40% 90%;
+    --input: 210 40% 90%;
+    --ring: 221 83% 53%;
     --radius: 0.5rem;
   }
 
   * {
-    border-color: #e5e7eb; /* neutral-200 */
+    border-color: #DDDAD0;
   }
+
   @media (prefers-color-scheme: dark) {
     * {
-      border-color: #1f2937; /* neutral-800 */
+      border-color: #57564F;
     }
   }
 
@@ -39,36 +54,54 @@
     color: hsl(var(--foreground));
   }
 }
+
 /* IntelliFit Custom Styles */
 .intellifit-gradient {
-  background: linear-gradient(135deg, #57564f 0%, #7a7a73 50%, #dddad0 100%);
+  background: linear-gradient(135deg, #2563eb 0%, #f59e42 100%);
 }
+
 .intellifit-bg {
-  background-color: #57564f;
+  background-color: #2563eb;
 }
-.intellifit-secondary-bg {
-  background-color: #7a7a73;
-}
+
 .intellifit-accent-bg {
-  background-color: #dddad0;
+  background-color: #f59e42;
 }
-.intellifit-light-bg {
-  background-color: #f8f3ce;
+
+.intellifit-surface-bg {
+  background-color: #ffffff;
 }
+
+.intellifit-sidebar-bg {
+  background-color: #1e293b;
+}
+
+.intellifit-success-bg {
+  background-color: #22c55e;
+}
+
+.intellifit-warning-bg {
+  background-color: #facc15;
+}
+
+.intellifit-danger-bg {
+  background-color: #ef4444;
+}
+
 .intellifit-text {
-  color: #57564f;
+  color: #1e293b !important;
 }
 
 .intellifit-secondary-text {
-  color: #7a7a73;
+  color: #64748b !important;
 }
 
 .intellifit-accent-text {
-  color: #dddad0;
+  color: #f59e42 !important;
 }
 
 .intellifit-light-text {
-  color: #f8f3ce;
+  color: #ffffff !important;
 }
 
 /* Smooth scrolling */
@@ -80,13 +113,16 @@ html {
 ::-webkit-scrollbar {
   width: 8px;
 }
+
 ::-webkit-scrollbar-track {
-  background: #57564f;
+  background: #F8F3CE;
 }
+
 ::-webkit-scrollbar-thumb {
-  background: #7a7a73;
+  background: #7A7A73;
   border-radius: 4px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
-  background: #dddad0;
+  background: #DDDAD0;
 }
