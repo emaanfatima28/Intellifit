@@ -66,15 +66,15 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex bg-gradient-to-r from-[#f8fafc] via-[#e0e7ef] to-[#f8fafc]">
       {/* Left side - Register Form */}
-      <div className="flex flex-col justify-center items-center w-full md:w-1/2 p-8 bg-white">
-        <div className="w-full max-w-md space-y-6 bg-white p-8 rounded-lg shadow-lg mx-auto">
+      <div className="flex flex-col justify-center items-center w-full md:w-1/2 p-8" style={{ background: 'linear-gradient(135deg, #f8fafc 60%, #e0e7ef 100%)' }}>
+        <div className="w-full max-w-md space-y-6 bg-white p-8 rounded-lg shadow-2xl border-2 border-[#2563eb]/10 mx-auto">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-[#1e293b] mb-2">Create an Account</h1>
+            <h1 className="text-2xl font-bold text-[#2563eb] mb-2">Create an Account</h1>
             <p className="text-[#64748b]">Join thousands on their fitness journey</p>
           </div>
-          <Card className="bg-white border-[#e2e8f0]">
+          <Card className="bg-white border-[#e2e8f0] shadow-md">
             <CardHeader>
               <CardTitle className="text-[#1e293b] text-center">Sign Up</CardTitle>
             </CardHeader>
@@ -86,7 +86,7 @@ export default function RegisterPage() {
                   </Alert>
                 )}
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-[#1e293b]">Full Name</Label>
+                  <Label htmlFor="name" className="text-[#2563eb] font-semibold">Full Name</Label>
                   <Input
                     id="name"
                     type="text"
@@ -94,11 +94,11 @@ export default function RegisterPage() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
-                    className="bg-white border-[#e2e8f0] text-[#1e293b] placeholder:text-[#64748b]"
+                    className="bg-[#f8fafc] border-[#2563eb]/30 text-[#1e293b] placeholder:text-[#64748b] focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-[#1e293b]">Email</Label>
+                  <Label htmlFor="email" className="text-[#2563eb] font-semibold">Email</Label>
                   <Input
                     id="email"
                     type="email"
@@ -106,11 +106,11 @@ export default function RegisterPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="bg-white border-[#e2e8f0] text-[#1e293b] placeholder:text-[#64748b]"
+                    className="bg-[#f8fafc] border-[#2563eb]/30 text-[#1e293b] placeholder:text-[#64748b] focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-[#1e293b]">Password</Label>
+                  <Label htmlFor="password" className="text-[#2563eb] font-semibold">Password</Label>
                   <div className="relative">
                     <Input
                       id="password"
@@ -119,7 +119,7 @@ export default function RegisterPage() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
-                      className="bg-white border-[#e2e8f0] text-[#1e293b] placeholder:text-[#64748b] pr-10"
+                      className="bg-[#f8fafc] border-[#2563eb]/30 text-[#1e293b] placeholder:text-[#64748b] pr-10 focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]"
                     />
                     <button
                       type="button"
@@ -131,7 +131,7 @@ export default function RegisterPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="confirmPassword" className="text-[#1e293b]">Confirm Password</Label>
+                  <Label htmlFor="confirmPassword" className="text-[#2563eb] font-semibold">Confirm Password</Label>
                   <Input
                     id="confirmPassword"
                     type="password"
@@ -139,13 +139,13 @@ export default function RegisterPage() {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
-                    className="bg-white border-[#e2e8f0] text-[#1e293b] placeholder:text-[#64748b]"
+                    className="bg-[#f8fafc] border-[#2563eb]/30 text-[#1e293b] placeholder:text-[#64748b] focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]"
                   />
                 </div>
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-[#2563eb] hover:bg-[#f59e42] text-white font-semibold"
+                  className="w-full bg-[#2563eb] hover:bg-[#f59e42] text-white font-semibold shadow-lg transition-colors duration-200"
                 >
                   {loading ? "Creating account..." : "Create Account"}
                 </Button>
