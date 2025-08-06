@@ -13,7 +13,7 @@ import Link from "next/link"
 import { API_URL, fetchApi } from '@/lib/api';
 
 export default function Dashboard() {
-  const { user, token } = useAuth()
+  const { user, token, isLoading } = useAuth()
   const router = useRouter()
   const [profile, setProfile] = useState<any>(null)
   const [stats, setStats] = useState({
@@ -24,8 +24,13 @@ export default function Dashboard() {
   })
 
   useEffect(() => {
-    if (!user || !token) {
+    if (!isLoading && !user) {
       router.push("/auth/login")
+    }
+  }, [user, isLoading, router])
+
+  useEffect(() => {
+    if (!user || !token) {
       return
     }
 
@@ -44,6 +49,10 @@ export default function Dashboard() {
     }
     fetchProfile()
   }, [user, token, router])
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   if (!user) return null
 

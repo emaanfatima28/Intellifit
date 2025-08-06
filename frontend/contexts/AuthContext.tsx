@@ -28,10 +28,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
     const storedUser = localStorage.getItem('user');
-    
-    if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
+    if (storedToken && storedUser && storedUser !== "undefined") {
+      try {
+        setUser(JSON.parse(storedUser));
+        setToken(storedToken);
+      } catch (error) {
+        localStorage.removeItem('user');
+        setUser(null);
+        setToken(null);
+      }
     }
     setIsLoading(false);
   }, []);
@@ -50,7 +55,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem('user');
   };
 
-  const isAdmin = user?._id === 'admin' || user?.role === 'admin';
+  const isAdmin = user && user.role === 'admin';
 
   return (
     <AuthContext.Provider value={{ user, token, login, logout, isAdmin, isLoading }}>

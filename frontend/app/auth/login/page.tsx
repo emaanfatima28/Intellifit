@@ -1,5 +1,4 @@
 "use client"
-
 import './login.css'
 import type React from "react"
 import { useState } from "react"
@@ -45,7 +44,7 @@ export default function LoginPage() {
       }
       const data = await response.json()
       console.log("Login response:", data)
-      await login(email, password)
+      await login(data)
       router.push("/dashboard")
     } catch (err: any) {
       console.error("Login error:", err)
