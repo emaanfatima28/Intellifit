@@ -42,7 +42,7 @@ export default function ProfilePage() {
 
   const fetchProfile = async () => {
     try {
-      const response = await fetch("http://localhost:3000/profile", {
+      const response = await fetch("http://localhost:5000/profile", {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (response.ok) {
@@ -56,6 +56,11 @@ export default function ProfilePage() {
           goal: data.goal || "",
           activityLevel: data.activityLevel || "",
         })
+      } else if (response.status === 404) {
+        // Profile not found, this is normal for new users
+        setProfile(null)
+      } else {
+        console.error("Error fetching profile:", response.statusText)
       }
     } catch (error) {
       console.error("Error fetching profile:", error)
@@ -71,8 +76,22 @@ export default function ProfilePage() {
     setSuccess("")
     setLoading(true)
 
+    // Validate form data
+    if (!formData.age || !formData.gender || !formData.height || !formData.weight || !formData.goal || !formData.activityLevel) {
+      setError("All fields are required")
+      setLoading(false)
+      return
+    }
+
+    // Validate numbers
+    if (isNaN(Number(formData.age)) || isNaN(Number(formData.height)) || isNaN(Number(formData.weight))) {
+      setError("Age, height, and weight must be valid numbers")
+      setLoading(false)
+      return
+    }
+
     try {
-      const response = await fetch("http://localhost:3000/profile", {
+      const response = await fetch("http://localhost:5000/profile", {
         method: profile ? "PUT" : "POST",
         headers: {
           "Content-Type": "application/json",
@@ -89,8 +108,8 @@ export default function ProfilePage() {
       })
 
       if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.message || "Failed to update profile")
+        const errorData = await response.json()
+        throw new Error(errorData.error || errorData.message || "Failed to update profile")
       }
 
       const data = await response.json()

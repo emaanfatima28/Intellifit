@@ -11,7 +11,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Eye, EyeOff } from "lucide-react"
 import Link from "next/link"
-
 export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -20,7 +19,6 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const { login } = useAuth()
   const router = useRouter()
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
@@ -37,7 +35,6 @@ export default function LoginPage() {
           password: password
         })
       })
-
       if (!response.ok) {
         const errorData = await response.json()
         throw new Error(errorData.message || "Login failed")
@@ -109,7 +106,6 @@ export default function LoginPage() {
                   </button>
                 </div>
               </div>
-
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <input type="checkbox" id="remember" className="rounded border-gray-600 bg-transparent" />
@@ -139,7 +135,6 @@ export default function LoginPage() {
             </form>
           </CardContent>
         </Card>
-
         {/* Demo Credentials */}
         <Card className="bg-white/10 backdrop-blur-md border-none shadow-lg">
           <CardContent className="p-4">

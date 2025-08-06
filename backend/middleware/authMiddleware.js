@@ -15,16 +15,27 @@ const protect = async (req, res, next) => {
 
       if (decoded.id === 'admin') {
         req.user = {
+          id: 'admin',
           _id: 'admin',
           name: 'Admin',
           email: process.env.ADMIN_EMAIL,
           role: 'admin'
         };
       } else {
-        req.user = await User.findById(decoded.id).select('-password');
+        const user = await User.findById(decoded.id).select('-password');
+        if (!user) {
+          return res.status(401).json({ message: 'User not found' });
+        }
+        req.user = {
+          id: user._id.toString(),
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role || 'user'
+        };
       }
 
-      next(); 
+      next();
     } catch (error) {
       return res.status(401).json({ message: 'Not authorized, token failed' });
     }

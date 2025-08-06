@@ -10,23 +10,54 @@ const createOrUpdateProfile = async (req, res) => {
     const { age, gender, height, weight, goal, activityLevel } = req.body;
     const userId = req.user.id;
 
+    // Validate required fields
+    if (!age || !gender || !height || !weight || !goal || !activityLevel) {
+      return res.status(400).json({ 
+        error: "All fields are required: age, gender, height, weight, goal, activityLevel" 
+      });
+    }
+
+    // Validate data types
+    if (isNaN(age) || isNaN(height) || isNaN(weight)) {
+      return res.status(400).json({ 
+        error: "Age, height, and weight must be valid numbers" 
+      });
+    }
+
+    // Validate enum values
+    const validGenders = ['male', 'female'];
+    const validGoals = ['weight_loss', 'muscle_gain', 'maintenance'];
+    const validActivityLevels = ['low', 'moderate', 'high'];
+
+    if (!validGenders.includes(gender)) {
+      return res.status(400).json({ error: "Gender must be 'male' or 'female'" });
+    }
+    if (!validGoals.includes(goal)) {
+      return res.status(400).json({ error: "Goal must be 'weight_loss', 'muscle_gain', or 'maintenance'" });
+    }
+    if (!validActivityLevels.includes(activityLevel)) {
+      return res.status(400).json({ error: "Activity level must be 'low', 'moderate', or 'high'" });
+    }
+
     let profile = await Profile.findOne({ user: userId });
 
     if (profile) {
-      profile.age = age;
+      // Update existing profile
+      profile.age = parseInt(age);
       profile.gender = gender;
-      profile.height = height;
-      profile.weight = weight;
+      profile.height = parseInt(height);
+      profile.weight = parseInt(weight);
       profile.goal = goal;
       profile.activityLevel = activityLevel;
       await profile.save();
     } else {
+      // Create new profile
       profile = await Profile.create({
         user: userId,
-        age,
+        age: parseInt(age),
         gender,
-        height,
-        weight,
+        height: parseInt(height),
+        weight: parseInt(weight),
         goal,
         activityLevel,
       });
@@ -40,12 +71,16 @@ const createOrUpdateProfile = async (req, res) => {
 };
 
 const getProfile = async (req, res) => {
-  const profile = await Profile.findOne({ user: req.user.id });
-  if (!profile) {
-    res.status(404);
-    throw new Error("Profile not found");
+  try {
+    const profile = await Profile.findOne({ user: req.user.id });
+    if (!profile) {
+      return res.status(404).json({ message: "Profile not found" });
+    }
+    res.json(profile);
+  } catch (error) {
+    console.error("Get profile error:", error);
+    res.status(500).json({ error: error.message });
   }
-  res.json(profile);
 };
 
 const deleteProfile = async (req, res) => {
