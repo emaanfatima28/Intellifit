@@ -42,13 +42,17 @@ export default function Dashboard() {
       if (response.ok) {
         const data = await response.json()
         setProfile(data)
-        // Show modal if profile is incomplete
+        // Show modal after 3 seconds if profile is incomplete
         if (!data || !data.age || !data.gender || !data.height || !data.weight || !data.goal || !data.activityLevel) {
-          setShowProfileModal(true)
+          setTimeout(() => {
+            setShowProfileModal(true)
+          }, 3000)
         }
       } else if (response.status === 404) {
-        // Show modal if no profile exists
-        setShowProfileModal(true)
+        // Show modal after 3 seconds if no profile exists
+        setTimeout(() => {
+          setShowProfileModal(true)
+        }, 3000)
       }
     } catch (error) {
       console.error("Error fetching profile:", error)
@@ -63,10 +67,11 @@ export default function Dashboard() {
     <DashboardLayout>
       {/* Profile Completion Modal */}
       <Dialog open={showProfileModal} onOpenChange={setShowProfileModal}>
-        <DialogContent className="sm:max-w-md bg-slate-800 border-slate-700">
-          <DialogHeader>
-            <div className="flex items-center justify-between">
-              <DialogTitle className="text-white text-xl font-bold">Complete Your Profile</DialogTitle>
+        <DialogContent className="sm:max-w-2xl bg-slate-800 border-slate-700">
+          <DialogHeader className="text-center">
+            <div className="flex items-center justify-between mb-4">
+              <div></div>
+              <DialogTitle className="text-white text-2xl font-bold">Complete Your Profile</DialogTitle>
               <Button
                 variant="ghost"
                 size="sm"
@@ -76,12 +81,12 @@ export default function Dashboard() {
                 <X className="h-4 w-4" />
               </Button>
             </div>
-            <DialogDescription className="text-gray-400">
+            <DialogDescription className="text-gray-400 text-lg">
               Let's personalize your fitness journey! Complete your profile to get tailored recommendations.
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-4">
+          <div className="space-y-6">
             {/* Arrow pointing down */}
             <div className="flex justify-center">
               <motion.div
@@ -89,68 +94,102 @@ export default function Dashboard() {
                 transition={{ duration: 1.5, repeat: Infinity }}
                 className="text-orange-500"
               >
-                <ArrowDown className="h-8 w-8" />
+                <ArrowDown className="h-10 w-10" />
               </motion.div>
             </div>
 
-            {/* Profile completion checklist */}
-            <div className="space-y-3">
-              <div className="flex items-center space-x-3">
-                <CheckCircle className={`h-5 w-5 ${profile?.age ? 'text-green-500' : 'text-gray-400'}`} />
-                <span className={`text-sm ${profile?.age ? 'text-white' : 'text-gray-400'}`}>Age</span>
+            {/* Horizontal layout for profile completion */}
+            <div className="grid grid-cols-2 gap-8">
+              {/* Left side - Profile completion checklist */}
+              <div className="space-y-4">
+                <h3 className="text-white font-semibold text-lg mb-4">Profile Information</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-3">
+                    <CheckCircle className={`h-5 w-5 ${profile?.age ? 'text-green-500' : 'text-gray-400'}`} />
+                    <span className={`text-sm ${profile?.age ? 'text-white' : 'text-gray-400'}`}>Age</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <CheckCircle className={`h-5 w-5 ${profile?.gender ? 'text-green-500' : 'text-gray-400'}`} />
+                    <span className={`text-sm ${profile?.gender ? 'text-white' : 'text-gray-400'}`}>Gender</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <CheckCircle className={`h-5 w-5 ${profile?.height ? 'text-green-500' : 'text-gray-400'}`} />
+                    <span className={`text-sm ${profile?.height ? 'text-white' : 'text-gray-400'}`}>Height</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <CheckCircle className={`h-5 w-5 ${profile?.weight ? 'text-green-500' : 'text-gray-400'}`} />
+                    <span className={`text-sm ${profile?.weight ? 'text-white' : 'text-gray-400'}`}>Weight</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <CheckCircle className={`h-5 w-5 ${profile?.goal ? 'text-green-500' : 'text-gray-400'}`} />
+                    <span className={`text-sm ${profile?.goal ? 'text-white' : 'text-gray-400'}`}>Fitness Goal</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <CheckCircle className={`h-5 w-5 ${profile?.activityLevel ? 'text-green-500' : 'text-gray-400'}`} />
+                    <span className={`text-sm ${profile?.activityLevel ? 'text-white' : 'text-gray-400'}`}>Activity Level</span>
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center space-x-3">
-                <CheckCircle className={`h-5 w-5 ${profile?.gender ? 'text-green-500' : 'text-gray-400'}`} />
-                <span className={`text-sm ${profile?.gender ? 'text-white' : 'text-gray-400'}`}>Gender</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <CheckCircle className={`h-5 w-5 ${profile?.height ? 'text-green-500' : 'text-gray-400'}`} />
-                <span className={`text-sm ${profile?.height ? 'text-white' : 'text-gray-400'}`}>Height</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <CheckCircle className={`h-5 w-5 ${profile?.weight ? 'text-green-500' : 'text-gray-400'}`} />
-                <span className={`text-sm ${profile?.weight ? 'text-white' : 'text-gray-400'}`}>Weight</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <CheckCircle className={`h-5 w-5 ${profile?.goal ? 'text-green-500' : 'text-gray-400'}`} />
-                <span className={`text-sm ${profile?.goal ? 'text-white' : 'text-gray-400'}`}>Fitness Goal</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <CheckCircle className={`h-5 w-5 ${profile?.activityLevel ? 'text-green-500' : 'text-gray-400'}`} />
-                <span className={`text-sm ${profile?.activityLevel ? 'text-white' : 'text-gray-400'}`}>Activity Level</span>
+
+              {/* Right side - Progress and benefits */}
+              <div className="space-y-4">
+                <h3 className="text-white font-semibold text-lg mb-4">Your Progress</h3>
+
+                {/* Progress bar */}
+                <div className="space-y-3">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">Profile Completion</span>
+                    <span className="text-white font-semibold">
+                      {profile ?
+                        Math.round((Object.values(profile).filter(v => v !== null && v !== undefined).length / 6) * 100)
+                        : 0}%
+                    </span>
+                  </div>
+                  <Progress
+                    value={profile ?
+                      (Object.values(profile).filter(v => v !== null && v !== undefined).length / 6) * 100
+                      : 0}
+                    className="h-3"
+                  />
+                </div>
+
+                {/* Benefits list */}
+                <div className="space-y-2 mt-6">
+                  <h4 className="text-orange-400 font-medium text-sm">Complete your profile to unlock:</h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                      <span className="text-gray-300">Personalized workout plans</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                      <span className="text-gray-300">Custom nutrition advice</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                      <span className="text-gray-300">Accurate progress tracking</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                      <span className="text-gray-300">AI-powered recommendations</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Progress bar */}
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-400">Profile Completion</span>
-                <span className="text-white">
-                  {profile ?
-                    Math.round((Object.values(profile).filter(v => v !== null && v !== undefined).length / 6) * 100)
-                    : 0}%
-                </span>
-              </div>
-              <Progress
-                value={profile ?
-                  (Object.values(profile).filter(v => v !== null && v !== undefined).length / 6) * 100
-                  : 0}
-                className="h-2"
-              />
-            </div>
-
-            {/* Action buttons */}
-            <div className="flex space-x-3 pt-4">
+            {/* Action buttons - centered */}
+            <div className="flex justify-center space-x-4 pt-6">
               <Button
                 onClick={() => setShowProfileModal(false)}
                 variant="outline"
-                className="flex-1 border-slate-600 text-white hover:bg-slate-700"
+                className="px-8 border-slate-600 text-white hover:bg-slate-700"
               >
                 Maybe Later
               </Button>
-              <Link href="/profile" className="flex-1">
+              <Link href="/profile">
                 <Button
-                  className="flex-1 bg-orange-500 hover:bg-orange-600 text-white"
+                  className="px-8 bg-orange-500 hover:bg-orange-600 text-white"
                   onClick={() => setShowProfileModal(false)}
                 >
                   <User className="h-4 w-4 mr-2" />
