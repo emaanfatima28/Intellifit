@@ -8,63 +8,113 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import { Droplets, Plus, Target } from "lucide-react"
+import { Droplets, Plus, Target, RefreshCw, Sparkles, Calendar } from "lucide-react"
+import { motion } from "framer-motion"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
-interface MealPlan {
-  _id: string
+interface Meal {
+  type: string
   name: string
-  description: string
-  meals: any[]
-  totalCalories: number
+  calories: number
   macros: {
     protein: number
     carbs: number
     fat: number
   }
+  ingredients: string[]
+}
+
+interface WeeklyDay {
+  day: string
+  meals: Meal[]
+}
+
+interface MealPlan {
+  _id: string
+  userId: string
+  date: string
+  planType: 'daily' | 'weekly'
+  meals?: Meal[]
+  weeklyPlan?: WeeklyDay[]
+  feedbackGiven: boolean
 }
 
 export default function MealsPage() {
   const { user, token } = useAuth()
   const router = useRouter()
-  const [mealPlans, setMealPlans] = useState<MealPlan[]>([])
+  const [currentMealPlan, setCurrentMealPlan] = useState<MealPlan | null>(null)
   const [profile, setProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
-  const [selectedDate, setSelectedDate] = useState(new Date())
+  const [generating, setGenerating] = useState(false)
+  const [error, setError] = useState("")
+  const [success, setSuccess] = useState("")
 
-  const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+  const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
   const mealTimes = [
-    { time: "08:00", type: "Breakfast" },
-    { time: "12:00", type: "Lunch" },
-    { time: "15:00", type: "Snack" },
-    { time: "19:00", type: "Dinner" },
+    { time: "08:00", type: "breakfast" },
+    { time: "12:00", type: "lunch" },
+    { time: "15:00", type: "snack" },
+    { time: "19:00", type: "dinner" },
   ]
 
-  // Sample meal data based on user goals
-  const getMealsByGoal = (goal: string, day: string, mealType: string) => {
-    const weightLossMeals = {
-      Breakfast: { name: "Oats with Berries", calories: 320, color: "bg-green-500" },
-      Lunch: { name: "Grilled Chicken Salad", calories: 450, color: "bg-green-500" },
-      Snack: { name: "Greek Yogurt", calories: 150, color: "bg-green-500" },
-      Dinner: { name: "Salmon with Vegetables", calories: 380, color: "bg-green-500" },
+  // Get meal for specific day and meal type from weekly plan
+  const getMealForDay = (day: string, mealType: string) => {
+    if (!currentMealPlan?.weeklyPlan) return null
+
+    const dayPlan = currentMealPlan.weeklyPlan.find(d => d.day === day)
+    if (!dayPlan) return null
+
+    return dayPlan.meals.find(meal => meal.type === mealType) || null
+  }
+
+  // Generate new weekly meal plan
+  const generateWeeklyMealPlan = async () => {
+    if (!profile) {
+      setError("Please complete your profile first")
+      return
     }
 
-    const muscleGainMeals = {
-      Breakfast: { name: "Protein Pancakes", calories: 520, color: "bg-blue-500" },
-      Lunch: { name: "Turkey Wrap", calories: 680, color: "bg-blue-500" },
-      Snack: { name: "Protein Shake", calories: 280, color: "bg-blue-500" },
-      Dinner: { name: "Beef with Rice", calories: 750, color: "bg-blue-500" },
-    }
+    setGenerating(true)
+    setError("")
+    setSuccess("")
 
-    const maintenanceMeals = {
-      Breakfast: { name: "Avocado Toast", calories: 420, color: "bg-yellow-500" },
-      Lunch: { name: "Quinoa Bowl", calories: 550, color: "bg-yellow-500" },
-      Snack: { name: "Mixed Nuts", calories: 180, color: "bg-yellow-500" },
-      Dinner: { name: "Grilled Fish", calories: 480, color: "bg-yellow-500" },
-    }
+    try {
+      console.log('Sending request to generate weekly meal plan...')
+      const response = await fetch("http://localhost:5000/meal/weekly", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
 
-    if (goal === "weight_loss") return weightLossMeals[mealType as keyof typeof weightLossMeals]
-    if (goal === "muscle_gain") return muscleGainMeals[mealType as keyof typeof muscleGainMeals]
-    return maintenanceMeals[mealType as keyof typeof maintenanceMeals]
+      console.log('Response status:', response.status)
+      console.log('Response headers:', response.headers)
+
+      if (!response.ok) {
+        let errorMessage = "Failed to generate meal plan"
+        try {
+          const errorData = await response.json()
+          errorMessage = errorData.error || errorMessage
+        } catch (parseError) {
+          console.error('Failed to parse error response:', parseError)
+          const text = await response.text()
+          console.error('Raw error response:', text)
+          errorMessage = `Server error (${response.status}): ${text.substring(0, 100)}`
+        }
+        throw new Error(errorMessage)
+      }
+
+      const mealPlan = await response.json()
+      console.log('Meal plan received:', mealPlan)
+      setCurrentMealPlan(mealPlan)
+      setSuccess("Weekly meal plan generated successfully!")
+    } catch (err: any) {
+      console.error('Error generating meal plan:', err)
+      setError(err.message)
+    } finally {
+      setGenerating(false)
+    }
   }
 
   const todayNutrition = {
@@ -96,23 +146,27 @@ export default function MealsPage() {
   const fetchData = async () => {
     try {
       // Fetch profile to get user goals
-      const profileResponse = await fetch("http://localhost:3000/profile", {
+      const profileResponse = await fetch("http://localhost:5000/profile", {
         headers: { Authorization: `Bearer ${token}` },
       })
 
       if (profileResponse.ok) {
         const profileData = await profileResponse.json()
         setProfile(profileData)
+      } else if (profileResponse.status === 404) {
+        setProfile(null)
       }
 
-      // Fetch meal plans
-      const mealResponse = await fetch("http://localhost:3000/meal-plans", {
+      // Fetch current meal plan
+      const mealResponse = await fetch("http://localhost:5000/meal/current", {
         headers: { Authorization: `Bearer ${token}` },
       })
 
       if (mealResponse.ok) {
         const mealData = await mealResponse.json()
-        setMealPlans(mealData.mealPlans || [])
+        setCurrentMealPlan(mealData)
+      } else if (mealResponse.status === 404) {
+        setCurrentMealPlan(null)
       }
     } catch (error) {
       console.error("Error fetching data:", error)
@@ -129,182 +183,230 @@ export default function MealsPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Food Diary</h1>
-            <p className="text-foreground/80 mt-1">07-20 July 2024</p>
+            <h1 className="text-3xl font-bold text-white">AI-Powered Meal Plans</h1>
+            <p className="text-gray-400 mt-1">Personalized weekly nutrition based on your profile</p>
           </div>
           <div className="flex items-center space-x-4">
             {profile?.goal && (
-              <Badge className="bg-primary/20 text-primary border-primary/30">
+              <Badge className="bg-orange-500/20 text-orange-400 border-orange-500/30">
                 Goal: {profile.goal.replace("_", " ").toUpperCase()}
               </Badge>
             )}
-            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
-              <Plus className="h-4 w-4 mr-2" />
-              Add Meal
+            <Button
+              onClick={generateWeeklyMealPlan}
+              disabled={generating || !profile}
+              className="bg-orange-500 hover:bg-orange-600 text-white"
+            >
+              {generating ? (
+                <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Sparkles className="h-4 w-4 mr-2" />
+              )}
+              {generating ? "Generating..." : "Generate New Plan"}
             </Button>
           </div>
         </div>
 
+        {/* Alerts */}
+        {error && (
+          <Alert className="bg-red-500/10 border-red-500/20 text-red-400">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+        {success && (
+          <Alert className="bg-green-500/10 border-green-500/20 text-green-400">
+            <AlertDescription>{success}</AlertDescription>
+          </Alert>
+        )}
+
+        {!profile && (
+          <Alert className="bg-yellow-500/10 border-yellow-500/20 text-yellow-400">
+            <AlertDescription>
+              Please complete your profile to get personalized meal plans.
+              <Button
+                variant="link"
+                className="p-0 h-auto text-yellow-400 underline ml-2"
+                onClick={() => router.push('/profile')}
+              >
+                Go to Profile
+              </Button>
+            </AlertDescription>
+          </Alert>
+        )}
+
         <div className="grid lg:grid-cols-4 gap-8">
           {/* Weekly Schedule */}
           <div className="lg:col-span-3">
-            <Card className="bg-primary/20 border-primary/30 mb-6">
-              <CardHeader>
-                <CardTitle className="text-foreground">Weekly Schedule</CardTitle>
-              </CardHeader>
-            </Card>
-
-            <Card className="bg-card border-border">
-              <CardContent className="p-0">
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b border-border">
-                        <th className="text-left p-4 text-foreground/70 font-medium">Time</th>
-                        {weekDays.map((day) => (
-                          <th key={day} className="text-center p-4 text-foreground/70 font-medium min-w-[120px]">
-                            {day}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {mealTimes.map(({ time, type }) => (
-                        <tr key={`${time}-${type}`} className="border-b border-border/50">
-                          <td className="p-4 text-foreground font-medium">{time}</td>
-                          {weekDays.map((day) => {
-                            const meal = getMealsByGoal(profile?.goal || "maintenance", day, type)
-                            return (
-                              <td key={day} className="p-2">
-                                <div
-                                  className={`${meal?.color || "bg-muted"} rounded-lg p-3 text-center cursor-pointer hover:opacity-80 transition-opacity`}
-                                >
-                                  <div className="text-foreground text-xs font-medium mb-1">{type}</div>
-                                  <div className="text-foreground text-xs mb-1">{meal?.name || "Not planned"}</div>
-                                  <div className="text-foreground text-xs opacity-75">{meal?.calories || 0} kcal</div>
-                                </div>
-                              </td>
-                            )
-                          })}
+            {!currentMealPlan ? (
+              <Card className="bg-slate-800 border-slate-700">
+                <CardContent className="p-8 text-center">
+                  <Calendar className="h-16 w-16 mx-auto mb-4 text-gray-400" />
+                  <h3 className="text-xl font-semibold text-white mb-2">No Meal Plan Generated</h3>
+                  <p className="text-gray-400 mb-6">
+                    Generate your first AI-powered weekly meal plan based on your profile and preferences.
+                  </p>
+                  <Button
+                    onClick={generateWeeklyMealPlan}
+                    disabled={generating || !profile}
+                    className="bg-orange-500 hover:bg-orange-600 text-white"
+                  >
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    Generate Weekly Plan
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card className="bg-slate-800 border-slate-700">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center">
+                    <Calendar className="h-5 w-5 mr-2 text-orange-500" />
+                    Weekly Meal Schedule
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b border-slate-700">
+                          <th className="text-left p-4 text-gray-400 font-medium">Time</th>
+                          {weekDays.map((day) => (
+                            <th key={day} className="text-center p-4 text-gray-400 font-medium min-w-[140px]">
+                              {day.slice(0, 3)}
+                            </th>
+                          ))}
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
+                      </thead>
+                      <tbody>
+                        {mealTimes.map(({ time, type }) => (
+                          <tr key={`${time}-${type}`} className="border-b border-slate-700/50">
+                            <td className="p-4 text-white font-medium">{time}</td>
+                            {weekDays.map((day) => {
+                              const meal = getMealForDay(day, type)
+                              return (
+                                <td key={day} className="p-2">
+                                  <motion.div
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ duration: 0.3 }}
+                                    className={`${meal ? 'bg-orange-500/20 border-orange-500/30' : 'bg-slate-700/50 border-slate-600'} border rounded-lg p-3 text-center cursor-pointer hover:opacity-80 transition-opacity`}
+                                  >
+                                    <div className="text-white text-xs font-medium mb-1 capitalize">{type}</div>
+                                    <div className="text-white text-xs mb-1 font-medium">
+                                      {meal?.name || "Not planned"}
+                                    </div>
+                                    <div className="text-gray-300 text-xs">
+                                      {meal?.calories || 0} kcal
+                                    </div>
+                                    {meal?.ingredients && (
+                                      <div className="text-gray-400 text-xs mt-1">
+                                        {meal.ingredients.slice(0, 2).join(", ")}
+                                        {meal.ingredients.length > 2 && "..."}
+                                      </div>
+                                    )}
+                                  </motion.div>
+                                </td>
+                              )
+                            })}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
 
           {/* Right Sidebar */}
           <div className="space-y-6">
-            {/* Today's Result */}
-            <Card className="bg-card border-border">
-              <CardHeader>
-                <CardTitle className="text-foreground">Today's Result</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {Object.entries(todayNutrition).map(([meal, data]) => (
-                  <div key={meal} className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-foreground capitalize">{meal}</span>
-                      <span className="text-foreground/70 text-sm">{data.calories} kcal</span>
-                    </div>
-                    <div className="relative">
-                      <div className="w-16 h-16 mx-auto">
-                        <svg className="w-16 h-16 transform -rotate-90" viewBox="0 0 36 36">
-                          <path
-                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                            fill="none"
-                            stroke="hsl(var(--muted))"
-                            strokeWidth="2"
-                          />
-                          <path
-                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                            fill="none"
-                            stroke="hsl(var(--primary))"
-                            strokeWidth="2"
-                            strokeDasharray={`${data.percentage}, 100`}
-                          />
-                        </svg>
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <span className="text-foreground text-xs font-bold">{data.percentage}%</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-
-            {/* Daily Summary */}
-            <Card className="bg-card border-border">
-              <CardHeader>
-                <CardTitle className="text-foreground">Daily Summary</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-foreground/70">Total Calories</span>
-                  <span className="text-foreground font-bold">{dailySummary.totalCalories} kcal</span>
-                </div>
-
-                <div className="space-y-3">
+            {/* Meal Plan Info */}
+            {currentMealPlan && (
+              <Card className="bg-slate-800 border-slate-700">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center">
+                    <Sparkles className="h-5 w-5 mr-2 text-orange-500" />
+                    Plan Details
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-foreground/70">Protein</span>
-                    <span className="text-foreground">{dailySummary.protein}g</span>
+                    <span className="text-gray-400">Plan Type</span>
+                    <Badge className="bg-orange-500/20 text-orange-400">
+                      {currentMealPlan.planType === 'weekly' ? 'Weekly' : 'Daily'}
+                    </Badge>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-foreground/70">Carbs</span>
-                    <span className="text-foreground">{dailySummary.carbs}g</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-foreground/70">Fat</span>
-                    <span className="text-foreground">{dailySummary.fat}g</span>
-                  </div>
-                </div>
-
-                <div className="border-t border-border pt-4">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center">
-                      <Droplets className="h-4 w-4 text-secondary mr-2" />
-                      <span className="text-foreground/70">Water</span>
-                    </div>
-                    <span className="text-foreground">
-                      {dailySummary.water}L / {dailySummary.targetWater}L
+                    <span className="text-gray-400">Generated</span>
+                    <span className="text-white text-sm">
+                      {new Date(currentMealPlan.date).toLocaleDateString()}
                     </span>
                   </div>
-                  <Progress value={(dailySummary.water / dailySummary.targetWater) * 100} className="mt-2" />
-                </div>
-              </CardContent>
-            </Card>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400">Days</span>
+                    <span className="text-white">
+                      {currentMealPlan.planType === 'weekly' ? '7 days' : '1 day'}
+                    </span>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             {/* AI Recommendations */}
-            <Card className="bg-primary/20 border-primary/30">
+            <Card className="bg-slate-800 border-slate-700">
               <CardHeader>
-                <CardTitle className="text-foreground flex items-center">
-                  <Target className="h-5 w-5 mr-2" />
+                <CardTitle className="text-white flex items-center">
+                  <Target className="h-5 w-5 mr-2 text-orange-500" />
                   AI Recommendations
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  <div className="text-sm text-foreground/80">
+                  <div className="text-sm text-gray-400">
                     Based on your {profile?.goal?.replace("_", " ")} goal:
                   </div>
-                  <ul className="space-y-2 text-sm text-foreground/80">
+                  <ul className="space-y-2 text-sm text-gray-300">
                     <li className="flex items-start">
-                      <span className="text-primary mr-2">•</span>
-                      Add more protein to your breakfast
+                      <span className="text-orange-500 mr-2">•</span>
+                      {profile?.goal === 'weight_loss' && 'Focus on high-protein, low-calorie meals'}
+                      {profile?.goal === 'muscle_gain' && 'Increase protein intake to 1.6-2.2g per kg body weight'}
+                      {profile?.goal === 'maintenance' && 'Maintain balanced macronutrient ratios'}
                     </li>
                     <li className="flex items-start">
-                      <span className="text-secondary mr-2">•</span>
-                      Increase water intake by 0.4L
+                      <span className="text-orange-500 mr-2">•</span>
+                      {profile?.activityLevel === 'low' && 'Include more fiber-rich foods for satiety'}
+                      {profile?.activityLevel === 'moderate' && 'Add complex carbs for sustained energy'}
+                      {profile?.activityLevel === 'high' && 'Increase overall caloric intake for recovery'}
                     </li>
                     <li className="flex items-start">
-                      <span className="text-accent mr-2">•</span>
-                      Consider a post-workout snack
+                      <span className="text-orange-500 mr-2">•</span>
+                      Stay hydrated with 2.5-3L of water daily
                     </li>
                   </ul>
                 </div>
+              </CardContent>
+            </Card>
+
+            {/* Quick Actions */}
+            <Card className="bg-slate-800 border-slate-700">
+              <CardHeader>
+                <CardTitle className="text-white">Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Button
+                  onClick={generateWeeklyMealPlan}
+                  disabled={generating || !profile}
+                  className="w-full bg-orange-500 hover:bg-orange-600 text-white"
+                >
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Regenerate Plan
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full border-slate-600 text-white hover:bg-slate-700"
+                >
+                  <Calendar className="h-4 w-4 mr-2" />
+                  View Details
+                </Button>
               </CardContent>
             </Card>
           </div>

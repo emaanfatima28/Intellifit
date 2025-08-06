@@ -31,6 +31,22 @@ app.use("/progress", progressRoutes);
 app.use("/chatbot", chatbotRoutes);
 app.use("/admin", adminRoutes);
 
+// Test endpoint
+app.get("/test", (req, res) => {
+  res.json({ message: "Server is running!", timestamp: new Date().toISOString() });
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Error:', err);
+  res.status(500).json({ error: 'Internal server error', message: err.message });
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ error: 'Route not found' });
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on ${PORT}.`);
 });
