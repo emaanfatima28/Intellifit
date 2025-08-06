@@ -126,3 +126,36 @@ html {
 ::-webkit-scrollbar-thumb:hover {
   background: #DDDAD0;
 }
+
+/* Custom scrollbar for chatbot container */
+.custom-scrollbar {
+  scrollbar-width: thin !important;
+  scrollbar-color: #7A7A73 #F8F3CE !important;
+  overflow-y: scroll !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 12px !important;
+  display: block !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #F8F3CE !important;
+  display: block !important;
+  border-radius: 6px !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #7A7A73 !important;
+  border-radius: 6px !important;
+  display: block !important;
+  border: 2px solid #F8F3CE !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #DDDAD0 !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar-corner {
+  background: #F8F3CE !important;
+}

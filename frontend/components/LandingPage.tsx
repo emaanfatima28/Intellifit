@@ -25,7 +25,7 @@ export default function LandingPage() {
     <div className="min-h-screen intellifit-light-bg">
       {/* Navigation */}
       <nav className="flex items-center justify-between p-6 max-w-7xl mx-auto sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-sm">
-        <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2">
           <div className="w-8 h-8 intellifit-gradient rounded-lg"></div>
           <span className="text-2xl font-bold intellifit-text">IntelliFit</span>
         </div>
@@ -88,7 +88,7 @@ export default function LandingPage() {
               <Card className="bg-white/80 border-primary/10 shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col items-center p-6">
                 <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-primary mb-6 flex items-center justify-center bg-gray-100">
                   <Image src={feature.img} alt={feature.title} width={128} height={128} className="object-cover" />
-                </div>
+          </div>
                 <h3 className="text-2xl font-bold text-[#1e293b] mb-2">{feature.title}</h3>
                 <p className="intellifit-secondary-text text-center">{feature.desc}</p>
               </Card>
@@ -142,7 +142,7 @@ export default function LandingPage() {
               <li>Supportive community and resources</li>
             </ul>
           </motion.div>
-        </div>
+          </div>
       </motion.section>
 
       {/* Contact Section */}
@@ -151,7 +151,7 @@ export default function LandingPage() {
           <h2 className="text-3xl font-bold text-white mb-6 text-center">Contact Us</h2>
           <form className="space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
-              <div>
+            <div>
                 <label className="block text-white mb-2">First Name*</label>
                 <input type="text" className="w-full border border-primary bg-transparent text-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-400" placeholder="First Name" required />
               </div>
@@ -163,7 +163,7 @@ export default function LandingPage() {
             <div>
               <label className="block text-white mb-2">Email Address*</label>
               <input type="email" className="w-full border border-primary bg-transparent text-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-400" placeholder="you@email.com" required />
-            </div>
+          </div>
             <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-white mb-2">Phone*</label>

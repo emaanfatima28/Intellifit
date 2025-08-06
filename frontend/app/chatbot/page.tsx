@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { MessageCircle, Send, Bot, User, Sparkles, Dumbbell, Apple, Target, TrendingUp } from "lucide-react"
+import { motion } from "framer-motion"
 
 interface Message {
   id: string
@@ -193,15 +194,15 @@ export default function ChatbotPage() {
 
   return (
     <DashboardLayout>
-      <div className="max-w-4xl mx-auto space-y-6">
+      <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="max-w-3xl mx-auto space-y-8 py-8">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-foreground flex items-center">
+            <h1 className="text-4xl font-extrabold text-[#1e293b] flex items-center drop-shadow-lg">
               <Bot className="h-8 w-8 mr-3 text-primary" />
               AI Fitness Assistant
             </h1>
-            <p className="text-foreground/80 mt-1">Get personalized fitness and nutrition advice</p>
+            <p className="text-[#64748b] mt-1">Get personalized fitness and nutrition advice</p>
           </div>
           <Badge className="bg-primary/20 text-primary border-primary/30 flex items-center">
             <Sparkles className="h-4 w-4 mr-1" />
@@ -210,139 +211,127 @@ export default function ChatbotPage() {
         </div>
 
         {/* Chat Interface */}
-        <Card className="bg-card border-border h-[600px] flex flex-col">
-          <CardHeader className="border-b border-border">
-            <CardTitle className="text-foreground flex items-center">
-              <MessageCircle className="h-5 w-5 mr-2" />
-              Chat with AI Assistant
-            </CardTitle>
-          </CardHeader>
-
-          <CardContent className="flex-1 flex flex-col p-0">
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-4">
-              {messages.map((message) => (
-                <div key={message.id} className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}>
-                  <div
-                    className={`max-w-[80%] rounded-lg p-4 ${
-                      message.sender === "user" ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"
-                    }`}
-                  >
-                    <div className="flex items-start space-x-2">
-                      {message.sender === "ai" && <Bot className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />}
-                      {message.sender === "user" && (
-                        <User className="h-5 w-5 text-primary-foreground mt-0.5 flex-shrink-0" />
-                      )}
-                      <div className="flex-1">
-                        <p className="text-sm leading-relaxed">{message.content}</p>
-                        <p className="text-xs opacity-70 mt-2">{message.timestamp.toLocaleTimeString()}</p>
+        <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }} className="rounded-2xl shadow-2xl border-2 border-[#2563eb]/10 bg-white overflow-hidden">
+          <Card className="bg-transparent border-none shadow-none h-[600px] flex flex-col">
+            <CardHeader className="border-b border-[#e2e8f0] bg-[#f8fafc]">
+              <CardTitle className="text-2xl font-bold text-[#1e293b] flex items-center">
+                <MessageCircle className="h-5 w-5 mr-2" />
+                Chat with AI Assistant
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="flex-1 flex flex-col p-0">
+              {/* Messages */}
+              <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-[#f8fafc] custom-scrollbar" style={{ maxHeight: '400px', minHeight: '200px' }}>
+                {messages.map((message, i) => (
+                  <motion.div key={message.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 * i }} className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}>
+                    <div
+                      className={`max-w-[80%] rounded-lg p-4 shadow-md transition-all duration-300 ${message.sender === "user"
+                        ? "bg-[#2563eb] text-white"
+                        : "bg-[#e0e7ef] text-[#1e293b]"
+                        }`}
+                    >
+                      <div className="flex items-start space-x-2">
+                        {message.sender === "ai" && <Bot className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />}
+                        {message.sender === "user" && (
+                          <User className="h-5 w-5 text-white mt-0.5 flex-shrink-0" />
+                        )}
+                        <div className="flex-1">
+                          <p className="text-base leading-relaxed">{message.content}</p>
+                          <p className="text-xs opacity-70 mt-2">{message.timestamp.toLocaleTimeString()}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+                {isLoading && (
+                  <div className="flex justify-start">
+                    <div className="bg-[#e0e7ef] text-[#1e293b] rounded-lg p-4 max-w-[80%] shadow-md">
+                      <div className="flex items-center space-x-2">
+                        <Bot className="h-5 w-5 text-primary" />
+                        <div className="flex space-x-1">
+                          <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
+                          <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: "0.1s" }}></div>
+                          <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
-
-              {isLoading && (
-                <div className="flex justify-start">
-                  <div className="bg-muted text-foreground rounded-lg p-4 max-w-[80%]">
-                    <div className="flex items-center space-x-2">
-                      <Bot className="h-5 w-5 text-primary" />
-                      <div className="flex space-x-1">
-                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
-                        <div
-                          className="w-2 h-2 bg-primary rounded-full animate-bounce"
-                          style={{ animationDelay: "0.1s" }}
-                        ></div>
-                        <div
-                          className="w-2 h-2 bg-primary rounded-full animate-bounce"
-                          style={{ animationDelay: "0.2s" }}
-                        ></div>
-                      </div>
-                    </div>
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+              {/* Quick Suggestions */}
+              {messages.length <= 1 && (
+                <div className="p-6 border-t border-[#e2e8f0] bg-[#f8fafc]">
+                  <p className="text-[#64748b] text-sm mb-3">Quick suggestions:</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {quickSuggestions.map((suggestion, index) => (
+                      <Button
+                        key={index}
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleSuggestionClick(suggestion.text)}
+                        className="border-[#e2e8f0] text-[#1e293b] hover:bg-[#2563eb]/10 bg-transparent justify-start"
+                      >
+                        <suggestion.icon className="h-4 w-4 mr-2" />
+                        {suggestion.text}
+                      </Button>
+                    ))}
                   </div>
                 </div>
               )}
-
-              <div ref={messagesEndRef} />
-            </div>
-
-            {/* Quick Suggestions */}
-            {messages.length <= 1 && (
-              <div className="p-6 border-t border-border">
-                <p className="text-foreground/70 text-sm mb-3">Quick suggestions:</p>
-                <div className="grid grid-cols-2 gap-2">
-                  {quickSuggestions.map((suggestion, index) => (
-                    <Button
-                      key={index}
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleSuggestionClick(suggestion.text)}
-                      className="border-border text-foreground/80 hover:bg-muted bg-transparent justify-start"
-                    >
-                      <suggestion.icon className="h-4 w-4 mr-2" />
-                      {suggestion.text}
-                    </Button>
-                  ))}
+              {/* Input */}
+              <div className="p-6 border-t border-[#e2e8f0] bg-[#f8fafc]">
+                <div className="flex space-x-2">
+                  <Input
+                    value={inputMessage}
+                    onChange={(e) => setInputMessage(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    placeholder="Ask me anything about fitness, nutrition, or health..."
+                    className="flex-1 bg-white border-[#e2e8f0] text-[#1e293b] placeholder:text-[#64748b] focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]"
+                    disabled={isLoading}
+                  />
+                  <Button
+                    onClick={() => sendMessage(inputMessage)}
+                    disabled={isLoading || !inputMessage.trim()}
+                    className="bg-[#2563eb] hover:bg-[#f59e42] text-white font-semibold shadow-lg transition-colors duration-200"
+                  >
+                    <Send className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
-            )}
-
-            {/* Input */}
-            <div className="p-6 border-t border-border">
-              <div className="flex space-x-2">
-                <Input
-                  value={inputMessage}
-                  onChange={(e) => setInputMessage(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Ask me anything about fitness, nutrition, or health..."
-                  className="flex-1 bg-muted border-border text-foreground placeholder:text-foreground/60"
-                  disabled={isLoading}
-                />
-                <Button
-                  onClick={() => sendMessage(inputMessage)}
-                  disabled={isLoading || !inputMessage.trim()}
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground"
-                >
-                  <Send className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
+            </CardContent>
+          </Card>
+        </motion.div>
         {/* AI Features */}
         <div className="grid md:grid-cols-3 gap-6">
-          <Card className="bg-primary/20 border-primary/30 transition-all duration-300 hover:scale-[1.02]">
-            <CardContent className="p-6 text-center">
-              <Dumbbell className="h-8 w-8 text-primary mx-auto mb-3" />
-              <h3 className="text-foreground font-semibold mb-2">Workout Plans</h3>
-              <p className="text-foreground/80 text-sm">
-                Get personalized workout routines based on your goals and fitness level
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-secondary/20 border-secondary/30 transition-all duration-300 hover:scale-[1.02]">
-            <CardContent className="p-6 text-center">
-              <Apple className="h-8 w-8 text-secondary mx-auto mb-3" />
-              <h3 className="text-foreground font-semibold mb-2">Nutrition Advice</h3>
-              <p className="text-foreground/80 text-sm">
-                Receive meal suggestions and dietary recommendations tailored to you
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-accent/20 border-accent/30 transition-all duration-300 hover:scale-[1.02]">
-            <CardContent className="p-6 text-center">
-              <Target className="h-8 w-8 text-accent mx-auto mb-3" />
-              <h3 className="text-foreground font-semibold mb-2">Goal Tracking</h3>
-              <p className="text-foreground/80 text-sm">
-                Monitor your progress and get insights on achieving your fitness goals
-              </p>
-            </CardContent>
-          </Card>
+          {[{
+            icon: Dumbbell,
+            title: "Workout Plans",
+            desc: "Get personalized workout routines based on your goals and fitness level",
+            color: "bg-primary/20 border-primary/30"
+          }, {
+            icon: Apple,
+            title: "Nutrition Advice",
+            desc: "Receive meal suggestions and dietary recommendations tailored to you",
+            color: "bg-secondary/20 border-secondary/30"
+          }, {
+            icon: Target,
+            title: "Goal Tracking",
+            desc: "Monitor your progress and get insights on achieving your fitness goals",
+            color: "bg-accent/20 border-accent/30"
+          }].map((feature, i) => (
+            <motion.div key={feature.title} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 * i }}>
+              <Card className={`${feature.color} transition-all duration-300 hover:scale-[1.02]`}>
+                <CardContent className="p-6 text-center">
+                  <feature.icon className="h-8 w-8 mx-auto mb-3 text-primary" />
+                  <h3 className="text-xl font-bold text-[#1e293b] mb-2">{feature.title}</h3>
+                  <p className="text-[#64748b] text-sm">{feature.desc}</p>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
         </div>
-      </div>
+      </motion.div>
     </DashboardLayout>
   )
 }
