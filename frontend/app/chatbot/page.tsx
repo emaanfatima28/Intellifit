@@ -114,7 +114,7 @@ export default function ChatbotPage() {
 
         const aiMessage: Message = {
           id: (Date.now() + 1).toString(),
-          content: data.response,
+          content: data.message,
           sender: "ai",
           timestamp: new Date(),
           type: data.type || "text",
