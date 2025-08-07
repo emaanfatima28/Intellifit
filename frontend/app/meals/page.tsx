@@ -174,12 +174,10 @@ export default function MealsPage() {
       setLoading(false)
     }
   }
-
   if (!user) return null
-
   return (
     <DashboardLayout>
-      <div className="space-y-12">
+      <div className="space-y-8">
         {/* Hero Header Section - Enhanced */}
         <motion.div
           initial={{ opacity: 0, y: -30 }}
@@ -324,7 +322,7 @@ export default function MealsPage() {
         )}
 
         {/* Main Content Area - Full Width */}
-        <div className="w-full">
+        <div className="w-full -mx-8 px-8">
           {!currentMealPlan ? (
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
@@ -381,159 +379,20 @@ export default function MealsPage() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="space-y-8"
+              className="space-y-12"
             >
-              {/* Weekly Schedule - Full Width */}
-              <Card className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 border-slate-700/50 backdrop-blur-sm">
-                <CardHeader className="pb-8">
-                  <motion.div
-                    initial={{ opacity: 0, x: -30 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.8, delay: 0.3 }}
-                    className="flex items-center justify-between"
-                  >
-                    <div className="flex items-center space-x-4">
-                      <div className="p-4 bg-orange-500/30 rounded-2xl">
-                        <Calendar className="h-8 w-8 text-orange-400" />
-                      </div>
-                      <div>
-                        <CardTitle className="text-4xl font-bold text-white mb-2">
-                          Weekly Meal Schedule
-                        </CardTitle>
-                        <p className="text-gray-400 text-lg">
-                          Your complete 7-day nutrition plan with detailed meal information
-                        </p>
-                      </div>
-                    </div>
-                    <Badge className="bg-green-500/30 text-green-400 border-green-500/40 px-4 py-2 text-base">
-                      <Star className="h-4 w-4 mr-2" />
-                      Active Plan
-                    </Badge>
-                  </motion.div>
-                </CardHeader>
-                <CardContent className="p-0">
-                  <div className="overflow-x-auto meal-scrollbar">
-                    <div className="min-w-full">
-                      {/* Header Row */}
-                      <motion.div
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.5 }}
-                        className="grid grid-cols-8 gap-4 p-6 border-b border-slate-700/50 bg-slate-800/30 sticky top-0 z-10"
-                      >
-                        <div className="text-gray-300 font-bold text-lg uppercase tracking-wider min-w-[140px]">
-                          Meal Time
-                        </div>
-                        {weekDays.map((day, index) => (
-                          <motion.div
-                            key={day}
-                            initial={{ opacity: 0, y: -20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.6, delay: 0.6 + index * 0.1 }}
-                            className="text-center min-w-[180px]"
-                          >
-                            <div className="text-white font-bold text-xl mb-1">
-                              {day.slice(0, 3)}
-                            </div>
-                            <div className="text-gray-400 text-sm font-medium">
-                              {day}
-                            </div>
-                          </motion.div>
-                        ))}
-                      </motion.div>
+              {/* Weekly Schedule - FULL SCREEN SIZE */}
+          
 
-                      {/* Meal Rows */}
-                      {mealTimes.map(({ time, type, icon, lucideIcon: LucideIcon }, mealIndex) => (
-                        <motion.div
-                          key={`${time}-${type}`}
-                          initial={{ opacity: 0, x: -30 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ duration: 0.8, delay: 0.7 + mealIndex * 0.1 }}
-                          className="grid grid-cols-8 gap-4 p-6 border-b border-slate-700/30 hover:bg-slate-700/10 transition-colors"
-                        >
-                          <div className="flex items-center space-x-3 min-w-[140px]">
-                            <div className="text-2xl">{icon}</div>
-                            <div className="flex items-center space-x-2">
-                              <div className="p-2 bg-orange-500/20 rounded-lg">
-                                <LucideIcon className="h-4 w-4 text-orange-400" />
-                              </div>
-                              <div>
-                                <div className="text-white font-bold text-base capitalize">{type}</div>
-                                <div className="text-gray-400 text-sm">{time}</div>
-                              </div>
-                            </div>
-                          </div>
-                          {weekDays.map((day, dayIndex) => {
-                            const meal = getMealForDay(day, type)
-                            return (
-                              <motion.div
-                                key={day}
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                className="relative min-w-[180px]"
-                              >
-                                <motion.div
-                                  initial={{ opacity: 0, scale: 0.8 }}
-                                  animate={{ opacity: 1, scale: 1 }}
-                                  transition={{ duration: 0.5, delay: 0.9 + mealIndex * 0.1 + dayIndex * 0.05 }}
-                                  className={`${meal
-                                    ? 'bg-gradient-to-br from-orange-500/25 to-orange-600/15 border-orange-500/40 shadow-xl'
-                                    : 'bg-slate-700/40 border-slate-600/60'
-                                    } border-2 rounded-xl p-5 text-center cursor-pointer hover:shadow-2xl hover:scale-105 transition-all duration-300 min-h-[160px] flex flex-col justify-between relative overflow-hidden group`}
-                                >
-                                  {meal && (
-                                    <div className="absolute top-2 right-2">
-                                      <div className="w-2 h-2 bg-green-400 rounded-full shadow-lg animate-pulse"></div>
-                                    </div>
-                                  )}
-
-                                  <div className="flex-1 flex flex-col justify-center">
-                                    <div className="text-white text-base font-bold mb-3 capitalize leading-tight line-clamp-2">
-                                      {meal?.name || "Not planned"}
-                                    </div>
-                                    <div className="text-orange-400 text-xl font-bold mb-3">
-                                      {meal?.calories || 0} kcal
-                                    </div>
-                                  </div>
-
-                                  {meal?.ingredients && meal.ingredients.length > 0 && (
-                                    <div className="mt-auto">
-                                      <div className="text-orange-300 text-sm font-bold mb-2">
-                                        Ingredients:
-                                      </div>
-                                      <div className="text-gray-300 text-sm leading-relaxed line-clamp-2 font-medium">
-                                        {meal.ingredients.slice(0, 3).join(", ")}
-                                        {meal.ingredients.length > 3 && "..."}
-                                      </div>
-                                    </div>
-                                  )}
-
-                                  {!meal && (
-                                    <div className="mt-auto">
-                                      <div className="text-gray-400 text-sm font-medium">
-                                        Click to plan
-                                      </div>
-                                    </div>
-                                  )}
-                                </motion.div>
-                              </motion.div>
-                            )
-                          })}
-                        </motion.div>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
               {/* Additional Sections Below - Grid Layout */}
-              <div className="grid lg:grid-cols-3 gap-8">
+              <div className="grid lg:grid-cols-3 gap-12">
                 {/* Meal Plan Info */}
                 <motion.div
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.3 }}
                 >
-                  <Card className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 border-slate-700/50 backdrop-blur-sm h-full">
+                  <Card className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 border-slate-700/50 backdrop-blur-sm h-full shadow-xl">
                     <CardHeader>
                       <CardTitle className="text-white flex items-center text-xl">
                         <Sparkles className="h-6 w-6 mr-3 text-orange-500" />
@@ -569,7 +428,7 @@ export default function MealsPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.5 }}
                 >
-                  <Card className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 border-slate-700/50 backdrop-blur-sm h-full">
+                  <Card className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 border-slate-700/50 backdrop-blur-sm h-full shadow-xl">
                     <CardHeader>
                       <CardTitle className="text-white flex items-center text-xl">
                         <Target className="h-6 w-6 mr-3 text-orange-500" />
@@ -629,7 +488,7 @@ export default function MealsPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.7 }}
                 >
-                  <Card className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 border-slate-700/50 backdrop-blur-sm h-full">
+                  <Card className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 border-slate-700/50 backdrop-blur-sm h-full shadow-xl">
                     <CardHeader>
                       <CardTitle className="text-white text-xl">Quick Actions</CardTitle>
                     </CardHeader>
@@ -657,6 +516,34 @@ export default function MealsPage() {
                   </Card>
                 </motion.div>
               </div>
+
+              {/* Weekly Meal Schedule - Grid Layout */}
+              {currentMealPlan && currentMealPlan.weeklyPlan && (
+                <div className="w-full min-h-screen bg-gray-100 flex flex-col items-center py-8 px-2">
+                  <h1 className="text-4xl font-extrabold text-orange-600 mb-8 text-center drop-shadow-lg">Weekly Meal Schedule</h1>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-7xl">
+                    {currentMealPlan.weeklyPlan.map((day, idx) => (
+                      <div
+                        key={idx}
+                        className="bg-white shadow-2xl rounded-2xl border-2 border-orange-200 p-8 flex flex-col hover:scale-105 transition-transform duration-300"
+                      >
+                        <h2 className="text-2xl font-extrabold text-orange-600 mb-4 uppercase tracking-wide">{day.day}</h2>
+                        <ul className="space-y-4">
+                          {day.meals.map((meal, mIdx) => (
+                            <li key={mIdx} className="bg-orange-50 rounded-lg p-4 shadow text-gray-900 font-bold border-l-4 border-orange-400">
+                              <span className="block text-lg mb-1">
+                                <span className="font-extrabold text-orange-700">{meal.type.toUpperCase()}</span>: {meal.name}
+                              </span>
+                              <span className="block text-sm text-gray-700 font-semibold">Calories: {meal.calories}</span>
+                              <span className="block text-sm text-gray-700">{meal.ingredients?.join(", ")}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </motion.div>
           )}
         </div>
