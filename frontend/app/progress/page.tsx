@@ -22,7 +22,7 @@ import {
   Pie,
   Cell,
 } from "recharts"
-import { Award, Edit } from "lucide-react"
+import { Award, Edit, CalendarCheck, CalendarX, Flame, CheckCircle, XCircle, TrendingUp, Dumbbell } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 export default function ProgressPage() {
   const { user, token } = useAuth()
@@ -151,6 +151,32 @@ export default function ProgressPage() {
     }
   }
 
+  const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+
+  function getStreaks(checks: { [date: string]: boolean }) {
+    let streak = 0, best = 0, current = 0
+    for (const day of weekDays) {
+      if (checks[day]) {
+        current++
+        best = Math.max(best, current)
+      } else {
+        current = 0
+      }
+    }
+    streak = current
+    return { streak, best }
+  }
+
+  const mealStreaks = getStreaks(mealChecks)
+  const workoutStreaks = getStreaks(workoutChecks)
+  const completionData = weekDays.map(day => ({
+    day,
+    meal: mealChecks[day] ? 1 : 0,
+    workout: workoutChecks[day] ? 1 : 0,
+  }))
+  const completedWorkouts = weekDays.filter(day => workoutChecks[day]).length
+  const completedMeals = weekDays.filter(day => mealChecks[day]).length
+
   if (!user) return null
 
   return (
@@ -193,6 +219,115 @@ export default function ProgressPage() {
                   Edit Profile
                 </Button>
               </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Calendar/Timeline Week View with Checkboxes */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.15 }} className="bg-slate-800 border-slate-700 rounded-xl p-6 mb-6">
+          <h3 className="text-xl font-bold text-white mb-4 flex items-center"><CalendarCheck className="h-5 w-5 mr-2 text-green-400" />This Week's Completion</h3>
+          <div className="grid grid-cols-7 gap-4">
+            {weekDays.map(day => (
+              <div key={day} className="flex flex-col items-center">
+                <span className="text-sm text-gray-400 mb-1">{day.slice(0, 3)}</span>
+                <div className="flex flex-col items-center mb-1">
+                  <input
+                    type="checkbox"
+                    checked={!!mealChecks[day]}
+                    onChange={() => handleCheck('meal', day)}
+                    className="accent-green-500 w-5 h-5 mb-1"
+                  />
+                  <span className="text-xs text-gray-500">Meal</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <input
+                    type="checkbox"
+                    checked={!!workoutChecks[day]}
+                    onChange={() => handleCheck('workout', day)}
+                    className="accent-orange-500 w-5 h-5 mb-1"
+                  />
+                  <span className="text-xs text-gray-500">Workout</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Streaks and Best Week Stats */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.18 }} className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <Card className="bg-gradient-to-r from-green-500/20 to-green-600/20 border-green-500/30">
+            <CardContent className="p-6">
+              <h4 className="text-lg font-bold text-green-700 mb-2 flex items-center"><Flame className="h-5 w-5 mr-2" />Meal Streak</h4>
+              <div className="text-3xl font-extrabold text-green-600 mb-1">{mealStreaks.streak} days</div>
+              <div className="text-gray-700">Best: {mealStreaks.best} days</div>
+            </CardContent>
+          </Card>
+          <Card className="bg-gradient-to-r from-orange-500/20 to-orange-600/20 border-orange-500/30">
+            <CardContent className="p-6">
+              <h4 className="text-lg font-bold text-orange-700 mb-2 flex items-center"><Dumbbell className="h-5 w-5 mr-2" />Workout Streak</h4>
+              <div className="text-3xl font-extrabold text-orange-600 mb-1">{workoutStreaks.streak} days</div>
+              <div className="text-gray-700">Best: {workoutStreaks.best} days</div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Completion Rate Chart */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.21 }} className="bg-slate-800 border-slate-700 rounded-xl p-6 mb-6">
+          <h3 className="text-xl font-bold text-white mb-4 flex items-center"><TrendingUp className="h-5 w-5 mr-2 text-orange-400" />Completion Rate</h3>
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={completionData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+              <XAxis dataKey="day" stroke="#9CA3AF" />
+              <YAxis stroke="#9CA3AF" domain={[0, 1]} ticks={[0, 1]} tickFormatter={v => v === 1 ? "✓" : "✗"} />
+              <Tooltip contentStyle={{ backgroundColor: "#1F2937", border: "1px solid #374151", borderRadius: "8px", color: "#F3F4F6" }} />
+              <Bar dataKey="meal" fill="#22c55e" name="Meal" />
+              <Bar dataKey="workout" fill="#f59e42" name="Workout" />
+            </BarChart>
+          </ResponsiveContainer>
+        </motion.div>
+
+        {/* Workout Statistics - show completed workouts */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.23 }}>
+          <Card className="bg-slate-800 border-slate-700 mb-6">
+            <CardHeader>
+              <CardTitle className="text-white">Workout Statistics</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-orange-400 mb-2">{completedWorkouts}</div>
+                  <div className="text-gray-400 text-sm">Workouts Completed (This Week)</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-blue-400 mb-2">{workoutStreaks.streak}</div>
+                  <div className="text-gray-400 text-sm">Current Streak</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-green-400 mb-2">{completedMeals}</div>
+                  <div className="text-gray-400 text-sm">Meals Completed (This Week)</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-purple-400 mb-2">{workoutStreaks.best}</div>
+                  <div className="text-gray-400 text-sm">Best Workout Streak</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Body Stats - show current stats from profile */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.25 }}>
+          <Card className="bg-slate-800 border-slate-700 mb-6">
+            <CardHeader>
+              <CardTitle className="text-white">Body Stats</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex justify-between"><span className="text-gray-400">Height</span><span className="text-white">{profile?.height || stats.height} cm</span></div>
+              <div className="flex justify-between"><span className="text-gray-400">Weight</span><span className="text-white">{profile?.weight || stats.weight} kg</span></div>
+              <div className="flex justify-between"><span className="text-gray-400">Age</span><span className="text-white">{profile?.age || stats.age} years</span></div>
+              <div className="flex justify-between"><span className="text-gray-400">BMI</span><span className="text-white">{stats.bmi}</span></div>
+              <div className="flex justify-between"><span className="text-gray-400">Body Fat</span><span className="text-white">{stats.bodyFat}%</span></div>
+              <div className="flex justify-between"><span className="text-gray-400">Muscle Mass</span><span className="text-white">{stats.muscleMass} kg</span></div>
             </CardContent>
           </Card>
         </motion.div>
@@ -325,9 +460,9 @@ export default function ProgressPage() {
                         <CardTitle className="text-white">Body Stats</CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-4">
-                        <div className="flex justify-between"><span className="text-gray-400">Height</span><span className="text-white">{stats.height} cm</span></div>
-                        <div className="flex justify-between"><span className="text-gray-400">Weight</span><span className="text-white">{stats.weight} kg</span></div>
-                        <div className="flex justify-between"><span className="text-gray-400">Age</span><span className="text-white">{stats.age} years</span></div>
+                        <div className="flex justify-between"><span className="text-gray-400">Height</span><span className="text-white">{profile?.height || stats.height} cm</span></div>
+                        <div className="flex justify-between"><span className="text-gray-400">Weight</span><span className="text-white">{profile?.weight || stats.weight} kg</span></div>
+                        <div className="flex justify-between"><span className="text-gray-400">Age</span><span className="text-white">{profile?.age || stats.age} years</span></div>
                         <div className="flex justify-between"><span className="text-gray-400">BMI</span><span className="text-white">{stats.bmi}</span></div>
                         <div className="flex justify-between"><span className="text-gray-400">Body Fat</span><span className="text-white">{stats.bodyFat}%</span></div>
                         <div className="flex justify-between"><span className="text-gray-400">Muscle Mass</span><span className="text-white">{stats.muscleMass} kg</span></div>
@@ -370,7 +505,7 @@ export default function ProgressPage() {
               </div>
             </TabsContent>
 
-            {/* Progress Tab - All Charts */}
+            {/* Progress Tab - More Charts */}
             <TabsContent value="progress" className="space-y-6">
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.8 }} className="grid lg:grid-cols-2 gap-8">
                 {/* Weight Progress Chart */}
@@ -390,37 +525,20 @@ export default function ProgressPage() {
                     </ResponsiveContainer>
                   </CardContent>
                 </Card>
-                {/* Body Composition */}
+                {/* Weekly Completion Chart */}
                 <Card className="bg-slate-800 border-slate-700">
                   <CardHeader>
-                    <CardTitle className="text-white">Body Composition</CardTitle>
+                    <CardTitle className="text-white">Weekly Completion</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <ResponsiveContainer width="100%" height={300}>
-                      <PieChart>
-                        <Pie data={bodyCompositionData} cx="50%" cy="50%" outerRadius={80} fill="#8884d8" dataKey="value" label={({ name, value }) => `${name}: ${value}%`}>
-                          {bodyCompositionData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Pie>
-                        <Tooltip />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </CardContent>
-                </Card>
-                {/* Weekly Activity Chart */}
-                <Card className="bg-slate-800 border-slate-700 lg:col-span-2">
-                  <CardHeader>
-                    <CardTitle className="text-white">Weekly Activity</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ResponsiveContainer width="100%" height={300}>
-                      <BarChart data={workoutData}>
+                      <BarChart data={completionData}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                         <XAxis dataKey="day" stroke="#9CA3AF" />
-                        <YAxis stroke="#9CA3AF" />
+                        <YAxis stroke="#9CA3AF" domain={[0, 1]} ticks={[0, 1]} tickFormatter={v => v === 1 ? "✓" : "✗"} />
                         <Tooltip contentStyle={{ backgroundColor: "#1F2937", border: "1px solid #374151", borderRadius: "8px", color: "#F3F4F6" }} />
-                        <Bar dataKey="calories" fill="#F59E0B" />
+                        <Bar dataKey="meal" fill="#22c55e" name="Meal" />
+                        <Bar dataKey="workout" fill="#f59e42" name="Workout" />
                       </BarChart>
                     </ResponsiveContainer>
                   </CardContent>

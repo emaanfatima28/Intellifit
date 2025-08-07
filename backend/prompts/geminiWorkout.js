@@ -1,6 +1,14 @@
 const axios = require("axios");
 require("dotenv").config();
 
+const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+const hasAllDays = (workoutDays) => {
+  if (!Array.isArray(workoutDays) || workoutDays.length !== 7) return false;
+  const daysSet = new Set(workoutDays.map(d => d.day));
+  return DAYS.every(day => daysSet.has(day));
+};
+
 const generateWorkoutPlan = async (profile, userPrompt = null) => {
   let basePrompt = `
 Create a 7-day (weekly) workout plan for:
@@ -55,34 +63,41 @@ Before responding, CHECKLIST:
 If not, regenerate your answer until all requirements are met.
 `;
 
-  try {
-    const response = await axios.post(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
-      {
-        contents: [
-          {
-            parts: [{ text: prompt }],
-          },
-        ],
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
+  let lastError = null;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const response = await axios.post(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+        {
+          contents: [
+            {
+              parts: [{ text: prompt }],
+            },
+          ],
         },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const text = response.data.candidates[0].content.parts[0].text;
+      const start = text.indexOf("{");
+      const end = text.lastIndexOf("}") + 1;
+      const jsonText = text.slice(start, end);
+      const parsed = JSON.parse(jsonText);
+      if (hasAllDays(parsed.workoutDays)) {
+        return parsed.workoutDays;
+      } else {
+        lastError = "Gemini did not return all 7 days. Retrying...";
+        continue;
       }
-    );
-
-    const text = response.data.candidates[0].content.parts[0].text;
-
-    const start = text.indexOf("{");
-    const end = text.lastIndexOf("}") + 1;
-    const jsonText = text.slice(start, end);
-    const parsed = JSON.parse(jsonText);
-    return parsed.workoutDays;
-  } catch (error) {
-    console.error("Gemini JSON parse failed or API error:\n", error.response?.data || error.message);
-    throw new Error("Failed to generate workout plan");
+    } catch (error) {
+      lastError = error.response?.data || error.message;
+    }
   }
+  console.error("Gemini JSON parse failed or API error after 3 attempts:\n", lastError);
+  throw new Error("Failed to generate a valid 7-day workout plan after 3 attempts");
 };
-
 module.exports = generateWorkoutPlan;
