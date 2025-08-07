@@ -18,8 +18,6 @@ app.use(
   cors({
     origin: "http://localhost:3000",
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 app.use("/users", userRoutes);
@@ -33,18 +31,22 @@ app.use("/admin", adminRoutes);
 
 // Test endpoint
 app.get("/test", (req, res) => {
-  res.json({ message: "Server is running!", timestamp: new Date().toISOString() });
+  res.json({
+    message: "Server is running!",
+    timestamp: new Date().toISOString(),
+  });
 });
-
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error('Error:', err);
-  res.status(500).json({ error: 'Internal server error', message: err.message });
+  console.error("Error:", err);
+  res
+    .status(500)
+    .json({ error: "Internal server error", message: err.message });
 });
 
 // 404 handler
 app.use((req, res) => {
-  res.status(404).json({ error: 'Route not found' });
+  res.status(404).json({ error: "Route not found" });
 });
 
 app.listen(PORT, () => {

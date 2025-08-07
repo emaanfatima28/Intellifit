@@ -97,7 +97,7 @@ export default function ChatbotPage() {
     setIsLoading(true)
 
     try {
-      const response = await fetch("http://localhost:3000/ai/chat", {
+      const response = await fetch("http://localhost:5000/chatbot/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
