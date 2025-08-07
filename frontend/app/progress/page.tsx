@@ -508,7 +508,7 @@ export default function ProgressPage() {
             {/* Progress Tab - More Charts */}
             <TabsContent value="progress" className="space-y-6">
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.8 }} className="grid lg:grid-cols-2 gap-8">
-                {/* Weight Progress Chart */}
+                {/* Weight Progress Chart - prominent and not duplicated */}
                 <Card className="bg-slate-800 border-slate-700">
                   <CardHeader>
                     <CardTitle className="text-white">Weight Progress</CardTitle>
