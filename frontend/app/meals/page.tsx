@@ -321,231 +321,165 @@ export default function MealsPage() {
           </motion.div>
         )}
 
-        {/* Main Content Area - Full Width */}
-        <div className="w-full -mx-8 px-8">
-          {!currentMealPlan ? (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8 }}
-            >
-              <Card className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 border-slate-700/50 backdrop-blur-sm">
-                <CardContent className="p-16 text-center">
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ duration: 0.8, delay: 0.3 }}
-                    className="mb-8"
-                  >
-                    <div className="w-32 h-32 mx-auto bg-gradient-to-br from-orange-500/30 to-orange-600/20 rounded-full flex items-center justify-center shadow-xl">
-                      <Calendar className="h-16 w-16 text-orange-400" />
-                    </div>
-                  </motion.div>
-                  <motion.h3
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.5 }}
-                    className="text-4xl font-bold text-white mb-6"
-                  >
-                    No Meal Plan Generated
-                  </motion.h3>
-                  <motion.p
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.7 }}
-                    className="text-gray-400 text-xl mb-10 max-w-2xl mx-auto leading-relaxed"
-                  >
-                    Generate your first AI-powered weekly meal plan based on your profile and preferences.
-                  </motion.p>
-                  <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.9 }}
-                  >
-                    <Button
-                      onClick={generateWeeklyMealPlan}
-                      disabled={generating || !profile}
-                      className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-10 py-5 text-lg font-semibold rounded-xl"
-                    >
-                      <Sparkles className="h-5 w-5 mr-3" />
-                      Generate Weekly Plan
-                    </Button>
-                  </motion.div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="space-y-12"
-            >
-              {/* Weekly Schedule - FULL SCREEN SIZE */}
-          
-
-              {/* Additional Sections Below - Grid Layout */}
-              <div className="grid lg:grid-cols-3 gap-12">
-                {/* Meal Plan Info */}
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.3 }}
+        {/* --- WEEKLY MEAL SCHEDULE SECTION (moved up) --- */}
+        {currentMealPlan && currentMealPlan.weeklyPlan && (
+          <div className="w-full min-h-screen bg-gray-100 flex flex-col items-center py-8 px-2">
+            <h1 className="text-4xl font-extrabold text-orange-600 mb-8 text-center drop-shadow-lg">Weekly Meal Schedule</h1>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-7xl">
+              {currentMealPlan.weeklyPlan.map((day, idx) => (
+                <div
+                  key={idx}
+                  className="bg-white shadow-2xl rounded-2xl border-2 border-orange-200 p-8 flex flex-col hover:scale-105 transition-transform duration-300"
                 >
-                  <Card className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 border-slate-700/50 backdrop-blur-sm h-full shadow-xl">
-                    <CardHeader>
-                      <CardTitle className="text-white flex items-center text-xl">
-                        <Sparkles className="h-6 w-6 mr-3 text-orange-500" />
-                        Plan Details
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="flex justify-between items-center p-4 bg-slate-700/40 rounded-xl">
-                        <span className="text-gray-400 font-medium">Plan Type</span>
-                        <Badge className="bg-orange-500/30 text-orange-400 px-3 py-1">
-                          {currentMealPlan.planType === 'weekly' ? 'Weekly' : 'Daily'}
-                        </Badge>
-                      </div>
-                      <div className="flex justify-between items-center p-4 bg-slate-700/40 rounded-xl">
-                        <span className="text-gray-400 font-medium">Generated</span>
-                        <span className="text-white text-base">
-                          {new Date(currentMealPlan.date).toLocaleDateString()}
+                  <h2 className="text-2xl font-extrabold text-orange-600 mb-4 uppercase tracking-wide">{day.day}</h2>
+                  <ul className="space-y-4">
+                    {day.meals.map((meal, mIdx) => (
+                      <li key={mIdx} className="bg-orange-50 rounded-lg p-4 shadow text-gray-900 font-bold border-l-4 border-orange-400">
+                        <span className="block text-lg mb-1">
+                          <span className="font-extrabold text-orange-700">{meal.type.toUpperCase()}</span>: {meal.name}
                         </span>
-                      </div>
-                      <div className="flex justify-between items-center p-4 bg-slate-700/40 rounded-xl">
-                        <span className="text-gray-400 font-medium">Duration</span>
-                        <span className="text-white text-base">
-                          {currentMealPlan.planType === 'weekly' ? '7 days' : '1 day'}
-                        </span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-
-                {/* AI Recommendations */}
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.5 }}
-                >
-                  <Card className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 border-slate-700/50 backdrop-blur-sm h-full shadow-xl">
-                    <CardHeader>
-                      <CardTitle className="text-white flex items-center text-xl">
-                        <Target className="h-6 w-6 mr-3 text-orange-500" />
-                        AI Recommendations
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        <div className="text-base text-gray-400 p-4 bg-slate-700/40 rounded-xl">
-                          Based on your <span className="text-orange-400 font-bold">{profile?.goal?.replace("_", " ")}</span> goal:
-                        </div>
-                        <ul className="space-y-3">
-                          <motion.li
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.5, delay: 0.7 }}
-                            className="flex items-start p-4 bg-slate-700/30 rounded-xl"
-                          >
-                            <span className="text-orange-500 mr-3 text-xl">•</span>
-                            <span className="text-gray-300 text-base">
-                              {profile?.goal === 'weight_loss' && 'Focus on high-protein, low-calorie meals'}
-                              {profile?.goal === 'muscle_gain' && 'Increase protein intake to 1.6-2.2g per kg body weight'}
-                              {profile?.goal === 'maintenance' && 'Maintain balanced macronutrient ratios'}
-                            </span>
-                          </motion.li>
-                          <motion.li
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.5, delay: 0.8 }}
-                            className="flex items-start p-4 bg-slate-700/30 rounded-xl"
-                          >
-                            <span className="text-orange-500 mr-3 text-xl">•</span>
-                            <span className="text-gray-300 text-base">
-                              {profile?.activityLevel === 'low' && 'Include more fiber-rich foods for satiety'}
-                              {profile?.activityLevel === 'moderate' && 'Add complex carbs for sustained energy'}
-                              {profile?.activityLevel === 'high' && 'Increase overall caloric intake for recovery'}
-                            </span>
-                          </motion.li>
-                          <motion.li
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.5, delay: 0.9 }}
-                            className="flex items-start p-4 bg-slate-700/30 rounded-xl"
-                          >
-                            <span className="text-orange-500 mr-3 text-xl">•</span>
-                            <span className="text-gray-300 text-base">Stay hydrated with 2.5-3L of water daily</span>
-                          </motion.li>
-                        </ul>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-
-                {/* Quick Actions */}
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.7 }}
-                >
-                  <Card className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 border-slate-700/50 backdrop-blur-sm h-full shadow-xl">
-                    <CardHeader>
-                      <CardTitle className="text-white text-xl">Quick Actions</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                        <Button
-                          onClick={generateWeeklyMealPlan}
-                          disabled={generating || !profile}
-                          className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-xl py-4 text-base font-semibold"
-                        >
-                          <RefreshCw className="h-5 w-5 mr-3" />
-                          Regenerate Plan
-                        </Button>
-                      </motion.div>
-                      <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                        <Button
-                          variant="outline"
-                          className="w-full border-slate-600 text-white hover:bg-slate-700 rounded-xl py-4 text-base font-semibold"
-                        >
-                          <Calendar className="h-5 w-5 mr-3" />
-                          View Details
-                        </Button>
-                      </motion.div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              </div>
-
-              {/* Weekly Meal Schedule - Grid Layout */}
-              {currentMealPlan && currentMealPlan.weeklyPlan && (
-                <div className="w-full min-h-screen bg-gray-100 flex flex-col items-center py-8 px-2">
-                  <h1 className="text-4xl font-extrabold text-orange-600 mb-8 text-center drop-shadow-lg">Weekly Meal Schedule</h1>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-7xl">
-                    {currentMealPlan.weeklyPlan.map((day, idx) => (
-                      <div
-                        key={idx}
-                        className="bg-white shadow-2xl rounded-2xl border-2 border-orange-200 p-8 flex flex-col hover:scale-105 transition-transform duration-300"
-                      >
-                        <h2 className="text-2xl font-extrabold text-orange-600 mb-4 uppercase tracking-wide">{day.day}</h2>
-                        <ul className="space-y-4">
-                          {day.meals.map((meal, mIdx) => (
-                            <li key={mIdx} className="bg-orange-50 rounded-lg p-4 shadow text-gray-900 font-bold border-l-4 border-orange-400">
-                              <span className="block text-lg mb-1">
-                                <span className="font-extrabold text-orange-700">{meal.type.toUpperCase()}</span>: {meal.name}
-                              </span>
-                              <span className="block text-sm text-gray-700 font-semibold">Calories: {meal.calories}</span>
-                              <span className="block text-sm text-gray-700">{meal.ingredients?.join(", ")}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
+                        <span className="block text-sm text-gray-700 font-semibold">Calories: {meal.calories}</span>
+                        <span className="block text-sm text-gray-700">{meal.ingredients?.join(", ")}</span>
+                      </li>
                     ))}
-                  </div>
+                  </ul>
                 </div>
-              )}
-            </motion.div>
-          )}
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* --- PLAN DETAILS, AI RECOMMENDATIONS, QUICK ACTIONS (move this grid below the meal schedule) --- */}
+        <div className="grid lg:grid-cols-3 gap-12">
+          {/* Meal Plan Info */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+          >
+            <Card className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 border-slate-700/50 backdrop-blur-sm h-full shadow-xl">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center text-xl">
+                  <Sparkles className="h-6 w-6 mr-3 text-orange-500" />
+                  Plan Details
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex justify-between items-center p-4 bg-slate-700/40 rounded-xl">
+                  <span className="text-gray-400 font-medium">Plan Type</span>
+                  <Badge className="bg-orange-500/30 text-orange-400 px-3 py-1">
+                    {currentMealPlan.planType === 'weekly' ? 'Weekly' : 'Daily'}
+                  </Badge>
+                </div>
+                <div className="flex justify-between items-center p-4 bg-slate-700/40 rounded-xl">
+                  <span className="text-gray-400 font-medium">Generated</span>
+                  <span className="text-white text-base">
+                    {new Date(currentMealPlan.date).toLocaleDateString()}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center p-4 bg-slate-700/40 rounded-xl">
+                  <span className="text-gray-400 font-medium">Duration</span>
+                  <span className="text-white text-base">
+                    {currentMealPlan.planType === 'weekly' ? '7 days' : '1 day'}
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* AI Recommendations */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+          >
+            <Card className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 border-slate-700/50 backdrop-blur-sm h-full shadow-xl">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center text-xl">
+                  <Target className="h-6 w-6 mr-3 text-orange-500" />
+                  AI Recommendations
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="text-base text-gray-400 p-4 bg-slate-700/40 rounded-xl">
+                    Based on your <span className="text-orange-400 font-bold">{profile?.goal?.replace("_", " ")}</span> goal:
+                  </div>
+                  <ul className="space-y-3">
+                    <motion.li
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.5, delay: 0.7 }}
+                      className="flex items-start p-4 bg-slate-700/30 rounded-xl"
+                    >
+                      <span className="text-orange-500 mr-3 text-xl">•</span>
+                      <span className="text-gray-300 text-base">
+                        {profile?.goal === 'weight_loss' && 'Focus on high-protein, low-calorie meals'}
+                        {profile?.goal === 'muscle_gain' && 'Increase protein intake to 1.6-2.2g per kg body weight'}
+                        {profile?.goal === 'maintenance' && 'Maintain balanced macronutrient ratios'}
+                      </span>
+                    </motion.li>
+                    <motion.li
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.5, delay: 0.8 }}
+                      className="flex items-start p-4 bg-slate-700/30 rounded-xl"
+                    >
+                      <span className="text-orange-500 mr-3 text-xl">•</span>
+                      <span className="text-gray-300 text-base">
+                        {profile?.activityLevel === 'low' && 'Include more fiber-rich foods for satiety'}
+                        {profile?.activityLevel === 'moderate' && 'Add complex carbs for sustained energy'}
+                        {profile?.activityLevel === 'high' && 'Increase overall caloric intake for recovery'}
+                      </span>
+                    </motion.li>
+                    <motion.li
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.5, delay: 0.9 }}
+                      className="flex items-start p-4 bg-slate-700/30 rounded-xl"
+                    >
+                      <span className="text-orange-500 mr-3 text-xl">•</span>
+                      <span className="text-gray-300 text-base">Stay hydrated with 2.5-3L of water daily</span>
+                    </motion.li>
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Quick Actions */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.7 }}
+          >
+            <Card className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 border-slate-700/50 backdrop-blur-sm h-full shadow-xl">
+              <CardHeader>
+                <CardTitle className="text-white text-xl">Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                  <Button
+                    onClick={generateWeeklyMealPlan}
+                    disabled={generating || !profile}
+                    className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-xl py-4 text-base font-semibold"
+                  >
+                    <RefreshCw className="h-5 w-5 mr-3" />
+                    Regenerate Plan
+                  </Button>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                  <Button
+                    variant="outline"
+                    className="w-full border-slate-600 text-white hover:bg-slate-700 rounded-xl py-4 text-base font-semibold"
+                  >
+                    <Calendar className="h-5 w-5 mr-3" />
+                    View Details
+                  </Button>
+                </motion.div>
+              </CardContent>
+            </Card>
+          </motion.div>
         </div>
       </div>
     </DashboardLayout>
