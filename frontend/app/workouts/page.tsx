@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Dumbbell, Clock, Flame, Target, Play, Star, Users, TrendingUp } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
 
 interface WorkoutPlan {
   _id: string
@@ -37,6 +38,8 @@ export default function WorkoutsPage() {
   const [workoutPlans, setWorkoutPlans] = useState<WorkoutPlan[]>([])
   const [profile, setProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [selectedDay, setSelectedDay] = useState<number>(new Date().getDay() - 1) // 0=Monday
+  const [weeklyPlan, setWeeklyPlan] = useState<any[]>([])
   const [selectedCategory, setSelectedCategory] = useState("all")
 
   const workoutCategories = [
@@ -128,30 +131,28 @@ export default function WorkoutsPage() {
       router.push("/auth/login")
       return
     }
-
     fetchData()
   }, [user, token, router])
 
+  // Fetch profile and weekly workout plan
   const fetchData = async () => {
+    setLoading(true)
     try {
-      // Fetch profile to get user goals
+      // Fetch profile
       const profileResponse = await fetch("http://localhost:3000/profile", {
         headers: { Authorization: `Bearer ${token}` },
       })
-
       if (profileResponse.ok) {
         const profileData = await profileResponse.json()
         setProfile(profileData)
       }
-
-      // Fetch workout plans
-      const workoutResponse = await fetch("http://localhost:3000/workout-plans", {
+      // Fetch/generate weekly workout plan
+      const planResponse = await fetch("http://localhost:3000/workout/current", {
         headers: { Authorization: `Bearer ${token}` },
       })
-
-      if (workoutResponse.ok) {
-        const workoutData = await workoutResponse.json()
-        setWorkoutPlans(workoutData.workoutPlans || [])
+      if (planResponse.ok) {
+        const planData = await planResponse.json()
+        setWeeklyPlan(planData.workoutDays || [])
       }
     } catch (error) {
       console.error("Error fetching data:", error)
@@ -159,6 +160,14 @@ export default function WorkoutsPage() {
       setLoading(false)
     }
   }
+
+  // Animation variants
+  const cardVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: (i: number) => ({ opacity: 1, y: 0, transition: { delay: i * 0.08 } }),
+  }
+
+  const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
   const getRecommendedWorkouts = () => {
     if (!profile?.goal) return workoutPlans
@@ -234,17 +243,84 @@ export default function WorkoutsPage() {
     <DashboardLayout>
       <div className="space-y-8">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-extrabold text-[#1e293b]">Workouts</h1>
-            <p className="text-gray-400 mt-1">Choose your workout type and start your fitness journey today</p>
+            <h1 className="text-4xl font-extrabold text-[#1e293b]">Weekly Workout Plan</h1>
+            <p className="text-gray-400 mt-1">Personalized for your goals and preferences</p>
           </div>
           {profile?.goal && (
             <Badge className="bg-orange-500/20 text-orange-400 border-orange-500/30">
               Goal: {profile.goal.replace("_", " ").toUpperCase()}
             </Badge>
           )}
-        </div>
+        </motion.div>
+
+        {/* Weekly Plan Navigation */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.2 }} className="flex justify-center gap-2 mb-4">
+          {weekDays.map((day, idx) => (
+            <Button
+              key={day}
+              variant={selectedDay === idx ? "default" : "outline"}
+              className={`rounded-full px-4 py-2 font-semibold transition-all ${selectedDay === idx ? "bg-orange-500 text-white" : "bg-white text-orange-500 border-orange-300"}`}
+              onClick={() => setSelectedDay(idx)}
+            >
+              {day}
+            </Button>
+          ))}
+        </motion.div>
+
+        {/* Weekly Plan Content */}
+        <AnimatePresence mode="wait">
+          {loading ? (
+            <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center py-12">
+              <span className="text-orange-500 text-lg font-bold animate-pulse">Loading your personalized plan...</span>
+            </motion.div>
+          ) : weeklyPlan.length > 0 ? (
+            <motion.div
+              key={selectedDay}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -30 }}
+              transition={{ duration: 0.5 }}
+              className="max-w-3xl mx-auto"
+            >
+              <motion.div className="bg-gradient-to-br from-orange-100/60 to-orange-200/40 border border-orange-300 rounded-3xl shadow-xl p-8 mb-8 relative overflow-hidden">
+                <motion.h2 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-3xl font-bold text-orange-700 mb-4">
+                  {weekDays[selectedDay]}
+                </motion.h2>
+                {weeklyPlan[selectedDay]?.exercises?.length > 0 ? (
+                  <div className="space-y-6">
+                    {weeklyPlan[selectedDay].exercises.map((ex: any, i: number) => (
+                      <motion.div
+                        key={i}
+                        custom={i}
+                        initial="hidden"
+                        animate="visible"
+                        variants={cardVariants}
+                        className="bg-white rounded-xl shadow p-6 flex flex-col md:flex-row md:items-center gap-4 border-l-4 border-orange-400/60 hover:scale-[1.02] transition-transform"
+                      >
+                        <div className="flex-1">
+                          <h3 className="text-xl font-bold text-orange-600 mb-1">{ex.name}</h3>
+                          <div className="flex flex-wrap gap-4 text-gray-600 text-sm mb-2">
+                            <span>Sets: <span className="font-semibold text-orange-500">{ex.sets}</span></span>
+                            <span>Reps: <span className="font-semibold text-orange-500">{ex.reps}</span></span>
+                            <span>Category: <span className="font-semibold text-orange-500">{ex.category}</span></span>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-gray-400 italic">No exercises planned for this day.</div>
+                )}
+              </motion.div>
+            </motion.div>
+          ) : (
+            <motion.div key="no-plan" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center py-12">
+              <span className="text-orange-500 text-lg font-bold">No workout plan found. Please complete your profile and generate a plan.</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Workout Categories */}
         <div>
