@@ -295,6 +295,9 @@ export default function WorkoutsPage() {
     }
   }
 
+  // Helper: Check if weeklyPlan is a valid 7-day plan
+  const isValidWeeklyPlan = weeklyPlan && Array.isArray(weeklyPlan) && weeklyPlan.length === 7 && ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].every(day => weeklyPlan.some(d => d.day === day))
+
   if (!user) return null
 
   return (
@@ -393,7 +396,7 @@ export default function WorkoutsPage() {
             <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center py-12">
               <span className="text-orange-500 text-lg font-bold animate-pulse">Loading your personalized plan...</span>
             </motion.div>
-          ) : weeklyPlan.length > 0 ? (
+          ) : isValidWeeklyPlan ? (
             <motion.div
               key={selectedDay}
               initial={{ opacity: 0, y: 30 }}
@@ -403,7 +406,7 @@ export default function WorkoutsPage() {
               className="max-w-3xl mx-auto"
             >
               <motion.div className="bg-gradient-to-br from-orange-100/60 to-orange-200/40 border border-orange-300 rounded-3xl shadow-xl p-8 mb-8 relative overflow-hidden">
-                <motion.h2 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-3xl font-bold text-orange-700 mb-4">
+                <motion.h2 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-3xl font-bold text-black mb-4">
                   {weekDays[selectedDay]}
                 </motion.h2>
                 {weeklyPlan[selectedDay]?.exercises?.length > 0 ? (
@@ -434,8 +437,17 @@ export default function WorkoutsPage() {
               </motion.div>
             </motion.div>
           ) : (
-            <motion.div key="no-plan" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center py-12">
-              <span className="text-orange-500 text-lg font-bold">No workout plan found. Please complete your profile and generate a plan.</span>
+            <motion.div key="invalid-plan" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center py-12">
+              <span className="text-red-500 text-lg font-bold">Workout plan is incomplete or invalid. Please regenerate.</span>
+              <div className="mt-4 flex justify-center">
+                <Button
+                  onClick={generateWeeklyPlan}
+                  disabled={generating}
+                  className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-3 text-lg font-bold rounded-xl shadow-lg transition-all duration-300"
+                >
+                  {generating ? "Regenerating..." : "Regenerate Plan"}
+                </Button>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

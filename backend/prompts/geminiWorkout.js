@@ -1,17 +1,8 @@
 const axios = require("axios");
 require("dotenv").config();
-
-const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-
-const hasAllDays = (workoutDays) => {
-  if (!Array.isArray(workoutDays) || workoutDays.length !== 7) return false;
-  const daysSet = new Set(workoutDays.map(d => d.day));
-  return DAYS.every(day => daysSet.has(day));
-};
-
 const generateWorkoutPlan = async (profile, userPrompt = null) => {
   let basePrompt = `
-Create a 7-day (weekly) workout plan for:
+Create a 1-day workout plan for:
 - Age: ${profile.age}
 - Gender: ${profile.gender}
 - Height: ${profile.height} cm
@@ -19,14 +10,12 @@ Create a 7-day (weekly) workout plan for:
 - Goal: ${profile.goal}
 - Activity Level: ${profile.activityLevel}
 `;
-
   if (userPrompt) {
     basePrompt += `\n\nUser's specific request: ${userPrompt}\n\nPlease modify the workout plan according to this request while maintaining fitness effectiveness.`;
   }
-
-  const prompt = basePrompt + `
-
-Workout plan must include 7 unique days (Monday to Sunday), each with a list of exercises. Each day must be present in the output, even if it is a rest or light day. Each day object must have:
+  const prompt =
+    basePrompt +
+    `Workout plan must include 7 days (Monday to Sunday), each with a list of exercises. Each day must be present in the output, even if it is a rest or light day. Each day object must have:
 - day (e.g. "Monday")
 - exercises: list of objects with:
   - name (string)
@@ -41,7 +30,8 @@ Workout plan must include 7 unique days (Monday to Sunday), each with a list of 
 - Do NOT use values like "AsManyAsPossible", "Few Minutes", etc.
 - Do NOT include explanations, markdown, or any text outside the JSON.
 - Only respond with raw valid JSON.
-- Each day must be unique and cover the full week (Monday to Sunday).
+- Cover the full week (Monday to Sunday).
+
 
 Example format (all 7 days):
 {
@@ -62,42 +52,37 @@ Before responding, CHECKLIST:
 - [ ] Is the output valid JSON with no extra text?
 If not, regenerate your answer until all requirements are met.
 `;
-
-  let lastError = null;
-  for (let attempt = 0; attempt < 3; attempt++) {
-    try {
-      const response = await axios.post(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
-        {
-          contents: [
-            {
-              parts: [{ text: prompt }],
-            },
-          ],
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
+  try {
+    const response = await axios.post(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      {
+        contents: [
+          {
+            parts: [{ text: prompt }],
           },
-        }
-      );
-
-      const text = response.data.candidates[0].content.parts[0].text;
-      const start = text.indexOf("{");
-      const end = text.lastIndexOf("}") + 1;
-      const jsonText = text.slice(start, end);
-      const parsed = JSON.parse(jsonText);
-      if (hasAllDays(parsed.workoutDays)) {
-        return parsed.workoutDays;
-      } else {
-        lastError = "Gemini did not return all 7 days. Retrying...";
-        continue;
+        ],
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
-    } catch (error) {
-      lastError = error.response?.data || error.message;
-    }
+    );
+
+    const text = response.data.candidates[0].content.parts[0].text;
+
+    const start = text.indexOf("{");
+    const end = text.lastIndexOf("}") + 1;
+    const jsonText = text.slice(start, end);
+    const parsed = JSON.parse(jsonText);
+    return parsed.workoutDays;
+  } catch (error) {
+    console.error(
+      "Gemini JSON parse failed or API error:\n",
+      error.response?.data || error.message
+    );
+    throw new Error("Failed to generate workout plan");
   }
-  console.error("Gemini JSON parse failed or API error after 3 attempts:\n", lastError);
-  throw new Error("Failed to generate a valid 7-day workout plan after 3 attempts");
 };
+
 module.exports = generateWorkoutPlan;

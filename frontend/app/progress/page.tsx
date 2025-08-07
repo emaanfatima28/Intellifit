@@ -314,20 +314,19 @@ export default function ProgressPage() {
             </CardContent>
           </Card>
         </motion.div>
-
-        {/* Body Stats - show current stats from profile */}
+        {/* Body Stats - show current stats from profile (only one instance) */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.25 }}>
           <Card className="bg-slate-800 border-slate-700 mb-6">
             <CardHeader>
-              <CardTitle className="text-white">Body Stats</CardTitle>
+              <motion.h2 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-2xl font-bold text-black mb-2">Body Stats</motion.h2>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex justify-between"><span className="text-gray-400">Height</span><span className="text-white">{profile?.height || stats.height} cm</span></div>
-              <div className="flex justify-between"><span className="text-gray-400">Weight</span><span className="text-white">{profile?.weight || stats.weight} kg</span></div>
-              <div className="flex justify-between"><span className="text-gray-400">Age</span><span className="text-white">{profile?.age || stats.age} years</span></div>
-              <div className="flex justify-between"><span className="text-gray-400">BMI</span><span className="text-white">{stats.bmi}</span></div>
-              <div className="flex justify-between"><span className="text-gray-400">Body Fat</span><span className="text-white">{stats.bodyFat}%</span></div>
-              <div className="flex justify-between"><span className="text-gray-400">Muscle Mass</span><span className="text-white">{stats.muscleMass} kg</span></div>
+              <div className="flex justify-between"><span className="text-gray-400">Height</span><span className="text-black">{profile?.height || stats.height} cm</span></div>
+              <div className="flex justify-between"><span className="text-gray-400">Weight</span><span className="text-black">{profile?.weight || stats.weight} kg</span></div>
+              <div className="flex justify-between"><span className="text-gray-400">Age</span><span className="text-black">{profile?.age || stats.age} years</span></div>
+              <div className="flex justify-between"><span className="text-gray-400">BMI</span><span className="text-black">{stats.bmi}</span></div>
+              <div className="flex justify-between"><span className="text-gray-400">Body Fat</span><span className="text-black">{stats.bodyFat}%</span></div>
+              <div className="flex justify-between"><span className="text-gray-400">Muscle Mass</span><span className="text-black">{stats.muscleMass} kg</span></div>
             </CardContent>
           </Card>
         </motion.div>
@@ -508,10 +507,10 @@ export default function ProgressPage() {
             {/* Progress Tab - More Charts */}
             <TabsContent value="progress" className="space-y-6">
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.8 }} className="grid lg:grid-cols-2 gap-8">
-                {/* Weight Progress Chart - prominent and not duplicated */}
+                {/* Weight Progress Chart - always displayed */}
                 <Card className="bg-slate-800 border-slate-700">
                   <CardHeader>
-                    <CardTitle className="text-white">Weight Progress</CardTitle>
+                    <motion.h2 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-2xl font-bold text-black mb-2">Weight Progress</motion.h2>
                   </CardHeader>
                   <CardContent>
                     <ResponsiveContainer width="100%" height={300}>
@@ -525,10 +524,10 @@ export default function ProgressPage() {
                     </ResponsiveContainer>
                   </CardContent>
                 </Card>
-                {/* Weekly Completion Chart */}
+                {/* Weekly Completion Chart - always displayed */}
                 <Card className="bg-slate-800 border-slate-700">
                   <CardHeader>
-                    <CardTitle className="text-white">Weekly Completion</CardTitle>
+                    <motion.h2 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-2xl font-bold text-black mb-2">Weekly Completion</motion.h2>
                   </CardHeader>
                   <CardContent>
                     <ResponsiveContainer width="100%" height={300}>
