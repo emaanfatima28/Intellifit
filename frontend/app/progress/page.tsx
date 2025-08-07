@@ -25,106 +25,100 @@ import {
 } from "recharts"
 import { Award, Edit } from "lucide-react"
 
-const weightData = [
-  { date: "2024-01-01", weight: 78 },
-  { date: "2024-01-15", weight: 77.5 },
-  { date: "2024-02-01", weight: 76.8 },
-  { date: "2024-02-15", weight: 76.2 },
-  { date: "2024-03-01", weight: 75.5 },
-  { date: "2024-03-15", weight: 75.0 },
-  { date: "2024-04-01", weight: 74.8 },
-]
-
-const workoutData = [
-  { day: "Mon", workouts: 1, duration: 45, calories: 450 },
-  { day: "Tue", workouts: 1, duration: 35, calories: 380 },
-  { day: "Wed", workouts: 0, duration: 0, calories: 0 },
-  { day: "Thu", workouts: 1, duration: 50, calories: 520 },
-  { day: "Fri", workouts: 1, duration: 40, calories: 410 },
-  { day: "Sat", workouts: 1, duration: 75, calories: 600 },
-  { day: "Sun", workouts: 1, duration: 30, calories: 350 },
-]
-
-const bodyCompositionData = [
-  { name: "Muscle Mass", value: 65, color: "#10B981" },
-  { name: "Body Fat", value: 12, color: "#F59E0B" },
-  { name: "Water", value: 23, color: "#3B82F6" },
-]
-
-const recentWorkouts = [
-  {
-    name: "Upper Body Strength",
-    date: "2024-06-15",
-    duration: 45,
-    calories: 420,
-    difficulty: "Strength",
-    level: "Intermediate",
-  },
-  {
-    name: "HIIT Cardio Blast",
-    date: "2024-06-14",
-    duration: 30,
-    calories: 380,
-    difficulty: "Cardio",
-    level: "Advanced",
-  },
-  {
-    name: "Yoga Flow",
-    date: "2024-06-13",
-    duration: 60,
-    calories: 250,
-    difficulty: "Yoga",
-    level: "Beginner",
-  },
-  {
-    name: "Full Body Circuit",
-    date: "2024-06-12",
-    duration: 50,
-    calories: 480,
-    difficulty: "HIIT",
-    level: "Intermediate",
-  },
-]
-
 export default function ProgressPage() {
   const { user, token } = useAuth()
   const router = useRouter()
   const [profile, setProfile] = useState<any>(null)
   const [stats, setStats] = useState({
-    totalWorkouts: 156,
-    totalHours: 234,
-    currentStreak: 18,
-    caloriesBurned: 45680,
-    height: 180,
-    weight: 75,
-    age: 32,
-    bmi: 23.1,
-    bodyFat: 12,
-    muscleMass: 65,
+    totalWorkouts: 0,
+    totalHours: 0,
+    currentStreak: 0,
+    caloriesBurned: 0,
+    height: 0,
+    weight: 0,
+    age: 0,
+    bmi: 0,
+    bodyFat: 0,
+    muscleMass: 0,
   })
+  const [weightData, setWeightData] = useState<any[]>([])
+  const [workoutData, setWorkoutData] = useState<any[]>([])
+  const [mealData, setMealData] = useState<any[]>([])
+  const [bodyCompositionData, setBodyCompositionData] = useState<any[]>([])
+  const [recentWorkouts, setRecentWorkouts] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (!user || !token) {
       router.push("/auth/login")
       return
     }
-    fetchProfile()
+    fetchAllProgress()
   }, [user, token, router])
 
-  const fetchProfile = async () => {
+  // Fetch all progress data for the user
+  const fetchAllProgress = async () => {
+    setLoading(true)
     try {
-      const response = await fetch("http://localhost:3000/profile", {
+      // Fetch profile
+      const profileRes = await fetch("http://localhost:3000/profile", {
         headers: { Authorization: `Bearer ${token}` },
       })
-      if (response.ok) {
-        const data = await response.json()
+      if (profileRes.ok) {
+        const data = await profileRes.json()
         setProfile(data)
-        if (data.weight) setStats((prev) => ({ ...prev, weight: data.weight }))
-        if (data.height) setStats((prev) => ({ ...prev, height: data.height }))
-        if (data.age) setStats((prev) => ({ ...prev, age: data.age }))
+        setStats((prev) => ({ ...prev, weight: data.weight || 0, height: data.height || 0, age: data.age || 0 }))
+      }
+      // Fetch weight progress
+      const weightRes = await fetch("http://localhost:3000/progress/weight", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (weightRes.ok) {
+        const data = await weightRes.json()
+        setWeightData(data)
+      }
+      // Fetch workout progress
+      const workoutRes = await fetch("http://localhost:3000/progress/workouts", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (workoutRes.ok) {
+        const data = await workoutRes.json()
+        setWorkoutData(data.weekly || [])
+        setStats((prev) => ({
+          ...prev,
+          totalWorkouts: data.totalWorkouts || 0,
+          totalHours: data.totalHours || 0,
+          currentStreak: data.currentStreak || 0,
+          caloriesBurned: data.caloriesBurned || 0,
+        }))
+        setRecentWorkouts(data.recent || [])
+      }
+      // Fetch meal progress
+      const mealRes = await fetch("http://localhost:3000/progress/meals", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (mealRes.ok) {
+        const data = await mealRes.json()
+        setMealData(data)
+      }
+      // Fetch body composition
+      const bodyRes = await fetch("http://localhost:3000/progress/body", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (bodyRes.ok) {
+        const data = await bodyRes.json()
+        setBodyCompositionData(data)
+        setStats((prev) => ({
+          ...prev,
+          bmi: data.bmi || 0,
+          bodyFat: data.bodyFat || 0,
+          muscleMass: data.muscleMass || 0,
+        }))
       }
     } catch (error) {
-      console.error("Error fetching profile:", error)
+      console.error("Error fetching progress data:", error)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -268,15 +262,14 @@ export default function ProgressPage() {
                           </div>
                           <div className="flex items-center space-x-2">
                             <Badge
-                              className={`${
-                                workout.difficulty === "Strength"
-                                  ? "bg-red-500/20 text-red-400"
-                                  : workout.difficulty === "Cardio"
-                                    ? "bg-green-500/20 text-green-400"
-                                    : workout.difficulty === "Yoga"
-                                      ? "bg-purple-500/20 text-purple-400"
-                                      : "bg-orange-500/20 text-orange-400"
-                              }`}
+                              className={`${workout.difficulty === "Strength"
+                                ? "bg-red-500/20 text-red-400"
+                                : workout.difficulty === "Cardio"
+                                  ? "bg-green-500/20 text-green-400"
+                                  : workout.difficulty === "Yoga"
+                                    ? "bg-purple-500/20 text-purple-400"
+                                    : "bg-orange-500/20 text-orange-400"
+                                }`}
                             >
                               {workout.difficulty}
                             </Badge>

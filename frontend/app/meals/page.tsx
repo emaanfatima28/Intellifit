@@ -368,19 +368,19 @@ export default function MealsPage() {
                 <div className="flex justify-between items-center p-4 bg-slate-700/40 rounded-xl">
                   <span className="text-gray-400 font-medium">Plan Type</span>
                   <Badge className="bg-orange-500/30 text-orange-400 px-3 py-1">
-                    {currentMealPlan.planType === 'weekly' ? 'Weekly' : 'Daily'}
+                    {currentMealPlan?.planType === 'weekly' ? 'Weekly' : currentMealPlan?.planType === 'daily' ? 'Daily' : 'No Plan'}
                   </Badge>
                 </div>
                 <div className="flex justify-between items-center p-4 bg-slate-700/40 rounded-xl">
                   <span className="text-gray-400 font-medium">Generated</span>
                   <span className="text-white text-base">
-                    {new Date(currentMealPlan.date).toLocaleDateString()}
+                    {currentMealPlan?.date ? new Date(currentMealPlan.date).toLocaleDateString() : 'N/A'}
                   </span>
                 </div>
                 <div className="flex justify-between items-center p-4 bg-slate-700/40 rounded-xl">
                   <span className="text-gray-400 font-medium">Duration</span>
                   <span className="text-white text-base">
-                    {currentMealPlan.planType === 'weekly' ? '7 days' : '1 day'}
+                    {currentMealPlan?.planType === 'weekly' ? '7 days' : currentMealPlan?.planType === 'daily' ? '1 day' : 'N/A'}
                   </span>
                 </div>
               </CardContent>

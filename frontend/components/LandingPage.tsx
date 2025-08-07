@@ -25,7 +25,7 @@ export default function LandingPage() {
     <div className="min-h-screen intellifit-light-bg">
       {/* Navigation */}
       <nav className="flex items-center justify-between p-6 max-w-7xl mx-auto sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-sm">
-            <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2">
           <div className="w-8 h-8 intellifit-gradient rounded-lg"></div>
           <span className="text-2xl font-bold intellifit-text">IntelliFit</span>
         </div>
@@ -88,7 +88,7 @@ export default function LandingPage() {
               <Card className="bg-white/80 border-primary/10 shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col items-center p-6">
                 <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-primary mb-6 flex items-center justify-center bg-gray-100">
                   <Image src={feature.img} alt={feature.title} width={128} height={128} className="object-cover" />
-          </div>
+                </div>
                 <h3 className="text-2xl font-bold text-[#1e293b] mb-2">{feature.title}</h3>
                 <p className="intellifit-secondary-text text-center">{feature.desc}</p>
               </Card>
@@ -142,7 +142,7 @@ export default function LandingPage() {
               <li>Supportive community and resources</li>
             </ul>
           </motion.div>
-          </div>
+        </div>
       </motion.section>
 
       {/* Contact Section */}
@@ -151,7 +151,7 @@ export default function LandingPage() {
           <h2 className="text-3xl font-bold text-white mb-6 text-center">Contact Us</h2>
           <form className="space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
-            <div>
+              <div>
                 <label className="block text-white mb-2">First Name*</label>
                 <input type="text" className="w-full border border-primary bg-transparent text-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-400" placeholder="First Name" required />
               </div>
@@ -163,7 +163,7 @@ export default function LandingPage() {
             <div>
               <label className="block text-white mb-2">Email Address*</label>
               <input type="email" className="w-full border border-primary bg-transparent text-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-400" placeholder="you@email.com" required />
-          </div>
+            </div>
             <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-white mb-2">Phone*</label>
@@ -182,45 +182,6 @@ export default function LandingPage() {
           </form>
         </div>
       </motion.section>
-
-      {/* Footer */}
-      <footer className="border-t border-primary/10 mt-20">
-        <div className="max-w-7xl mx-auto px-6 py-12">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="w-8 h-8 intellifit-gradient rounded-lg"></div>
-                <span className="text-2xl font-bold intellifit-text">IntelliFit</span>
-              </div>
-              <p className="text-secondary">Your journey to better health starts here.</p>
-            </div>
-            <div>
-              <h4 className="text-primary font-semibold mb-4">Product</h4>
-              <div className="space-y-2">
-                <a href="#features" className="block text-secondary hover:text-primary transition-colors">Features</a>
-                <a href="#" className="block text-secondary hover:text-primary transition-colors">Pricing</a>
-              </div>
-            </div>
-            <div>
-              <h4 className="text-primary font-semibold mb-4">Company</h4>
-              <div className="space-y-2">
-                <button onClick={() => scrollToSection(aboutRef)} className="block text-secondary hover:text-primary transition-colors">About</button>
-                <button onClick={() => scrollToSection(contactRef)} className="block text-secondary hover:text-primary transition-colors">Contact</button>
-              </div>
-            </div>
-            <div>
-              <h4 className="text-primary font-semibold mb-4">Contact</h4>
-              <div className="space-y-2 text-secondary">
-                <p>Email: hello@intellifit.com</p>
-                <p>Phone: +1 (555) 123-4567</p>
-              </div>
-            </div>
-          </div>
-          <div className="border-t border-primary/10 mt-12 pt-8 text-center text-secondary">
-            <p>&copy; 2024 IntelliFit. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
     </div>
   )
 }

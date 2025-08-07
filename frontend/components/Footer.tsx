@@ -3,14 +3,14 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { 
-  Facebook, 
-  Twitter, 
-  Instagram, 
-  Linkedin, 
-  Mail, 
-  Phone, 
-  MapPin, 
+import {
+  Facebook,
+  Twitter,
+  Instagram,
+  Linkedin,
+  Mail,
+  Phone,
+  MapPin,
   Heart,
   ArrowUp,
   Users,
@@ -29,18 +29,18 @@ export default function Footer() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden">
+    <footer className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden mt-24">
       {/* Background decorative elements */}
-      <div className="absolute inset-0 bg-gradient-to-r from-orange-500/5 to-purple-500/5"></div>
-      <div className="absolute top-0 left-0 w-64 h-64 bg-orange-500/10 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-0 right-0 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl"></div>
-      
+      <div className="absolute inset-0 bg-gradient-to-r from-orange-500/5 to-purple-500/5 pointer-events-none select-none"></div>
+      <div className="absolute top-0 left-0 w-64 h-64 bg-orange-500/10 rounded-full blur-3xl pointer-events-none select-none"></div>
+      <div className="absolute bottom-0 right-0 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl pointer-events-none select-none"></div>
+
       <div className="relative z-10">
         {/* Main Footer Content */}
         <div className="max-w-7xl mx-auto px-6 py-16">
           <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-12">
             {/* Brand Section */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -83,7 +83,7 @@ export default function Footer() {
             </motion.div>
 
             {/* Product Links */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -128,7 +128,7 @@ export default function Footer() {
             </motion.div>
 
             {/* Company Links */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -173,7 +173,7 @@ export default function Footer() {
             </motion.div>
 
             {/* Contact Information */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -197,7 +197,7 @@ export default function Footer() {
                   <span>123 Fitness Street, Health City, HC 12345</span>
                 </div>
               </div>
-              
+
               {/* Newsletter Signup */}
               <div className="mt-8">
                 <h5 className="text-lg font-semibold mb-3 flex items-center">
@@ -205,8 +205,8 @@ export default function Footer() {
                   Stay Updated
                 </h5>
                 <div className="flex space-x-2">
-                  <input 
-                    type="email" 
+                  <input
+                    type="email"
                     placeholder="Enter your email"
                     className="flex-1 bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
                   />
@@ -219,7 +219,7 @@ export default function Footer() {
           </div>
 
           {/* Bottom Section */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -234,7 +234,7 @@ export default function Footer() {
                   Made with <Heart className="h-4 w-4 mx-1 text-red-400" /> for your health
                 </span>
               </div>
-              
+
               <div className="flex items-center space-x-6">
                 <Badge variant="secondary" className="bg-white/10 text-gray-300 border-white/20">
                   <Shield className="h-3 w-3 mr-1" />
@@ -248,24 +248,6 @@ export default function Footer() {
             </div>
           </motion.div>
         </div>
-
-        {/* Scroll to Top Button */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          className="fixed bottom-8 right-8 z-50"
-        >
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={scrollToTop}
-            className="w-12 h-12 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-full shadow-lg flex items-center justify-center transition-all duration-300 hover:shadow-xl"
-          >
-            <ArrowUp className="h-5 w-5" />
-          </motion.button>
-        </motion.div>
       </div>
     </footer>
   )

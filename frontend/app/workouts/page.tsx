@@ -203,6 +203,31 @@ export default function WorkoutsPage() {
     }
   }
 
+  // Dynamically filter categories based on user profile
+  const getPersonalizedCategories = () => {
+    if (!profile) return workoutCategories;
+    // Example: filter or highlight categories based on goal/activityLevel
+    if (profile.goal === 'weight_loss') {
+      return workoutCategories.filter(cat => ['stretching', 'yoga', 'meditation', 'fullbody', 'legs'].includes(cat.id));
+    } else if (profile.goal === 'muscle_gain') {
+      return workoutCategories.filter(cat => ['fullbody', 'arms', 'legs'].includes(cat.id));
+    } else {
+      return workoutCategories;
+    }
+  };
+
+  // Dynamically filter trainers based on user profile
+  const getPersonalizedTrainers = () => {
+    if (!profile) return trainers;
+    if (profile.goal === 'weight_loss') {
+      return trainers.filter(tr => tr.specialty.toLowerCase().includes('yoga') || tr.specialty.toLowerCase().includes('hiit'));
+    } else if (profile.goal === 'muscle_gain') {
+      return trainers.filter(tr => tr.specialty.toLowerCase().includes('strength') || tr.specialty.toLowerCase().includes('hiit'));
+    } else {
+      return trainers;
+    }
+  };
+
   if (!user) return null
 
   return (
@@ -225,7 +250,7 @@ export default function WorkoutsPage() {
         <div>
           <h2 className="text-2xl font-bold text-[#1e293b] mb-4">Select workout type</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {workoutCategories.map((category) => (
+            {getPersonalizedCategories().map((category) => (
               <Card
                 key={category.id}
                 className={`bg-gradient-to-br ${category.color} cursor-pointer hover:scale-105 transition-transform`}
@@ -277,10 +302,10 @@ export default function WorkoutsPage() {
                       <div className="flex items-center justify-between mb-4">
                         <Badge
                           className={`${workout.difficulty === "beginner"
-                              ? "bg-green-500/20 text-green-400"
-                              : workout.difficulty === "intermediate"
-                                ? "bg-yellow-500/20 text-yellow-400"
-                                : "bg-red-500/20 text-red-400"
+                            ? "bg-green-500/20 text-green-400"
+                            : workout.difficulty === "intermediate"
+                              ? "bg-yellow-500/20 text-yellow-400"
+                              : "bg-red-500/20 text-red-400"
                             }`}
                         >
                           {workout.difficulty}
@@ -323,7 +348,7 @@ export default function WorkoutsPage() {
         <div>
           <h2 className="text-2xl font-bold text-[#1e293b] mb-4">Featured Trainers</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {trainers.map((trainer) => (
+            {getPersonalizedTrainers().map((trainer) => (
               <Card key={trainer.id} className="bg-slate-800 border-slate-700">
                 <CardContent className="p-6 text-center">
                   <div
