@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Dumbbell, Clock, Flame, Target, Play, Star, Users, TrendingUp } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 interface WorkoutPlan {
   _id: string
@@ -41,6 +42,9 @@ export default function WorkoutsPage() {
   const [selectedDay, setSelectedDay] = useState<number>(new Date().getDay() - 1) // 0=Monday
   const [weeklyPlan, setWeeklyPlan] = useState<any[]>([])
   const [selectedCategory, setSelectedCategory] = useState("all")
+  const [generating, setGenerating] = useState(false)
+  const [error, setError] = useState("")
+  const [success, setSuccess] = useState("")
 
   const workoutCategories = [
     {
@@ -139,20 +143,25 @@ export default function WorkoutsPage() {
     setLoading(true)
     try {
       // Fetch profile
-      const profileResponse = await fetch("http://localhost:3000/profile", {
+      const profileResponse = await fetch("http://localhost:5000/profile", {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (profileResponse.ok) {
         const profileData = await profileResponse.json()
         setProfile(profileData)
+      } else if (profileResponse.status === 404) {
+        setProfile(null)
       }
-      // Fetch/generate weekly workout plan
-      const planResponse = await fetch("http://localhost:3000/workout/current", {
+
+      // Fetch current workout plan
+      const planResponse = await fetch("http://localhost:5000/workout/current", {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (planResponse.ok) {
         const planData = await planResponse.json()
         setWeeklyPlan(planData.workoutDays || [])
+      } else if (planResponse.status === 404) {
+        setWeeklyPlan([])
       }
     } catch (error) {
       console.error("Error fetching data:", error)
@@ -237,6 +246,55 @@ export default function WorkoutsPage() {
     }
   };
 
+  // Generate a new weekly workout plan
+  const generateWeeklyPlan = async () => {
+    if (!profile) {
+      setError("Please complete your profile first")
+      return
+    }
+
+    setGenerating(true)
+    setError("")
+    setSuccess("")
+
+    try {
+      console.log('Sending request to generate weekly workout plan...')
+      const response = await fetch("http://localhost:5000/workout/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      console.log('Response status:', response.status)
+
+      if (!response.ok) {
+        let errorMessage = "Failed to generate workout plan"
+        try {
+          const errorData = await response.json()
+          errorMessage = errorData.error || errorMessage
+        } catch (parseError) {
+          console.error('Failed to parse error response:', parseError)
+          const text = await response.text()
+          console.error('Raw error response:', text)
+          errorMessage = `Server error (${response.status}): ${text.substring(0, 100)}`
+        }
+        throw new Error(errorMessage)
+      }
+
+      const workoutPlan = await response.json()
+      console.log('Workout plan received:', workoutPlan)
+      setWeeklyPlan(workoutPlan.workoutDays || [])
+      setSuccess("Weekly workout plan generated successfully!")
+    } catch (err: any) {
+      console.error('Error generating workout plan:', err)
+      setError(err.message)
+    } finally {
+      setGenerating(false)
+    }
+  }
+
   if (!user) return null
 
   return (
@@ -254,6 +312,66 @@ export default function WorkoutsPage() {
             </Badge>
           )}
         </motion.div>
+
+        {/* Generate Plan Button */}
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="flex justify-center mb-4">
+          <Button
+            onClick={generateWeeklyPlan}
+            disabled={generating}
+            className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-3 text-lg font-bold rounded-xl shadow-lg transition-all duration-300"
+          >
+            {generating ? "Generating..." : "Generate New Weekly Plan"}
+          </Button>
+        </motion.div>
+
+        {/* Alerts */}
+        <AnimatePresence>
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.4 }}
+            >
+              <Alert className="bg-red-500/10 border-red-500/20 text-red-400">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            </motion.div>
+          )}
+          {success && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.4 }}
+            >
+              <Alert className="bg-green-500/10 border-green-500/20 text-green-400">
+                <AlertDescription>{success}</AlertDescription>
+              </Alert>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {!profile && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <Alert className="bg-yellow-500/10 border-yellow-500/20 text-yellow-400">
+              <AlertDescription>
+                Please complete your profile to get personalized workout plans.
+                <Button
+                  variant="link"
+                  className="p-0 h-auto text-yellow-400 underline ml-2"
+                  onClick={() => router.push('/profile')}
+                >
+                  Go to Profile
+                </Button>
+              </AlertDescription>
+            </Alert>
+          </motion.div>
+        )}
 
         {/* Weekly Plan Navigation */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.2 }} className="flex justify-center gap-2 mb-4">

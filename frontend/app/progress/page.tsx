@@ -48,6 +48,7 @@ export default function ProgressPage() {
   const [loading, setLoading] = useState(true)
   const [mealChecks, setMealChecks] = useState<{ [date: string]: boolean }>({})
   const [workoutChecks, setWorkoutChecks] = useState<{ [date: string]: boolean }>({})
+  const [updating, setUpdating] = useState(false)
   useEffect(() => {
     if (!user || !token) {
       router.push("/auth/login")
@@ -121,12 +122,32 @@ export default function ProgressPage() {
     }
   }
 
-  // Handler for marking meal/workout as completed
-  const handleCheck = (type: 'meal' | 'workout', date: string) => {
+  // Handler for marking meal/workout as completed and updating backend
+  const handleCheck = async (type: 'meal' | 'workout', date: string) => {
     if (type === 'meal') {
       setMealChecks((prev) => ({ ...prev, [date]: !prev[date] }))
     } else {
       setWorkoutChecks((prev) => ({ ...prev, [date]: !prev[date] }))
+    }
+    setUpdating(true)
+    try {
+      await fetch("http://localhost:3000/progress/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          date,
+          type,
+          completed: true,
+        }),
+      })
+      await fetchAllProgress()
+    } catch (error) {
+      console.error("Error updating progress:", error)
+    } finally {
+      setUpdating(false)
     }
   }
 
@@ -177,6 +198,9 @@ export default function ProgressPage() {
         </motion.div>
 
         {/* Real-Time Progress Section */}
+        {updating && (
+          <div className="text-center text-orange-500 font-bold animate-pulse">Updating progress...</div>
+        )}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.2 }}>
           <Tabs defaultValue="overview" className="space-y-6">
             <TabsList className="bg-slate-800 border-slate-700">
