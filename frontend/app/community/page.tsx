@@ -81,6 +81,8 @@ export default function CommunityPage() {
   const [newPostDescription, setNewPostDescription] = useState("")
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string>("")
+  const [commentText, setCommentText] = useState<{ [key: string]: string }>({})
+  const [showComments, setShowComments] = useState<{ [key: string]: boolean }>({})
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -188,9 +190,9 @@ export default function CommunityPage() {
 
     const newPost: Post = {
       id: Date.now().toString(),
-      userId: user.id,
-      userName: user.name,
-      userAvatar: user.avatar || "/placeholder-user.jpg",
+      userId: user?.name || "user",
+      userName: user?.name || "User",
+      userAvatar: "/placeholder-user.jpg",
       image: imagePreview,
       description: newPostDescription,
       likes: 0,
@@ -244,6 +246,38 @@ export default function CommunityPage() {
     }))
   }
 
+  const handleAddComment = (postId: string) => {
+    const comment = commentText[postId]?.trim()
+    if (!comment) return
+
+    const newComment: Comment = {
+      id: Date.now().toString(),
+      userId: user?.name || "user",
+      userName: user?.name || "User",
+      content: comment,
+      timestamp: new Date()
+    }
+
+    setPosts(posts.map(post => {
+      if (post.id === postId) {
+        return {
+          ...post,
+          comments: [...post.comments, newComment]
+        }
+      }
+      return post
+    }))
+
+    setCommentText({ ...commentText, [postId]: "" })
+  }
+
+  const toggleComments = (postId: string) => {
+    setShowComments({
+      ...showComments,
+      [postId]: !showComments[postId]
+    })
+  }
+
   if (!user) return null
 
   return (
@@ -285,8 +319,8 @@ export default function CommunityPage() {
               <CardContent className="space-y-4">
                 <div className="flex items-start space-x-3">
                   <Avatar className="h-10 w-10">
-                    <AvatarImage src={user.avatar || "/placeholder-user.jpg"} />
-                    <AvatarFallback>{user.name?.charAt(0).toUpperCase()}</AvatarFallback>
+                    <AvatarImage src="/placeholder-user.jpg" />
+                    <AvatarFallback>{user?.name?.charAt(0).toUpperCase()}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1 space-y-3">
                     <Textarea
@@ -297,7 +331,7 @@ export default function CommunityPage() {
                     />
                     {imagePreview && (
                       <div className="relative">
-                        <img src={imagePreview} alt="Preview" className="w-full max-w-md rounded-lg" />
+                        <img src={imagePreview} alt="Preview" className="w-full max-w-xs rounded-lg" />
                         <Button
                           variant="destructive"
                           size="sm"
@@ -369,12 +403,12 @@ export default function CommunityPage() {
                       </div>
 
                       {post.image && (
-                        <img src={post.image} alt="Post" className="w-full rounded-lg mb-4" />
+                        <img src={post.image} alt="Post" className="w-full max-w-xs rounded-lg mb-4" />
                       )}
 
                       <p className="text-black mb-4">{post.description}</p>
 
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center space-x-4">
                           <Button
                             variant="ghost"
@@ -385,7 +419,12 @@ export default function CommunityPage() {
                             <Heart className={`h-4 w-4 ${post.isLiked ? 'fill-current' : ''}`} />
                             <span>{post.likes}</span>
                           </Button>
-                          <Button variant="ghost" size="sm" className="text-gray-500">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-gray-500"
+                            onClick={() => toggleComments(post.id)}
+                          >
                             <MessageCircle className="h-4 w-4 mr-1" />
                             {post.comments.length}
                           </Button>
@@ -395,6 +434,55 @@ export default function CommunityPage() {
                           </Button>
                         </div>
                       </div>
+
+                      {/* Comments Section */}
+                      {showComments[post.id] && (
+                        <div className="border-t pt-4 space-y-4">
+                          {/* Add Comment */}
+                          <div className="flex items-center space-x-2">
+                            <Avatar className="h-8 w-8">
+                              <AvatarImage src="/placeholder-user.jpg" />
+                              <AvatarFallback>{user?.name?.charAt(0).toUpperCase()}</AvatarFallback>
+                            </Avatar>
+                            <Input
+                              placeholder="Write a comment..."
+                              value={commentText[post.id] || ""}
+                              onChange={(e) => setCommentText({ ...commentText, [post.id]: e.target.value })}
+                              className="flex-1 text-sm"
+                              onKeyPress={(e) => e.key === 'Enter' && handleAddComment(post.id)}
+                            />
+                            <Button
+                              size="sm"
+                              onClick={() => handleAddComment(post.id)}
+                              disabled={!commentText[post.id]?.trim()}
+                              className="bg-primary hover:bg-primary/90 text-white"
+                            >
+                              <Send className="h-3 w-3" />
+                            </Button>
+                          </div>
+
+                          {/* Display Comments */}
+                          <div className="space-y-3">
+                            {post.comments.map((comment) => (
+                              <div key={comment.id} className="flex items-start space-x-2">
+                                <Avatar className="h-6 w-6">
+                                  <AvatarImage src="/placeholder-user.jpg" />
+                                  <AvatarFallback>{comment.userName.charAt(0).toUpperCase()}</AvatarFallback>
+                                </Avatar>
+                                <div className="flex-1 bg-gray-50 rounded-lg p-3">
+                                  <div className="flex items-center space-x-2 mb-1">
+                                    <span className="font-semibold text-sm text-black">{comment.userName}</span>
+                                    <span className="text-xs text-gray-500">
+                                      {comment.timestamp.toLocaleDateString()}
+                                    </span>
+                                  </div>
+                                  <p className="text-sm text-gray-700">{comment.content}</p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 </motion.div>
