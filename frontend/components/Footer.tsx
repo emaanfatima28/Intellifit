@@ -29,7 +29,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden mt-24">
+    <footer className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute inset-0 bg-gradient-to-r from-orange-500/5 to-purple-500/5 pointer-events-none select-none"></div>
       <div className="absolute top-0 left-0 w-64 h-64 bg-orange-500/10 rounded-full blur-3xl pointer-events-none select-none"></div>
@@ -122,6 +122,12 @@ export default function Footer() {
                   <span className="flex items-center">
                     <span className="w-2 h-2 bg-orange-400 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></span>
                     Profile Settings
+                  </span>
+                </Link>
+                <Link href="/community" className="block text-gray-300 hover:text-orange-400 transition-colors duration-200 group">
+                  <span className="flex items-center">
+                    <span className="w-2 h-2 bg-orange-400 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                    Community
                   </span>
                 </Link>
               </div>

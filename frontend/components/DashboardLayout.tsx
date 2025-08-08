@@ -16,6 +16,7 @@ import {
   LogOut,
   Menu,
   X,
+  Users,
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -26,6 +27,7 @@ const navigation = [
   { name: "Workouts", href: "/workouts", icon: Dumbbell },
   { name: "Meals", href: "/meals", icon: Apple },
   { name: "Progress", href: "/progress", icon: TrendingUp },
+  { name: "Community", href: "/community", icon: Users },
   { name: "AI Assistant", href: "/chatbot", icon: MessageCircle },
   { name: "Profile", href: "/profile", icon: User },
 ]

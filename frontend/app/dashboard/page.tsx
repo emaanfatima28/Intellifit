@@ -203,10 +203,53 @@ export default function Dashboard() {
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
         {/* Welcome Section */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Welcome back, {user.name}! 👋</h1>
-          <p className="text-gray-400">Let's crush your fitness goals today</p>
-        </div>
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ duration: 0.6 }}
+          className="mb-8"
+        >
+          <Card className="bg-gradient-to-r from-orange-500/20 via-orange-600/20 to-orange-700/20 border-orange-500/30 overflow-hidden relative">
+            {/* Background decorative elements */}
+            <div className="absolute inset-0 bg-gradient-to-r from-orange-500/5 to-purple-500/5 pointer-events-none"></div>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl pointer-events-none"></div>
+            
+            <CardContent className="p-8 relative z-10">
+              <div className="text-center">
+                <div className="flex items-center justify-center mb-4">
+                  <div className="w-16 h-16 bg-gradient-to-r from-orange-400 to-orange-600 rounded-full flex items-center justify-center mr-4">
+                    <span className="text-white text-2xl font-bold">{user.name?.charAt(0).toUpperCase()}</span>
+                  </div>
+                  <div className="text-left">
+                    <h1 className="text-4xl font-bold text-white mb-2">
+                      Welcome back, {user.name}! 👋
+                    </h1>
+                    <p className="text-black font-bold text-xl bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent tracking-wide">
+                      Let's crush your fitness goals today
+                    </p>
+                  </div>
+                </div>
+                
+                {/* Motivational stats */}
+                <div className="grid grid-cols-3 gap-6 mt-6">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-orange-400">5</div>
+                    <div className="text-gray-300 text-sm">Day Streak</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-green-400">12</div>
+                    <div className="text-gray-300 text-sm">Workouts</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-blue-400">85%</div>
+                    <div className="text-gray-300 text-sm">Goal Progress</div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
 
         {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

@@ -148,7 +148,9 @@ export default function ProfilePage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-white mb-2">Profile Settings</h1>
-            <p className="text-gray-400">Manage your personal information and fitness preferences</p>
+            <p className="text-black font-semibold text-lg bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent tracking-wide">
+              Manage your personal information and fitness preferences
+            </p>
           </div>
           <Button onClick={() => setIsEditing(!isEditing)} className="bg-orange-500 hover:bg-orange-600 text-white">
             {isEditing ? <Save className="h-4 w-4 mr-2" /> : <Edit className="h-4 w-4 mr-2" />}

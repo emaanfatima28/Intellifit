@@ -53,7 +53,7 @@ export default function ChatbotPage() {
 
   const fetchProfile = async () => {
     try {
-      const response = await fetch("http://localhost:3000/profile", {
+      const response = await fetch("http://localhost:5000/profile", {
         headers: { Authorization: `Bearer ${token}` },
       })
 

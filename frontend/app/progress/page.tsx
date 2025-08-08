@@ -186,7 +186,9 @@ export default function ProgressPage() {
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-white mb-2">Progress Tracking</h1>
-            <p className="text-gray-400">Monitor your fitness journey and achievements</p>
+            <p className="text-black font-semibold text-lg bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent tracking-wide">
+              Monitor your fitness journey and achievements
+            </p>
           </div>
           <Button className="bg-orange-500 hover:bg-orange-600 text-white">
             <Edit className="h-4 w-4 mr-2" />
