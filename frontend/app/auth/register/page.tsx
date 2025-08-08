@@ -64,29 +64,33 @@ export default function RegisterPage() {
       setLoading(false)
     }
   }
-
   return (
-    <div className="min-h-screen flex bg-gradient-to-r from-[#f8fafc] via-[#e0e7ef] to-[#f8fafc]">
+    <div className="min-h-screen flex bg-gradient-to-br from-[#f8fafc] via-[#e0e7ef] to-[#f8fafc]">
       {/* Left side - Register Form */}
-      <div className="flex flex-col justify-center items-center w-full md:w-1/2 p-8" style={{ background: 'linear-gradient(135deg, #f8fafc 60%, #e0e7ef 100%)' }}>
-        <div className="w-full max-w-md space-y-6 bg-white p-8 rounded-lg shadow-2xl border-2 border-[#2563eb]/10 mx-auto">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-[#2563eb] mb-2">Create an Account</h1>
-            <p className="text-[#64748b]">Join thousands on their fitness journey</p>
-          </div>
-          <Card className="bg-white border-[#e2e8f0] shadow-md">
+      <div className="flex flex-col justify-center items-center w-full md:w-1/2 p-8">
+        <div className="w-full max-w-md space-y-6">
+          <Card className="bg-white/95 backdrop-blur-md border border-gray-200 shadow-xl">
             <CardHeader>
-              <CardTitle className="text-[#1e293b] text-center">Sign Up</CardTitle>
+              {/* Logo inside container */}
+              <div className="flex items-center justify-center space-x-2 mb-6">
+                <div className="w-10 h-10 intellifit-gradient rounded-lg"></div>
+                <span className="text-2xl font-bold intellifit-text">IntelliFit</span>
+              </div>
+              <CardTitle className="intellifit-text text-center text-xl font-bold">Create an Account</CardTitle>
+              <p className="intellifit-secondary-text text-center text-sm">Join thousands on their fitness journey</p>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSignup} className="space-y-6">
                 {error && (
-                  <Alert className="bg-[#ef4444]/10 border-[#ef4444]/20 text-[#ef4444]">
+                  <Alert className="bg-red-50 border-red-200 text-red-600">
                     <AlertDescription>{error}</AlertDescription>
                   </Alert>
                 )}
+
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-[#2563eb] font-semibold">Full Name</Label>
+                  <Label htmlFor="name" className="intellifit-text font-medium">
+                    Full Name
+                  </Label>
                   <Input
                     id="name"
                     type="text"
@@ -94,11 +98,14 @@ export default function RegisterPage() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
-                    className="bg-[#f8fafc] border-[#2563eb]/30 text-[#1e293b] placeholder:text-[#64748b] focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]"
+                    className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
                   />
                 </div>
+
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-[#2563eb] font-semibold">Email</Label>
+                  <Label htmlFor="email" className="intellifit-text font-medium">
+                    Email
+                  </Label>
                   <Input
                     id="email"
                     type="email"
@@ -106,11 +113,14 @@ export default function RegisterPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="bg-[#f8fafc] border-[#2563eb]/30 text-[#1e293b] placeholder:text-[#64748b] focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]"
+                    className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
                   />
                 </div>
+
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-[#2563eb] font-semibold">Password</Label>
+                  <Label htmlFor="password" className="intellifit-text font-medium">
+                    Password
+                  </Label>
                   <div className="relative">
                     <Input
                       id="password"
@@ -119,19 +129,22 @@ export default function RegisterPage() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
-                      className="bg-[#f8fafc] border-[#2563eb]/30 text-[#1e293b] placeholder:text-[#64748b] pr-10 focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]"
+                      className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 pr-10 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#64748b] hover:text-[#2563eb]"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                     >
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
                 </div>
+
                 <div className="space-y-2">
-                  <Label htmlFor="confirmPassword" className="text-[#2563eb] font-semibold">Confirm Password</Label>
+                  <Label htmlFor="confirmPassword" className="intellifit-text font-medium">
+                    Confirm Password
+                  </Label>
                   <Input
                     id="confirmPassword"
                     type="password"
@@ -139,19 +152,21 @@ export default function RegisterPage() {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
-                    className="bg-[#f8fafc] border-[#2563eb]/30 text-[#1e293b] placeholder:text-[#64748b] focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]"
+                    className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
                   />
                 </div>
+
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-[#2563eb] hover:bg-[#f59e42] text-white font-semibold shadow-lg transition-colors duration-200"
+                  className="w-full intellifit-bg hover:intellifit-accent-bg intellifit-light-text font-semibold py-3 text-lg transition-all duration-200 hover:scale-105 shadow-lg"
                 >
                   {loading ? "Creating account..." : "Create Account"}
                 </Button>
+
                 <div className="text-center">
-                  <span className="text-[#64748b]">Already have an account? </span>
-                  <Link href="/auth/login" className="text-[#2563eb] hover:text-[#f59e42] font-medium">
+                  <span className="intellifit-secondary-text">Already have an account? </span>
+                  <Link href="/auth/login" className="intellifit-accent-text hover:text-orange-600 font-medium transition-colors">
                     Sign in
                   </Link>
                 </div>
@@ -160,10 +175,20 @@ export default function RegisterPage() {
           </Card>
         </div>
       </div>
+
       {/* Right side - Image */}
       <div className="hidden md:block w-1/2 relative">
-        <Image src="/ImageGenerator_A full background illust (1).png?height=800&width=600" alt="Signup Visual" fill className="object-cover rounded-l-lg shadow-lg" />
+        <Image
+          src="/ImageGenerator_Ultra-wide header compos.png"
+          alt="Signup Visual"
+          fill
+          className="object-cover rounded-l-lg shadow-lg"
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-[#1e293b]/70 to-transparent rounded-l-lg"></div>
+        <div className="absolute bottom-8 left-8 right-8 text-white">
+          <h2 className="text-3xl font-bold mb-4">Start Your Fitness Journey</h2>
+          <p className="text-lg opacity-90">Join our community and transform your life with personalized AI-powered fitness plans.</p>
+        </div>
       </div>
     </div>
   )

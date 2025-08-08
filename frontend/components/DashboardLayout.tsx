@@ -92,8 +92,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
         </div>
 
-        {/* Page content */}
-        <main className="py-8 px-4 sm:px-6 lg:px-8">{children}</main>
+        {/* Page content with bottom margin to prevent footer overlap */}
+        <main className="py-8 px-4 sm:px-6 lg:px-8 pb-32">{children}</main>
       </div>
     </div>
   )

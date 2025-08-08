@@ -6,7 +6,8 @@ import { Star, ArrowRight, CheckCircle } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { motion } from "framer-motion"
-import { useRef } from "react"
+import { useRef, useState, useEffect } from "react"
+import FoodModel3D from "./3DFoodModel"
 
 export default function LandingPage() {
   // Refs for smooth scroll
@@ -14,6 +15,24 @@ export default function LandingPage() {
   const contactRef = useRef<HTMLDivElement>(null)
   const featuresRef = useRef<HTMLDivElement>(null)
   const howItWorksRef = useRef<HTMLDivElement>(null)
+
+  // State for letter-by-letter animation
+  const [displayedText, setDisplayedText] = useState("")
+  const fullText = "Start eating healthy"
+
+  useEffect(() => {
+    let index = 0
+    const timer = setInterval(() => {
+      if (index <= fullText.length) {
+        setDisplayedText(fullText.slice(0, index))
+        index++
+      } else {
+        clearInterval(timer)
+      }
+    }, 100) // Speed of letter appearance
+
+    return () => clearInterval(timer)
+  }, [])
 
   const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => {
     if (ref.current) {
@@ -42,34 +61,64 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <motion.section initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="max-w-7xl mx-auto px-6 py-20">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+      <motion.section initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="max-w-7xl mx-auto px-6 py-20 relative overflow-hidden">
+        {/* Background decorative elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-primary/20 to-accent/20 rounded-full blur-3xl"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-blue-500/20 to-purple-500/20 rounded-full blur-3xl"></div>
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-12 items-center relative z-10">
           <motion.div initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="space-y-8">
             <div className="space-y-4">
-              <Badge className="bg-primary/10 text-primary border-primary/30 animate-pulse">✨ AI-Powered Fitness</Badge>
-              <h1 className="text-6xl font-extrabold text-[#1e293b] leading-tight drop-shadow-lg">
-                Start eating
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                <Badge className="bg-primary/10 text-primary border-primary/30 animate-pulse shadow-lg">✨ AI-Powered Fitness</Badge>
+              </motion.div>
+              <motion.h1
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="text-6xl font-extrabold text-[#1e293b] leading-tight drop-shadow-lg"
+              >
+                {displayedText}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent animate-gradient"> healthy</span>
-              </h1>
-              <p className="text-xl intellifit-secondary-text leading-relaxed">
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="text-xl intellifit-secondary-text leading-relaxed"
+              >
                 Prioritize expert advice and personalized plans to help you achieve your health and wellness goals
-              </p>
+              </motion.p>
             </div>
-            <Link href="/auth/register">
-              <Button size="lg" className="intellifit-bg hover:intellifit-accent-bg intellifit-light-text px-8 py-4 text-lg transition-transform duration-200 hover:scale-105">
-                Contact us
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+            >
+              <Link href="/auth/login">
+                <Button size="lg" className="intellifit-bg hover:intellifit-accent-bg intellifit-light-text px-8 py-4 text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl shadow-lg">
+                  Explore Now
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+            </motion.div>
           </motion.div>
-          <motion.div initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} className="relative">
-            <div className="relative w-full h-96 rounded-2xl overflow-hidden shadow-xl">
-              <Image
-                src="/placeholder.svg?height=400&width=400"
-                alt="Healthy food arrangement"
-                fill
-                className="object-cover scale-105 hover:scale-110 transition-transform duration-700"
-              />
+          <motion.div
+            initial={{ opacity: 0, x: 40, scale: 0.8 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            transition={{ delay: 0.3, duration: 0.8 }}
+            className="relative"
+          >
+            <div className="relative w-full h-96 rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-blue-500 to-purple-600 transform hover:scale-105 transition-transform duration-500">
+              <FoodModel3D />
+              {/* Glow effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-pulse"></div>
             </div>
           </motion.div>
         </div>
@@ -80,14 +129,20 @@ export default function LandingPage() {
         <h2 className="text-4xl font-bold text-[#1e293b] mb-12 text-center">Our Services</h2>
         <div className="grid md:grid-cols-3 gap-8">
           {[
-            { title: "Meal Plan", desc: "Personalized meal plans for your goals.", img: "/meal-placeholder.jpg" },
-            { title: "Workout", desc: "Custom workouts for every fitness level.", img: "/workout-placeholder.jpg" },
-            { title: "AI Assistant", desc: "Smart AI to guide your fitness journey.", img: "/ai-placeholder.jpg" },
+            { title: "Meal Plan", desc: "Personalized meal plans for your goals.", img: "/carrots-2106825_1280.jpg" },
+            { title: "Workout", desc: "Custom workouts for every fitness level.", img: "/man-2264825_1280.jpg" },
+            { title: "AI Assistant", desc: "Smart AI to guide your fitness journey.", img: "/ai-7977960_1280.jpg" },
           ].map((feature, i) => (
             <motion.div key={feature.title} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 * i }}>
               <Card className="bg-white/80 border-primary/10 shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col items-center p-6">
                 <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-primary mb-6 flex items-center justify-center bg-gray-100">
-                  <Image src={feature.img} alt={feature.title} width={128} height={128} className="object-cover" />
+                  <Image
+                    src={feature.img}
+                    alt={feature.title}
+                    width={128}
+                    height={128}
+                    className="object-cover w-full h-full"
+                  />
                 </div>
                 <h3 className="text-2xl font-bold text-[#1e293b] mb-2">{feature.title}</h3>
                 <p className="intellifit-secondary-text text-center">{feature.desc}</p>
@@ -124,11 +179,11 @@ export default function LandingPage() {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <motion.div initial={{ opacity: 0, x: -40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
             <Image
-              src="/aboutus-placeholder.jpg"
+              src="/ImageGenerator_A high-resolution, wides (11).png"
               alt="About Us"
               width={400}
               height={400}
-              className="rounded-2xl shadow-lg object-cover"
+              className="rounded-2xl shadow-lg object-cover w-full h-auto"
             />
           </motion.div>
           <motion.div initial={{ opacity: 0, x: 40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: 0.3 }}>

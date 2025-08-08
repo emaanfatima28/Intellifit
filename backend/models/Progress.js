@@ -10,4 +10,3 @@ const progressSchema = new mongoose.Schema({
   notes: String
 }, { timestamps: true });
 module.exports = mongoose.model('Progress', progressSchema);
-
