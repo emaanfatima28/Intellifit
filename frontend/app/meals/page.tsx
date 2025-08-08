@@ -8,7 +8,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import { Droplets, Plus, Target, RefreshCw, Sparkles, Calendar, Clock, Utensils, Zap, TrendingUp, Users, Star, ChefHat, Apple, Coffee, Pizza } from "lucide-react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
+import { Droplets, Plus, Target, RefreshCw, Sparkles, Calendar, Clock, Utensils, Zap, TrendingUp, Users, Star, ChefHat, Apple, Coffee, Pizza, Edit3 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
@@ -49,6 +52,13 @@ export default function MealsPage() {
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
 
+  // Dialog states
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [selectedMeal, setSelectedMeal] = useState<{ day: string; mealType: string; currentMeal: Meal } | null>(null)
+  const [userPrompt, setUserPrompt] = useState("")
+  const [updatingMeal, setUpdatingMeal] = useState(false)
+  const [updatedMeals, setUpdatedMeals] = useState<Set<string>>(new Set())
+
   const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
   const mealTimes = [
     { time: "08:00", type: "breakfast", icon: "🌅", lucideIcon: Coffee },
@@ -65,6 +75,96 @@ export default function MealsPage() {
     if (!dayPlan) return null
 
     return dayPlan.meals.find(meal => meal.type === mealType) || null
+  }
+
+  // Open change plan dialog
+  const openChangePlanDialog = (day: string, mealType: string, currentMeal: Meal) => {
+    setSelectedMeal({ day, mealType, currentMeal })
+    setUserPrompt("")
+    setIsDialogOpen(true)
+  }
+
+  // Update specific meal based on user prompt
+  const updateSpecificMeal = async () => {
+    if (!selectedMeal || !userPrompt.trim()) {
+      setError("Please provide a prompt for the meal change")
+      return
+    }
+
+    setUpdatingMeal(true)
+    setError("")
+    setSuccess("")
+
+    try {
+      console.log('Updating meal:', { day: selectedMeal.day, mealType: selectedMeal.mealType, prompt: userPrompt })
+
+      const response = await fetch("http://localhost:5000/meal/update-specific", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          prompt: userPrompt,
+          day: selectedMeal.day,
+          mealType: selectedMeal.mealType
+        }),
+      })
+
+      console.log('Response status:', response.status)
+
+      if (!response.ok) {
+        let errorMessage = "Failed to update meal"
+        try {
+          const errorData = await response.json()
+          errorMessage = errorData.message || errorData.error || errorMessage
+        } catch (parseError) {
+          console.error('Failed to parse error response:', parseError)
+          errorMessage = `Server error (${response.status})`
+        }
+        throw new Error(errorMessage)
+      }
+
+      const responseData = await response.json()
+      console.log('Response data:', responseData)
+      console.log('Current meal plan before update:', currentMealPlan)
+
+      if (responseData.success && responseData.mealPlan) {
+        console.log('Setting new meal plan:', responseData.mealPlan)
+        setCurrentMealPlan(responseData.mealPlan)
+        setSuccess(`Successfully updated ${selectedMeal.day}'s ${selectedMeal.mealType}!`)
+
+        // Track the updated meal for visual feedback
+        const mealKey = `${selectedMeal.day}-${selectedMeal.mealType}`
+        setUpdatedMeals(prev => new Set([...prev, mealKey]))
+
+        // Remove the highlight after 5 seconds
+        setTimeout(() => {
+          setUpdatedMeals(prev => {
+            const newSet = new Set(prev)
+            newSet.delete(mealKey)
+            return newSet
+          })
+        }, 5000)
+
+        // Close dialog and reset state
+        setIsDialogOpen(false)
+        setSelectedMeal(null)
+        setUserPrompt("")
+
+        // Clear success message after 3 seconds
+        setTimeout(() => {
+          setSuccess("")
+        }, 3000)
+      } else {
+        throw new Error("Invalid response format from server")
+      }
+    } catch (err: any) {
+      console.error('Error updating meal:', err)
+      setError(err.message)
+    } finally {
+      setUpdatingMeal(false)
+    }
   }
 
   // Generate new weekly meal plan
@@ -143,6 +243,11 @@ export default function MealsPage() {
     fetchData()
   }, [user, token, router])
 
+  // Debug effect to log meal plan changes
+  useEffect(() => {
+    console.log('Meal plan updated:', currentMealPlan)
+  }, [currentMealPlan])
+
   const fetchData = async () => {
     try {
       // Fetch profile to get user goals
@@ -174,7 +279,9 @@ export default function MealsPage() {
       setLoading(false)
     }
   }
+
   if (!user) return null
+
   return (
     <DashboardLayout>
       <div className="space-y-8">
@@ -333,21 +440,120 @@ export default function MealsPage() {
                 >
                   <h2 className="text-2xl font-extrabold text-orange-600 mb-4 uppercase tracking-wide">{day.day}</h2>
                   <ul className="space-y-4">
-                    {day.meals.map((meal, mIdx) => (
-                      <li key={mIdx} className="bg-orange-50 rounded-lg p-4 shadow text-gray-900 font-bold border-l-4 border-orange-400">
-                        <span className="block text-lg mb-1">
-                          <span className="font-extrabold text-orange-700">{meal.type.toUpperCase()}</span>: {meal.name}
-                        </span>
-                        <span className="block text-sm text-gray-700 font-semibold">Calories: {meal.calories}</span>
-                        <span className="block text-sm text-gray-700">{meal.ingredients?.join(", ")}</span>
-                      </li>
-                    ))}
+                    {day.meals.map((meal, mIdx) => {
+                      const mealKey = `${day.day}-${meal.type}`
+                      const isUpdated = updatedMeals.has(mealKey)
+
+                      return (
+                        <li
+                          key={mIdx}
+                          className={`rounded-lg p-4 shadow text-gray-900 font-bold border-l-4 relative group transition-all duration-300 ${isUpdated
+                              ? 'bg-green-50 border-green-400 shadow-lg scale-105'
+                              : 'bg-orange-50 border-orange-400'
+                            }`}
+                        >
+                          <span className="block text-lg mb-1">
+                            <span className={`font-extrabold ${isUpdated ? 'text-green-700' : 'text-orange-700'}`}>
+                              {meal.type.toUpperCase()}
+                            </span>: {meal.name}
+                            {isUpdated && (
+                              <span className="ml-2 text-green-600 text-sm font-normal">
+                                ✓ Updated
+                              </span>
+                            )}
+                          </span>
+                          <span className="block text-sm text-gray-700 font-semibold">Calories: {meal.calories}</span>
+                          <span className="block text-sm text-gray-700">{meal.ingredients?.join(", ")}</span>
+
+                          {/* Change Plan Button */}
+                          <Button
+                            onClick={() => openChangePlanDialog(day.day, meal.type, meal)}
+                            variant="outline"
+                            size="sm"
+                            className={`absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ${isUpdated
+                                ? 'bg-white/90 hover:bg-white border-green-300 text-green-600 hover:text-green-700'
+                                : 'bg-white/80 hover:bg-white border-orange-300 text-orange-600 hover:text-orange-700'
+                              }`}
+                          >
+                            <Edit3 className="h-3 w-3 mr-1" />
+                            Change
+                          </Button>
+                        </li>
+                      )
+                    })}
                   </ul>
                 </div>
               ))}
             </div>
           </div>
         )}
+
+        {/* Change Plan Dialog */}
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogContent className="sm:max-w-[600px]">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-bold text-orange-600">
+                Customize Your Meal
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-6">
+              {selectedMeal && (
+                <div className="bg-orange-50 rounded-lg p-4 border border-orange-200">
+                  <h3 className="font-semibold text-orange-800 mb-2">
+                    {selectedMeal.day} - {selectedMeal.mealType.toUpperCase()}
+                  </h3>
+                  <p className="text-orange-700">
+                    Current: <span className="font-medium">{selectedMeal.currentMeal.name}</span>
+                    ({selectedMeal.currentMeal.calories} calories)
+                  </p>
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <Label htmlFor="userPrompt" className="text-base font-semibold">
+                  What would you like to change about this meal?
+                </Label>
+                <Textarea
+                  id="userPrompt"
+                  placeholder="e.g., Make it vegetarian, add more protein, reduce calories, make it spicier, use different ingredients..."
+                  value={userPrompt}
+                  onChange={(e) => setUserPrompt(e.target.value)}
+                  className="min-h-[120px] resize-none"
+                />
+                <p className="text-sm text-gray-600">
+                  Be specific about your preferences, dietary restrictions, or desired changes.
+                </p>
+              </div>
+
+              <div className="flex justify-end space-x-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsDialogOpen(false)}
+                  disabled={updatingMeal}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={updateSpecificMeal}
+                  disabled={updatingMeal || !userPrompt.trim()}
+                  className="bg-orange-500 hover:bg-orange-600 text-white"
+                >
+                  {updatingMeal ? (
+                    <>
+                      <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                      Updating...
+                    </>
+                  ) : (
+                    <>
+                      <Edit3 className="h-4 w-4 mr-2" />
+                      Update Meal
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {/* --- PLAN DETAILS, AI RECOMMENDATIONS, QUICK ACTIONS (move this grid below the meal schedule) --- */}
         <div className="grid lg:grid-cols-3 gap-12">

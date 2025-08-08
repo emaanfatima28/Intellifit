@@ -159,7 +159,7 @@ export default function WorkoutsPage() {
       })
       if (planResponse.ok) {
         const planData = await planResponse.json()
-        setWeeklyPlan(planData.workoutDays || [])
+        setWeeklyPlan(planData.workoutPlan?.workoutDays || [])
       } else if (planResponse.status === 404) {
         setWeeklyPlan([])
       }
@@ -273,7 +273,14 @@ export default function WorkoutsPage() {
         let errorMessage = "Failed to generate workout plan"
         try {
           const errorData = await response.json()
-          errorMessage = errorData.error || errorMessage
+          errorMessage = errorData.message || errorData.error || errorMessage
+
+          // Handle specific error cases
+          if (errorData.error === "Incomplete profile") {
+            errorMessage = `Please complete your profile first. Missing: ${errorData.missingFields?.join(', ')}`
+          } else if (errorData.error === "User profile not found") {
+            errorMessage = "Please complete your profile first to generate a workout plan"
+          }
         } catch (parseError) {
           console.error('Failed to parse error response:', parseError)
           const text = await response.text()
@@ -283,10 +290,15 @@ export default function WorkoutsPage() {
         throw new Error(errorMessage)
       }
 
-      const workoutPlan = await response.json()
-      console.log('Workout plan received:', workoutPlan)
-      setWeeklyPlan(workoutPlan.workoutDays || [])
-      setSuccess("Weekly workout plan generated successfully!")
+      const responseData = await response.json()
+      console.log('Workout plan received:', responseData)
+
+      if (responseData.success && responseData.workoutPlan) {
+        setWeeklyPlan(responseData.workoutPlan.workoutDays || [])
+        setSuccess("Weekly workout plan generated successfully!")
+      } else {
+        throw new Error("Invalid response format from server")
+      }
     } catch (err: any) {
       console.error('Error generating workout plan:', err)
       setError(err.message)
