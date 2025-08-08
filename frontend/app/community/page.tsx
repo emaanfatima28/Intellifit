@@ -1,389 +1,508 @@
 "use client"
 
+import type React from "react"
 import { useAuth } from "@/contexts/AuthContext"
 import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { useEffect, useState, useRef } from "react"
 import DashboardLayout from "@/components/DashboardLayout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Input } from "@/components/ui/input"
-import { 
-  Users, 
-  MessageCircle, 
-  Heart, 
-  Share2, 
-  TrendingUp, 
-  Award,
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import {
+  Users,
+  Heart,
+  MessageCircle,
+  Share2,
+  Upload,
+  Trophy,
+  Target,
   Calendar,
-  MapPin,
-  Clock,
-  Star
+  Plus,
+  Image as ImageIcon,
+  Send,
+  Users2,
+  Award,
+  TrendingUp
 } from "lucide-react"
 import { motion } from "framer-motion"
+
+interface Post {
+  id: string
+  userId: string
+  userName: string
+  userAvatar: string
+  image?: string
+  description: string
+  likes: number
+  isLiked: boolean
+  comments: Comment[]
+  timestamp: Date
+}
+
+interface Comment {
+  id: string
+  userId: string
+  userName: string
+  content: string
+  timestamp: Date
+}
+
+interface Challenge {
+  id: string
+  title: string
+  description: string
+  participants: number
+  maxParticipants: number
+  endDate: Date
+  isJoined: boolean
+  image: string
+}
+
+interface Group {
+  id: string
+  name: string
+  description: string
+  members: number
+  maxMembers: number
+  isJoined: boolean
+  image: string
+}
 
 export default function CommunityPage() {
   const { user, token } = useAuth()
   const router = useRouter()
+  const [posts, setPosts] = useState<Post[]>([])
+  const [challenges, setChallenges] = useState<Challenge[]>([])
+  const [groups, setGroups] = useState<Group[]>([])
+  const [newPostDescription, setNewPostDescription] = useState("")
+  const [selectedImage, setSelectedImage] = useState<File | null>(null)
+  const [imagePreview, setImagePreview] = useState<string>("")
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (!user || !token) {
       router.push("/auth/login")
       return
     }
+
+    loadCommunityData()
   }, [user, token, router])
+
+  const loadCommunityData = () => {
+    // Mock data - replace with actual API calls
+    const mockPosts: Post[] = [
+      {
+        id: "1",
+        userId: "user1",
+        userName: "Sarah Johnson",
+        userAvatar: "/placeholder-user.jpg",
+        image: "/placeholder.jpg",
+        description: "Just completed my morning workout! 💪 30 minutes of HIIT training. Feeling energized and ready for the day!",
+        likes: 24,
+        isLiked: false,
+        comments: [
+          { id: "1", userId: "user2", userName: "Mike Chen", content: "Great job! Keep it up!", timestamp: new Date() }
+        ],
+        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000)
+      },
+      {
+        id: "2",
+        userId: "user2",
+        userName: "Mike Chen",
+        userAvatar: "/placeholder-user.jpg",
+        description: "Hit a new personal record today! Deadlifted 225lbs for 5 reps. Progress feels amazing! 🏋️‍♂️",
+        likes: 18,
+        isLiked: true,
+        comments: [],
+        timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000)
+      }
+    ]
+
+    const mockChallenges: Challenge[] = [
+      {
+        id: "1",
+        title: "30-Day Push-up Challenge",
+        description: "Complete 100 push-ups daily for 30 days. Build strength and endurance together!",
+        participants: 156,
+        maxParticipants: 200,
+        endDate: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000),
+        isJoined: false,
+        image: "/placeholder.jpg"
+      },
+      {
+        id: "2",
+        title: "Summer Body Transformation",
+        description: "12-week program to get your best summer body. Nutrition and workout guidance included.",
+        participants: 89,
+        maxParticipants: 100,
+        endDate: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
+        isJoined: true,
+        image: "/placeholder.jpg"
+      }
+    ]
+
+    const mockGroups: Group[] = [
+      {
+        id: "1",
+        name: "Weightlifting Warriors",
+        description: "A community for serious weightlifters. Share tips, progress, and motivate each other.",
+        members: 342,
+        maxMembers: 500,
+        isJoined: false,
+        image: "/placeholder.jpg"
+      },
+      {
+        id: "2",
+        name: "Yoga & Mindfulness",
+        description: "Find your inner peace through yoga and meditation. All levels welcome!",
+        members: 189,
+        maxMembers: 300,
+        isJoined: true,
+        image: "/placeholder.jpg"
+      }
+    ]
+
+    setPosts(mockPosts)
+    setChallenges(mockChallenges)
+    setGroups(mockGroups)
+  }
+
+  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file) {
+      setSelectedImage(file)
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        setImagePreview(e.target?.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const handleCreatePost = () => {
+    if (!newPostDescription.trim() && !selectedImage) return
+
+    const newPost: Post = {
+      id: Date.now().toString(),
+      userId: user.id,
+      userName: user.name,
+      userAvatar: user.avatar || "/placeholder-user.jpg",
+      image: imagePreview,
+      description: newPostDescription,
+      likes: 0,
+      isLiked: false,
+      comments: [],
+      timestamp: new Date()
+    }
+
+    setPosts([newPost, ...posts])
+    setNewPostDescription("")
+    setSelectedImage(null)
+    setImagePreview("")
+  }
+
+  const handleLikePost = (postId: string) => {
+    setPosts(posts.map(post => {
+      if (post.id === postId) {
+        return {
+          ...post,
+          likes: post.isLiked ? post.likes - 1 : post.likes + 1,
+          isLiked: !post.isLiked
+        }
+      }
+      return post
+    }))
+  }
+
+  const handleJoinChallenge = (challengeId: string) => {
+    setChallenges(challenges.map(challenge => {
+      if (challenge.id === challengeId) {
+        return {
+          ...challenge,
+          participants: challenge.isJoined ? challenge.participants - 1 : challenge.participants + 1,
+          isJoined: !challenge.isJoined
+        }
+      }
+      return challenge
+    }))
+  }
+
+  const handleJoinGroup = (groupId: string) => {
+    setGroups(groups.map(group => {
+      if (group.id === groupId) {
+        return {
+          ...group,
+          members: group.isJoined ? group.members - 1 : group.members + 1,
+          isJoined: !group.isJoined
+        }
+      }
+      return group
+    }))
+  }
 
   if (!user) return null
 
-  const communityPosts = [
-    {
-      id: 1,
-      user: {
-        name: "Sarah Johnson",
-        avatar: "/placeholder-user.jpg",
-        level: "Gold Member"
-      },
-      content: "Just completed my 30-day fitness challenge! Lost 5kg and feeling amazing. Consistency is key! 💪",
-      likes: 24,
-      comments: 8,
-      shares: 3,
-      timeAgo: "2 hours ago",
-      tags: ["Weight Loss", "Motivation"]
-    },
-    {
-      id: 2,
-      user: {
-        name: "Mike Chen",
-        avatar: "/placeholder-user.jpg",
-        level: "Silver Member"
-      },
-      content: "New personal record on bench press today! 100kg for 3 reps. The progressive overload is working wonders.",
-      likes: 18,
-      comments: 5,
-      shares: 2,
-      timeAgo: "4 hours ago",
-      tags: ["Strength Training", "PR"]
-    },
-    {
-      id: 3,
-      user: {
-        name: "Emma Davis",
-        avatar: "/placeholder-user.jpg",
-        level: "Platinum Member"
-      },
-      content: "Started my morning with a 5km run and some yoga. Perfect way to energize for the day ahead! 🌅",
-      likes: 31,
-      comments: 12,
-      shares: 7,
-      timeAgo: "6 hours ago",
-      tags: ["Cardio", "Yoga", "Morning Routine"]
-    }
-  ]
-
-  const upcomingEvents = [
-    {
-      id: 1,
-      title: "Virtual Fitness Challenge",
-      date: "Dec 15, 2024",
-      time: "10:00 AM",
-      participants: 156,
-      type: "Challenge"
-    },
-    {
-      id: 2,
-      title: "Nutrition Workshop",
-      date: "Dec 20, 2024",
-      time: "2:00 PM",
-      participants: 89,
-      type: "Workshop"
-    },
-    {
-      id: 3,
-      title: "Group Workout Session",
-      date: "Dec 22, 2024",
-      time: "9:00 AM",
-      participants: 45,
-      type: "Workout"
-    }
-  ]
-
   return (
     <DashboardLayout>
-      <div className="space-y-8">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-7xl mx-auto space-y-8 py-8"
+      >
         {/* Header */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }} 
-          animate={{ opacity: 1, y: 0 }} 
-          transition={{ duration: 0.5 }}
-          className="flex items-center justify-between"
-        >
-          <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Community</h1>
-            <p className="text-black font-semibold text-lg bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent tracking-wide">
-              Connect, share, and grow together
-            </p>
-          </div>
-          <Button className="bg-orange-500 hover:bg-orange-600 text-white">
-            <MessageCircle className="h-4 w-4 mr-2" />
-            Create Post
-          </Button>
-        </motion.div>
+        <div className="text-center space-y-4">
+          <h1 className="text-4xl font-extrabold text-black flex items-center justify-center">
+            <Users className="h-10 w-10 mr-3 text-primary" />
+            Community
+          </h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Connect, share, and grow together with fitness enthusiasts from around the world
+          </p>
+        </div>
 
-        {/* Community Stats */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }} 
-          animate={{ opacity: 1, y: 0 }} 
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="grid grid-cols-1 md:grid-cols-4 gap-6"
-        >
-          <Card className="bg-slate-800 border-slate-700">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-gray-400 text-sm">Total Members</p>
-                  <p className="text-2xl font-bold text-white">2,847</p>
-                </div>
-                <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                  <Users className="h-6 w-6 text-blue-500" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+        <Tabs defaultValue="feed" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-3 bg-gray-100">
+            <TabsTrigger value="feed" className="text-black">Feed</TabsTrigger>
+            <TabsTrigger value="challenges" className="text-black">Challenges</TabsTrigger>
+            <TabsTrigger value="groups" className="text-black">Groups</TabsTrigger>
+          </TabsList>
 
-          <Card className="bg-slate-800 border-slate-700">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-gray-400 text-sm">Active Today</p>
-                  <p className="text-2xl font-bold text-white">342</p>
-                </div>
-                <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
-                  <TrendingUp className="h-6 w-6 text-green-500" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-slate-800 border-slate-700">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-gray-400 text-sm">Posts Today</p>
-                  <p className="text-2xl font-bold text-white">156</p>
-                </div>
-                <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
-                  <MessageCircle className="h-6 w-6 text-purple-500" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-slate-800 border-slate-700">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-gray-400 text-sm">Challenges</p>
-                  <p className="text-2xl font-bold text-white">12</p>
-                </div>
-                <div className="w-12 h-12 bg-orange-500/20 rounded-lg flex items-center justify-center">
-                  <Award className="h-6 w-6 text-orange-500" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Main Content Grid */}
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Left Column - Community Feed */}
-          <div className="lg:col-span-2 space-y-6">
+          {/* Feed Tab */}
+          <TabsContent value="feed" className="space-y-6">
             {/* Create Post */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }} 
-              animate={{ opacity: 1, y: 0 }} 
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <Card className="bg-slate-800 border-slate-700">
-                <CardContent className="p-6">
-                  <div className="flex items-start space-x-4">
-                    <Avatar className="w-12 h-12">
-                      <AvatarImage src="/placeholder-user.jpg" />
-                      <AvatarFallback className="bg-orange-500 text-white">
-                        {user.name?.charAt(0).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <Input 
-                        placeholder="Share your fitness journey..." 
-                        className="bg-slate-700 border-slate-600 text-white placeholder-gray-400"
-                      />
-                      <div className="flex items-center justify-between mt-4">
-                        <div className="flex space-x-4">
-                          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
-                            📷 Photo
-                          </Button>
-                          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
-                            🏃‍♂️ Workout
-                          </Button>
-                          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
-                            🎯 Goal
-                          </Button>
-                        </div>
-                        <Button className="bg-orange-500 hover:bg-orange-600 text-white">
-                          Post
+            <Card className="bg-white shadow-lg">
+              <CardHeader>
+                <CardTitle className="text-black flex items-center">
+                  <Plus className="h-5 w-5 mr-2" />
+                  Share Your Progress
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-start space-x-3">
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src={user.avatar || "/placeholder-user.jpg"} />
+                    <AvatarFallback>{user.name?.charAt(0).toUpperCase()}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 space-y-3">
+                    <Textarea
+                      placeholder="What's your fitness achievement today? Share your progress, tips, or motivation..."
+                      value={newPostDescription}
+                      onChange={(e) => setNewPostDescription(e.target.value)}
+                      className="min-h-[100px] text-black"
+                    />
+                    {imagePreview && (
+                      <div className="relative">
+                        <img src={imagePreview} alt="Preview" className="w-full max-w-md rounded-lg" />
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedImage(null)
+                            setImagePreview("")
+                          }}
+                          className="absolute top-2 right-2"
+                        >
+                          ×
                         </Button>
                       </div>
+                    )}
+                    <div className="flex items-center justify-between">
+                      <div className="flex space-x-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => fileInputRef.current?.click()}
+                          className="text-black"
+                        >
+                          <ImageIcon className="h-4 w-4 mr-2" />
+                          Add Photo
+                        </Button>
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageSelect}
+                          className="hidden"
+                        />
+                      </div>
+                      <Button
+                        onClick={handleCreatePost}
+                        disabled={!newPostDescription.trim() && !selectedImage}
+                        className="bg-primary hover:bg-primary/90 text-white"
+                      >
+                        <Send className="h-4 w-4 mr-2" />
+                        Post
+                      </Button>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            </motion.div>
+                </div>
+              </CardContent>
+            </Card>
 
-            {/* Community Posts */}
-            {communityPosts.map((post, index) => (
-              <motion.div 
-                key={post.id}
-                initial={{ opacity: 0, y: 20 }} 
-                animate={{ opacity: 1, y: 0 }} 
-                transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
-              >
-                <Card className="bg-slate-800 border-slate-700">
-                  <CardContent className="p-6">
-                    <div className="flex items-start space-x-4">
-                      <Avatar className="w-12 h-12">
-                        <AvatarImage src={post.user.avatar} />
-                        <AvatarFallback className="bg-orange-500 text-white">
-                          {post.user.name.charAt(0).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <h3 className="text-white font-semibold">{post.user.name}</h3>
-                          <Badge className="bg-orange-500/20 text-orange-400 text-xs">
-                            {post.user.level}
-                          </Badge>
-                          <span className="text-gray-400 text-sm">• {post.timeAgo}</span>
-                        </div>
-                        <p className="text-gray-300 mb-4">{post.content}</p>
-                        <div className="flex flex-wrap gap-2 mb-4">
-                          {post.tags.map((tag, tagIndex) => (
-                            <Badge key={tagIndex} variant="secondary" className="bg-slate-700 text-gray-300">
-                              #{tag}
-                            </Badge>
-                          ))}
-                        </div>
-                        <div className="flex items-center space-x-6">
-                          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-red-400">
-                            <Heart className="h-4 w-4 mr-2" />
-                            {post.likes}
-                          </Button>
-                          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-blue-400">
-                            <MessageCircle className="h-4 w-4 mr-2" />
-                            {post.comments}
-                          </Button>
-                          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-green-400">
-                            <Share2 className="h-4 w-4 mr-2" />
-                            {post.shares}
-                          </Button>
+            {/* Posts Feed */}
+            <div className="space-y-6">
+              {posts.map((post) => (
+                <motion.div
+                  key={post.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Card className="bg-white shadow-lg">
+                    <CardContent className="p-6">
+                      <div className="flex items-start space-x-3 mb-4">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src={post.userAvatar} />
+                          <AvatarFallback>{post.userName.charAt(0).toUpperCase()}</AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-black">{post.userName}</h3>
+                          <p className="text-sm text-gray-500">
+                            {post.timestamp.toLocaleDateString()} at {post.timestamp.toLocaleTimeString()}
+                          </p>
                         </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
 
-          {/* Right Column - Events & Leaderboard */}
-          <div className="space-y-6">
-            {/* Upcoming Events */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }} 
-              animate={{ opacity: 1, y: 0 }} 
-              transition={{ duration: 0.5, delay: 0.4 }}
-            >
-              <Card className="bg-slate-800 border-slate-700">
-                <CardHeader>
-                  <CardTitle className="text-white flex items-center">
-                    <Calendar className="h-5 w-5 mr-2 text-orange-500" />
-                    Upcoming Events
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {upcomingEvents.map((event) => (
-                    <div key={event.id} className="flex items-center justify-between p-4 bg-slate-700 rounded-lg">
-                      <div>
-                        <h4 className="text-white font-medium">{event.title}</h4>
-                        <div className="flex items-center space-x-4 text-sm text-gray-400">
-                          <span className="flex items-center">
-                            <Calendar className="h-3 w-3 mr-1" />
-                            {event.date}
-                          </span>
-                          <span className="flex items-center">
-                            <Clock className="h-3 w-3 mr-1" />
-                            {event.time}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <Badge className="bg-orange-500/20 text-orange-400 mb-1">
-                          {event.type}
-                        </Badge>
-                        <p className="text-gray-400 text-sm">{event.participants} participants</p>
-                      </div>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            {/* Leaderboard */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }} 
-              animate={{ opacity: 1, y: 0 }} 
-              transition={{ duration: 0.5, delay: 0.5 }}
-            >
-              <Card className="bg-slate-800 border-slate-700">
-                <CardHeader>
-                  <CardTitle className="text-white flex items-center">
-                    <Award className="h-5 w-5 mr-2 text-yellow-500" />
-                    This Week's Leaders
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {[
-                    { name: "Emma Davis", points: 2847, rank: 1, avatar: "/placeholder-user.jpg" },
-                    { name: "Mike Chen", points: 2654, rank: 2, avatar: "/placeholder-user.jpg" },
-                    { name: "Sarah Johnson", points: 2432, rank: 3, avatar: "/placeholder-user.jpg" },
-                    { name: "Alex Rodriguez", points: 2218, rank: 4, avatar: "/placeholder-user.jpg" },
-                    { name: "Lisa Wang", points: 1987, rank: 5, avatar: "/placeholder-user.jpg" }
-                  ].map((leader, index) => (
-                    <div key={leader.rank} className="flex items-center space-x-4 p-3 bg-slate-700 rounded-lg">
-                      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-black font-bold text-sm">
-                        {leader.rank}
-                      </div>
-                      <Avatar className="w-10 h-10">
-                        <AvatarImage src={leader.avatar} />
-                        <AvatarFallback className="bg-orange-500 text-white">
-                          {leader.name.charAt(0).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <h4 className="text-white font-medium text-sm">{leader.name}</h4>
-                        <p className="text-gray-400 text-xs">{leader.points} points</p>
-                      </div>
-                      {index < 3 && (
-                        <Star className="h-4 w-4 text-yellow-500" />
+                      {post.image && (
+                        <img src={post.image} alt="Post" className="w-full rounded-lg mb-4" />
                       )}
+
+                      <p className="text-black mb-4">{post.description}</p>
+
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleLikePost(post.id)}
+                            className={`flex items-center space-x-1 ${post.isLiked ? 'text-red-500' : 'text-gray-500'}`}
+                          >
+                            <Heart className={`h-4 w-4 ${post.isLiked ? 'fill-current' : ''}`} />
+                            <span>{post.likes}</span>
+                          </Button>
+                          <Button variant="ghost" size="sm" className="text-gray-500">
+                            <MessageCircle className="h-4 w-4 mr-1" />
+                            {post.comments.length}
+                          </Button>
+                          <Button variant="ghost" size="sm" className="text-gray-500">
+                            <Share2 className="h-4 w-4 mr-1" />
+                            Share
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </TabsContent>
+
+          {/* Challenges Tab */}
+          <TabsContent value="challenges" className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-6">
+              {challenges.map((challenge) => (
+                <motion.div
+                  key={challenge.id}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Card className="bg-white shadow-lg h-full">
+                    <div className="relative">
+                      <img src={challenge.image} alt={challenge.title} className="w-full h-48 object-cover rounded-t-lg" />
+                      <Badge className="absolute top-4 right-4 bg-primary text-white">
+                        <Trophy className="h-3 w-3 mr-1" />
+                        Challenge
+                      </Badge>
                     </div>
-                  ))}
-                </CardContent>
-              </Card>
-            </motion.div>
-          </div>
-        </div>
-      </div>
+                    <CardContent className="p-6">
+                      <h3 className="text-xl font-bold text-black mb-2">{challenge.title}</h3>
+                      <p className="text-gray-600 mb-4">{challenge.description}</p>
+
+                      <div className="space-y-3 mb-4">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-gray-500">Participants:</span>
+                          <span className="text-black font-semibold">
+                            {challenge.participants}/{challenge.maxParticipants}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-gray-500">Ends:</span>
+                          <span className="text-black font-semibold">
+                            {challenge.endDate.toLocaleDateString()}
+                          </span>
+                        </div>
+                      </div>
+
+                      <Button
+                        onClick={() => handleJoinChallenge(challenge.id)}
+                        className={`w-full ${challenge.isJoined
+                          ? 'bg-gray-500 hover:bg-gray-600'
+                          : 'bg-primary hover:bg-primary/90'
+                          } text-white`}
+                      >
+                        {challenge.isJoined ? 'Leave Challenge' : 'Join Challenge'}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </TabsContent>
+
+          {/* Groups Tab */}
+          <TabsContent value="groups" className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-6">
+              {groups.map((group) => (
+                <motion.div
+                  key={group.id}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Card className="bg-white shadow-lg h-full">
+                    <div className="relative">
+                      <img src={group.image} alt={group.name} className="w-full h-48 object-cover rounded-t-lg" />
+                      <Badge className="absolute top-4 right-4 bg-secondary text-white">
+                        <Users2 className="h-3 w-3 mr-1" />
+                        Group
+                      </Badge>
+                    </div>
+                    <CardContent className="p-6">
+                      <h3 className="text-xl font-bold text-black mb-2">{group.name}</h3>
+                      <p className="text-gray-600 mb-4">{group.description}</p>
+
+                      <div className="space-y-3 mb-4">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-gray-500">Members:</span>
+                          <span className="text-black font-semibold">
+                            {group.members}/{group.maxMembers}
+                          </span>
+                        </div>
+                      </div>
+
+                      <Button
+                        onClick={() => handleJoinGroup(group.id)}
+                        className={`w-full ${group.isJoined
+                          ? 'bg-gray-500 hover:bg-gray-600'
+                          : 'bg-secondary hover:bg-secondary/90'
+                          } text-white`}
+                      >
+                        {group.isJoined ? 'Leave Group' : 'Join Group'}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
+      </motion.div>
     </DashboardLayout>
   )
 }

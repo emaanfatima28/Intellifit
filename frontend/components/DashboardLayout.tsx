@@ -153,12 +153,12 @@ function SidebarContent({
         {/* User section */}
         <div className="mt-auto space-y-2">
           <Link
-            href="/settings"
+            href="/community"
             onClick={onClose}
             className="group flex gap-x-3 rounded-md p-3 text-sm leading-6 font-semibold intellifit-light-text hover:intellifit-accent-bg hover:intellifit-accent-text transition-colors"
           >
-            <Settings className="h-5 w-5 shrink-0" />
-            Settings
+            <Users className="h-5 w-5 shrink-0" />
+            Community
           </Link>
           <button
             onClick={() => {
