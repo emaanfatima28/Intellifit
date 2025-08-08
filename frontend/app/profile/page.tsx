@@ -147,7 +147,7 @@ export default function ProfilePage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Profile Settings</h1>
+            <h1 className="text-3xl font-bold text-black mb-2">Profile Settings</h1>
             <p className="text-black font-semibold text-lg bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent tracking-wide">
               Manage your personal information and fitness preferences
             </p>
@@ -390,17 +390,15 @@ export default function ProfilePage() {
                           <div
                             key={goal.value}
                             onClick={() => handleInputChange("goal", goal.value)}
-                            className={`p-4 rounded-lg border cursor-pointer transition-colors ${
-                              formData.goal === goal.value
+                            className={`p-4 rounded-lg border cursor-pointer transition-colors ${formData.goal === goal.value
                                 ? "border-orange-500 bg-orange-500/10"
                                 : "border-slate-600 bg-slate-700 hover:border-slate-500"
-                            }`}
+                              }`}
                           >
                             <div className="flex items-center space-x-3">
                               <div
-                                className={`w-4 h-4 rounded-full border-2 ${
-                                  formData.goal === goal.value ? "border-orange-500 bg-orange-500" : "border-slate-400"
-                                }`}
+                                className={`w-4 h-4 rounded-full border-2 ${formData.goal === goal.value ? "border-orange-500 bg-orange-500" : "border-slate-400"
+                                  }`}
                               />
                               <div>
                                 <p className="text-white font-medium">{goal.label}</p>
@@ -431,19 +429,17 @@ export default function ProfilePage() {
                           <div
                             key={level.value}
                             onClick={() => handleInputChange("activityLevel", level.value)}
-                            className={`p-4 rounded-lg border cursor-pointer transition-colors ${
-                              formData.activityLevel === level.value
+                            className={`p-4 rounded-lg border cursor-pointer transition-colors ${formData.activityLevel === level.value
                                 ? "border-orange-500 bg-orange-500/10"
                                 : "border-slate-600 bg-slate-700 hover:border-slate-500"
-                            }`}
+                              }`}
                           >
                             <div className="flex items-center space-x-3">
                               <div
-                                className={`w-4 h-4 rounded-full border-2 ${
-                                  formData.activityLevel === level.value
+                                className={`w-4 h-4 rounded-full border-2 ${formData.activityLevel === level.value
                                     ? "border-orange-500 bg-orange-500"
                                     : "border-slate-400"
-                                }`}
+                                  }`}
                               />
                               <div>
                                 <p className="text-white font-medium">{level.label}</p>
@@ -545,6 +541,6 @@ export default function ProfilePage() {
         </Tabs>
       </div>
     </DashboardLayout>
-    )
+  )
 }
 

@@ -27,12 +27,12 @@ body {
   padding: 0;
 }
 
-.w-full.max-w-md.space-y-8 {
+.w-full.max-w-lg.space-y-4 {
   position: relative;
   width: 100%;
-  max-width: 24rem;
+  max-width: 32rem;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 1rem;
 }
 
 .text-center {
@@ -40,11 +40,11 @@ body {
 }
 
 /* Logo styling inside container */
-.flex.items-center.justify-center.space-x-2.mb-6 {
+.flex.items-center.justify-center.space-x-2.mb-4 {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .w-10.h-10.intellifit-gradient.rounded-lg {
@@ -145,15 +145,6 @@ body {
   padding: 0.75rem 1rem;
 }
 
-/* Demo credentials card */
-.bg-gray-50.border.border-gray-200.shadow-md {
-  background-color: rgba(249, 250, 251, 0.9);
-  border: 1px solid #e5e7eb;
-  border-radius: 0.75rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(8px);
-}
-
 /* Checkbox styling */
 .rounded.border-gray-300.text-blue-600.focus\:ring-blue-500 {
   border-radius: 0.25rem;
@@ -182,7 +173,7 @@ body {
 
 /* Responsive adjustments */
 @media (max-width: 640px) {
-  .w-full.max-w-md.space-y-8 {
+  .w-full.max-w-lg.space-y-4 {
     padding: 1rem;
     max-width: 100%;
   }

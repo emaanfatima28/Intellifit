@@ -55,11 +55,11 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-cover bg-center">
-      <div className="w-full max-w-md space-y-8">
+      <div className="w-full max-w-lg space-y-4">
         <Card className="bg-white/90 backdrop-blur-md border border-gray-200 shadow-xl">
-          <CardHeader>
+          <CardHeader className="pb-4">
             {/* Logo inside container */}
-            <div className="flex items-center justify-center space-x-2 mb-6">
+            <div className="flex items-center justify-center space-x-2 mb-4">
               <div className="w-10 h-10 intellifit-gradient rounded-lg"></div>
               <span className="text-2xl font-bold intellifit-light-text">IntelliFit</span>
             </div>
@@ -67,14 +67,14 @@ export default function LoginPage() {
             <p className="intellifit-secondary-text text-center text-sm">Sign in to your account</p>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
               {error && (
                 <Alert className="bg-red-50 border-red-200 text-red-600">
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
 
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <Label htmlFor="email" className="intellifit-text font-medium">
                   Email
                 </Label>
@@ -89,7 +89,7 @@ export default function LoginPage() {
                 />
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <Label htmlFor="password" className="intellifit-text font-medium">
                   Password
                 </Label>
@@ -144,15 +144,6 @@ export default function LoginPage() {
                 </Link>
               </div>
             </form>
-          </CardContent>
-        </Card>
-
-        {/* Demo Credentials */}
-        <Card className="bg-gray-50 border border-gray-200 shadow-md">
-          <CardContent className="p-4">
-            <p className="text-sm intellifit-text font-medium mb-2">Demo Credentials:</p>
-            <p className="text-xs intellifit-secondary-text">Admin: emaanfatima0613@gmail.com / 12345678</p>
-            <p className="text-xs intellifit-secondary-text">User: user@fitlux.com / user123</p>
           </CardContent>
         </Card>
       </div>

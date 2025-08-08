@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Star, ArrowRight, CheckCircle } from "lucide-react"
+import { Star, ArrowRight, CheckCircle, Mail, Phone, MapPin, Send, User, MessageSquare } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { motion } from "framer-motion"
@@ -200,41 +200,194 @@ export default function LandingPage() {
         </div>
       </motion.section>
 
-      {/* Contact Section */}
-      <motion.section ref={contactRef} id="contact" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }} className="max-w-7xl mx-auto px-6 py-20">
-        <div className="bg-[#1e293b] rounded-2xl shadow-xl p-10 max-w-2xl mx-auto">
-          <h2 className="text-3xl font-bold text-white mb-6 text-center">Contact Us</h2>
-          <form className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-white mb-2">First Name*</label>
-                <input type="text" className="w-full border border-primary bg-transparent text-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-400" placeholder="First Name" required />
-              </div>
-              <div>
-                <label className="block text-white mb-2">Last Name*</label>
-                <input type="text" className="w-full border border-primary bg-transparent text-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-400" placeholder="Last Name" required />
-              </div>
+      {/* Contact Section - Full Screen Right Side */}
+      <motion.section ref={contactRef} id="contact" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }} className="min-h-screen relative overflow-hidden">
+        {/* Background with gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-orange-600/20"></div>
+
+        {/* Decorative elements */}
+        <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-orange-500/5 rounded-full blur-2xl"></div>
+
+        <div className="relative z-10 min-h-screen flex items-center">
+          <div className="w-full max-w-7xl mx-auto px-6 py-20">
+            <div className="grid lg:grid-cols-2 gap-16 items-center">
+              {/* Left Side - Contact Information */}
+              <motion.div
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 }}
+                className="text-white space-y-8"
+              >
+                <div className="space-y-4">
+                  <Badge className="bg-white/10 text-white border-white/20 mb-4">GET IN TOUCH</Badge>
+                  <h2 className="text-5xl font-bold leading-tight">
+                    Let's Start Your
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400"> Fitness Journey</span>
+                  </h2>
+                  <p className="text-xl text-gray-300 leading-relaxed">
+                    Ready to transform your life? Our team of experts is here to guide you every step of the way. Reach out and let's create your personalized fitness plan together.
+                  </p>
+                </div>
+
+                {/* Contact Info Cards */}
+                <div className="space-y-6">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.3 }}
+                    className="flex items-center space-x-4 p-4 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300"
+                  >
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                      <Mail className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-white">Email Us</h4>
+                      <p className="text-gray-300">hello@intellifit.com</p>
+                    </div>
+                  </motion.div>
+
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.4 }}
+                    className="flex items-center space-x-4 p-4 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300"
+                  >
+                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
+                      <Phone className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-white">Call Us</h4>
+                      <p className="text-gray-300">+1 (555) 123-4567</p>
+                    </div>
+                  </motion.div>
+
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.5 }}
+                    className="flex items-center space-x-4 p-4 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300"
+                  >
+                    <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
+                      <MapPin className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-white">Visit Us</h4>
+                      <p className="text-gray-300">123 Fitness Street, Health City</p>
+                    </div>
+                  </motion.div>
+                </div>
+              </motion.div>
+
+              {/* Right Side - Contact Form */}
+              <motion.div
+                initial={{ opacity: 0, x: 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3 }}
+                className="lg:col-span-1"
+              >
+                <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl">
+                  <div className="text-center mb-8">
+                    <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                      <MessageSquare className="h-8 w-8 text-white" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-white mb-2">Send us a Message</h3>
+                    <p className="text-gray-300">We'd love to hear from you</p>
+                  </div>
+
+                  <form className="space-y-6">
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="block text-white font-medium text-sm">First Name*</label>
+                        <div className="relative">
+                          <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                          <input
+                            type="text"
+                            className="w-full bg-white/10 border border-white/20 text-white rounded-xl px-4 py-3 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all placeholder:text-gray-400"
+                            placeholder="John"
+                            required
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="block text-white font-medium text-sm">Last Name*</label>
+                        <div className="relative">
+                          <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                          <input
+                            type="text"
+                            className="w-full bg-white/10 border border-white/20 text-white rounded-xl px-4 py-3 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all placeholder:text-gray-400"
+                            placeholder="Doe"
+                            required
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="block text-white font-medium text-sm">Email Address*</label>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                        <input
+                          type="email"
+                          className="w-full bg-white/10 border border-white/20 text-white rounded-xl px-4 py-3 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all placeholder:text-gray-400"
+                          placeholder="john@example.com"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="block text-white font-medium text-sm">Phone</label>
+                        <div className="relative">
+                          <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                          <input
+                            type="tel"
+                            className="w-full bg-white/10 border border-white/20 text-white rounded-xl px-4 py-3 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all placeholder:text-gray-400"
+                            placeholder="+1 (555) 123-4567"
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="block text-white font-medium text-sm">Subject*</label>
+                        <input
+                          type="text"
+                          className="w-full bg-white/10 border border-white/20 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all placeholder:text-gray-400"
+                          placeholder="General Inquiry"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="block text-white font-medium text-sm">Message*</label>
+                      <textarea
+                        className="w-full bg-white/10 border border-white/20 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all placeholder:text-gray-400 resize-none"
+                        rows={4}
+                        placeholder="Tell us about your fitness goals and how we can help you achieve them..."
+                        required
+                      />
+                    </div>
+
+                    <Button
+                      type="submit"
+                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-4 text-lg font-semibold rounded-xl transition-all duration-300 hover:scale-105 shadow-lg flex items-center justify-center space-x-2"
+                    >
+                      <Send className="h-5 w-5" />
+                      <span>Send Message</span>
+                    </Button>
+                  </form>
+                </div>
+              </motion.div>
             </div>
-            <div>
-              <label className="block text-white mb-2">Email Address*</label>
-              <input type="email" className="w-full border border-primary bg-transparent text-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-400" placeholder="you@email.com" required />
-            </div>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-white mb-2">Phone*</label>
-                <input type="text" className="w-full border border-primary bg-transparent text-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-400" placeholder="Phone" required />
-              </div>
-              <div>
-                <label className="block text-white mb-2">Subject*</label>
-                <input type="text" className="w-full border border-primary bg-transparent text-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-400" placeholder="Subject" required />
-              </div>
-            </div>
-            <div>
-              <label className="block text-white mb-2">Message*</label>
-              <textarea className="w-full border border-primary bg-transparent text-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-400" rows={4} placeholder="How can we help you?" required />
-            </div>
-            <Button type="submit" className="w-full intellifit-accent-bg hover:intellifit-bg text-white py-3 text-lg transition-transform duration-200 hover:scale-105">Send Message</Button>
-          </form>
+          </div>
         </div>
       </motion.section>
     </div>
