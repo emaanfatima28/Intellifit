@@ -18,7 +18,7 @@ export default function LandingPage() {
 
   // State for letter-by-letter animation
   const [displayedText, setDisplayedText] = useState("")
-  const fullText = "Start eating healthy"
+  const fullText = "Start eating "
 
   useEffect(() => {
     let index = 0

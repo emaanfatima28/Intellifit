@@ -468,9 +468,7 @@ export default function ProgressPage() {
                     </Card>
                   </motion.div>
                 </div>
-            
             </TabsContent>
-
             {/* Progress Tab - More Charts */}
             <TabsContent value="progress" className="space-y-6">
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.8 }} className="grid lg:grid-cols-2 gap-8">
@@ -482,11 +480,25 @@ export default function ProgressPage() {
                   <CardContent>
                     <ResponsiveContainer width="100%" height={300}>
                       <LineChart data={weightData}>
+                        <defs>
+                          <linearGradient id="weightGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.8}/>
+                            <stop offset="95%" stopColor="#F59E0B" stopOpacity={0.1}/>
+                          </linearGradient>
+                        </defs>
                         <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                         <XAxis dataKey="date" stroke="#9CA3AF" />
                         <YAxis stroke="#9CA3AF" />
                         <Tooltip contentStyle={{ backgroundColor: "#1F2937", border: "1px solid #374151", borderRadius: "8px", color: "#F3F4F6" }} />
-                        <Line type="monotone" dataKey="weight" stroke="#F59E0B" strokeWidth={3} />
+                        <Line
+                          type="monotone"
+                          dataKey="weight"
+                          stroke="#F59E0B"
+                          strokeWidth={3}
+                          dot={{ r: 5, stroke: "#F59E0B", strokeWidth: 2, fill: "#fff" }}
+                          activeDot={{ r: 8 }}
+                          fill="url(#weightGradient)"
+                        />
                       </LineChart>
                     </ResponsiveContainer>
                   </CardContent>
