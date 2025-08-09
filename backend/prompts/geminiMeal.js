@@ -2,11 +2,9 @@ const axios = require("axios");
 require("dotenv").config();
 
 const generateMealPlan = async (profile, userPrompt = null, isWeekly = false) => {
-  // Check if this is a single meal request for updating
   const isSingleMealRequest = profile.singleMealRequest;
 
   if (isSingleMealRequest) {
-    // Generate a single meal based on the specific request
     const { day, mealType, userPrompt: mealPrompt } = isSingleMealRequest;
 
     const singleMealPrompt = `
@@ -52,7 +50,6 @@ Rules:
       console.log('Single meal generation response received');
       const text = response.data.candidates[0].content.parts[0].text;
 
-      // Extract JSON from the response
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         const mealData = JSON.parse(jsonMatch[0]);
@@ -67,7 +64,6 @@ Rules:
     }
   }
 
-  // Original weekly/daily meal plan generation logic
   let basePrompt = `
 Create a ${isWeekly ? 'weekly' : 'daily'} meal plan for a user with the following profile:
 - Age: ${profile.age}
@@ -145,6 +141,11 @@ ${isWeekly ? `
     console.log('Sending request to Gemini API...');
     console.log('API Key exists:', !!process.env.GEMINI_API_KEY);
 
+    if (!process.env.GEMINI_API_KEY) {
+      console.log('No GEMINI_API_KEY found, using fallback meal plan');
+      return generateFallbackMealPlan(profile, isWeekly);
+    }
+
     const response = await axios.post(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
@@ -165,7 +166,6 @@ ${isWeekly ? `
     console.log('Gemini API response received');
     const text = response.data.candidates?.[0]?.content?.parts?.[0]?.text || "";
 
-    // Extract first JSON object from the response
     const jsonMatch = text.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
       throw new Error("Model did not return JSON");
@@ -173,7 +173,6 @@ ${isWeekly ? `
 
     const data = JSON.parse(jsonMatch[0]);
 
-    // Basic validation/coercion
     if (isWeekly) {
       if (!Array.isArray(data.weeklyPlan)) throw new Error("Invalid weekly JSON");
     } else {
@@ -182,8 +181,9 @@ ${isWeekly ? `
 
     return data;
   } catch (err) {
-    console.error('Gemini parsing error:', err);
-    throw err;
+    console.error('Gemini API error:', err);
+    console.log('Using fallback meal plan due to API error');
+    return generateFallbackMealPlan(profile, isWeekly);
   }
 };
 
@@ -224,11 +224,10 @@ const generateFallbackMealPlan = (profile, isWeekly) => {
   if (isWeekly) {
     const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     const weeklyPlan = weekDays.map((day, index) => {
-      // Modify meals slightly for each day to add variety
       const dayMeals = baseMeals.map(meal => ({
         ...meal,
         name: `${meal.name} (${day})`,
-        calories: meal.calories + (index * 10), // Slight variation
+        calories: meal.calories + (index * 10),
         ingredients: [...meal.ingredients, `day-${index + 1}-special`]
       }));
 
@@ -238,9 +237,9 @@ const generateFallbackMealPlan = (profile, isWeekly) => {
       };
     });
 
-    return weeklyPlan;
+    return { weeklyPlan };
   } else {
-    return baseMeals;
+    return { meals: baseMeals };
   }
 };
 

@@ -185,15 +185,12 @@ export default function ProgressPage() {
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Progress Tracking</h1>
+            <h1 className="text-3xl font-bold text-black mb-2">Progress Tracking</h1>
             <p className="text-black font-semibold text-lg bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent tracking-wide">
               Monitor your fitness journey and achievements
             </p>
           </div>
-          <Button className="bg-orange-500 hover:bg-orange-600 text-white">
-            <Edit className="h-4 w-4 mr-2" />
-            Update Stats
-          </Button>
+          
         </motion.div>
 
         {/* Profile Header */}
@@ -320,16 +317,9 @@ export default function ProgressPage() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.25 }}>
           <Card className="bg-slate-800 border-slate-700 mb-6">
             <CardHeader>
-              <motion.h2 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-2xl font-bold text-black mb-2">Body Stats</motion.h2>
+              <motion.h2 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-2xl font-bold text-black mb-2"></motion.h2>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex justify-between"><span className="text-gray-400">Height</span><span className="text-black">{profile?.height || stats.height} cm</span></div>
-              <div className="flex justify-between"><span className="text-gray-400">Weight</span><span className="text-black">{profile?.weight || stats.weight} kg</span></div>
-              <div className="flex justify-between"><span className="text-gray-400">Age</span><span className="text-black">{profile?.age || stats.age} years</span></div>
-              <div className="flex justify-between"><span className="text-gray-400">BMI</span><span className="text-black">{stats.bmi}</span></div>
-              <div className="flex justify-between"><span className="text-gray-400">Body Fat</span><span className="text-black">{stats.bodyFat}%</span></div>
-              <div className="flex justify-between"><span className="text-gray-400">Muscle Mass</span><span className="text-black">{stats.muscleMass} kg</span></div>
-            </CardContent>
+            
           </Card>
         </motion.div>
 
@@ -352,60 +342,51 @@ export default function ProgressPage() {
                 {/* Left Column - Stats */}
                 <div className="lg:col-span-2 space-y-6">
                   {/* Workout Statistics */}
-                  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.3 }}>
-                    <Card className="bg-slate-800 border-slate-700">
-                      <CardHeader>
-                        <CardTitle className="text-white">Workout Statistics</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                          <div className="text-center">
-                            <div className="text-3xl font-bold text-orange-400 mb-2">{stats.totalWorkouts}</div>
-                            <div className="text-gray-400 text-sm">Total Workouts</div>
-                          </div>
-                          <div className="text-center">
-                            <div className="text-3xl font-bold text-blue-400 mb-2">{stats.currentStreak}</div>
-                            <div className="text-gray-400 text-sm">Current Streak</div>
-                          </div>
-                          <div className="text-center">
-                            <div className="text-3xl font-bold text-green-400 mb-2">{stats.totalHours}</div>
-                            <div className="text-gray-400 text-sm">Total Hours</div>
-                          </div>
-                          <div className="text-center">
-                            <div className="text-3xl font-bold text-purple-400 mb-2">{stats.caloriesBurned.toLocaleString()}</div>
-                            <div className="text-gray-400 text-sm">Calories Burned</div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
+               
 
-                  {/* This Week's Activity (with checkboxes) */}
+                  {/* This Week's Activity (dynamic & visually appealing) */}
                   <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.4 }}>
                     <Card className="bg-slate-800 border-slate-700">
                       <CardHeader>
                         <CardTitle className="text-white">This Week's Activity</CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <div className="space-y-4">
-                          {workoutData.map((day) => (
-                            <div key={day.day} className="flex items-center justify-between p-4 bg-slate-700 rounded-lg">
-                              <div className="flex items-center space-x-4">
-                                <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center">
-                                  <span className="text-white text-sm font-bold">{day.day}</span>
-                                </div>
-                                <div>
-                                  <p className="text-white font-medium">
-                                    {day.workouts} workout{day.workouts !== 1 ? "s" : ""}
-                                  </p>
-                                  <p className="text-gray-400 text-sm">{day.duration} minutes</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          {weekDays.map((day) => (
+                            <div key={day} className="flex flex-col bg-slate-700 rounded-xl p-4 shadow-md transition-all duration-300 hover:scale-105">
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="font-bold text-lg text-orange-300">{day.slice(0, 3)}</span>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-green-400 font-semibold">Meal</span>
+                                  <input
+                                    type="checkbox"
+                                    checked={!!mealChecks[day]}
+                                    onChange={() => handleCheck('meal', day)}
+                                    className="accent-green-500 w-5 h-5"
+                                  />
+                                  <span className="text-orange-400 font-semibold">Workout</span>
+                                  <input
+                                    type="checkbox"
+                                    checked={!!workoutChecks[day]}
+                                    onChange={() => handleCheck('workout', day)}
+                                    className="accent-orange-500 w-5 h-5"
+                                  />
                                 </div>
                               </div>
-                              <div className="flex items-center gap-2">
-                                <input type="checkbox" checked={!!workoutChecks[day.day]} onChange={() => handleCheck('workout', day.day)} className="accent-orange-500 w-5 h-5" />
-                                <div className="text-right">
-                                  <p className="text-orange-400 font-bold">{day.calories}</p>
-                                  <p className="text-gray-400 text-sm">calories</p>
+                              <div className="flex items-center gap-4 mt-2">
+                                <div className="w-full">
+                                  <div className="flex justify-between text-xs text-gray-400 mb-1">
+                                    <span>Meal</span>
+                                    <span>{mealChecks[day] ? "Completed" : "Pending"}</span>
+                                  </div>
+                                  <Progress value={mealChecks[day] ? 100 : 0} className="h-2 bg-slate-600" />
+                                </div>
+                                <div className="w-full">
+                                  <div className="flex justify-between text-xs text-gray-400 mb-1">
+                                    <span>Workout</span>
+                                    <span>{workoutChecks[day] ? "Completed" : "Pending"}</span>
+                                  </div>
+                                  <Progress value={workoutChecks[day] ? 100 : 0} className="h-2 bg-slate-600" />
                                 </div>
                               </div>
                             </div>
@@ -453,23 +434,7 @@ export default function ProgressPage() {
                 </div>
 
                 {/* Right Column - Body Stats & Goals */}
-                <div className="space-y-6">
-                  {/* Body Stats */}
-                  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.6 }}>
-                    <Card className="bg-slate-800 border-slate-700">
-                      <CardHeader>
-                        <CardTitle className="text-white">Body Stats</CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <div className="flex justify-between"><span className="text-gray-400">Height</span><span className="text-white">{profile?.height || stats.height} cm</span></div>
-                        <div className="flex justify-between"><span className="text-gray-400">Weight</span><span className="text-white">{profile?.weight || stats.weight} kg</span></div>
-                        <div className="flex justify-between"><span className="text-gray-400">Age</span><span className="text-white">{profile?.age || stats.age} years</span></div>
-                        <div className="flex justify-between"><span className="text-gray-400">BMI</span><span className="text-white">{stats.bmi}</span></div>
-                        <div className="flex justify-between"><span className="text-gray-400">Body Fat</span><span className="text-white">{stats.bodyFat}%</span></div>
-                        <div className="flex justify-between"><span className="text-gray-400">Muscle Mass</span><span className="text-white">{stats.muscleMass} kg</span></div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
+                
 
                   {/* Current Goals */}
                   <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.7 }}>
@@ -503,7 +468,7 @@ export default function ProgressPage() {
                     </Card>
                   </motion.div>
                 </div>
-              </div>
+            
             </TabsContent>
 
             {/* Progress Tab - More Charts */}

@@ -1,7 +1,7 @@
 const MealPlan = require('../models/Meal');
 const Profile = require('../models/Profile');
 const generateMealPlan = require('../prompts/geminiMeal');
-const axios = require('axios'); // Added axios for Gemini API call
+const axios = require('axios');
 
 const createMealPlan = async (req, res) => {
   try {
@@ -14,7 +14,8 @@ const createMealPlan = async (req, res) => {
     }
 
     if (planType === 'weekly') {
-      const weeklyPlan = await generateMealPlan(profile, null, true);
+      const result = await generateMealPlan(profile, null, true);
+      const weeklyPlan = result.weeklyPlan;
 
       const mealPlan = await MealPlan.create({
         userId,
@@ -25,7 +26,8 @@ const createMealPlan = async (req, res) => {
 
       return res.status(201).json(mealPlan);
     } else {
-      const meals = await generateMealPlan(profile, null, false);
+      const result = await generateMealPlan(profile, null, false);
+      const meals = result.meals;
 
       const mealPlan = await MealPlan.create({
         userId,
@@ -81,7 +83,6 @@ const updateSpecificMeal = async (req, res) => {
       });
     }
 
-    // Find latest plan
     const existingPlan = await MealPlan.findOne({ userId }).sort({ createdAt: -1 }).limit(1);
     if (!existingPlan) {
       return res.status(404).json({
@@ -97,7 +98,6 @@ const updateSpecificMeal = async (req, res) => {
       });
     }
 
-    // Build AI request for a single meal
     const specificPrompt = `Generate ONLY ONE meal for ${day}'s ${mealType}. Keep name concise (max 60 chars, 4-7 words). Use realistic calories and macros. Ingredients should be 4-8 common items. User request: ${prompt}. Return strict JSON only.`;
 
     let newMeal;
@@ -107,22 +107,21 @@ const updateSpecificMeal = async (req, res) => {
         singleMealRequest: { day, mealType, userPrompt: prompt },
       };
 
-      const generated = await generateMealPlan(tempProfile, specificPrompt, false);
+      const result = await generateMealPlan(tempProfile, specificPrompt, false);
+      const generated = result.meals;
 
-      if (!generated || !Array.isArray(generated.meals) || generated.meals.length === 0) {
+      if (!generated || !Array.isArray(generated) || generated.length === 0) {
         return res.status(502).json({
           error: "Generation failed",
           message: "Could not generate a new meal. Please try again.",
         });
       }
 
-      // Prefer matching type; otherwise take first and coerce type
-      newMeal = generated.meals.find((m) => m.type === mealType) || {
-        ...generated.meals[0],
+      newMeal = generated.find((m) => m.type === mealType) || {
+        ...generated[0],
         type: mealType,
       };
 
-      // Sanitize/validate
       const safeNumber = (v, fallback) => (Number.isFinite(Number(v)) ? Number(v) : fallback);
 
       const forbidPhrases = [
@@ -172,7 +171,6 @@ const updateSpecificMeal = async (req, res) => {
       });
     }
 
-    // Locate day/meal indices
     const dayIndex = existingPlan.weeklyPlan.findIndex((d) => d.day === day);
     if (dayIndex === -1) {
       return res.status(400).json({ error: "Invalid day", message: "Specified day not found in meal plan" });
@@ -182,7 +180,6 @@ const updateSpecificMeal = async (req, res) => {
       return res.status(400).json({ error: "Invalid meal type", message: "Specified meal type not found for this day" });
     }
 
-    // Persist update
     existingPlan.weeklyPlan[dayIndex].meals[mealIndex] = newMeal;
     existingPlan.date = new Date();
     await existingPlan.save();
@@ -223,10 +220,10 @@ const updateMealPlan = async (req, res) => {
 
     console.log(`Updating meal plan for user ${userId} with prompt: ${prompt}`);
 
-    // Generate new meal plan based on user prompt
     let updatedMeals;
     try {
-      updatedMeals = await generateMealPlan(profile, prompt, false);
+      const result = await generateMealPlan(profile, prompt, false);
+      updatedMeals = result.meals;
     } catch (genError) {
       console.error('Meal generation error:', genError);
       return res.status(500).json({
@@ -235,27 +232,23 @@ const updateMealPlan = async (req, res) => {
       });
     }
 
-    // Find existing meal plan
     const existingPlan = await MealPlan.findOne({ userId })
       .sort({ createdAt: -1 })
       .limit(1);
 
     let updatedPlan;
     if (existingPlan) {
-      // Update existing plan
       if (existingPlan.planType === 'weekly') {
-        // For weekly plans, we need to update the specific meal mentioned in the prompt
-        // This is a simplified approach - in a real app you'd parse the prompt to identify the specific meal
-        existingPlan.weeklyPlan = await generateMealPlan(profile, prompt, true);
+
+        const result = await generateMealPlan(profile, prompt, true);
+        existingPlan.weeklyPlan = result.weeklyPlan;
       } else {
-        // For daily plans, update the meals
         existingPlan.meals = updatedMeals;
       }
       existingPlan.date = new Date();
       await existingPlan.save();
       updatedPlan = existingPlan;
     } else {
-      // Create new plan if none exists
       updatedPlan = await MealPlan.create({
         userId,
         date: new Date(),
@@ -296,10 +289,15 @@ const generateWeeklyMealPlan = async (req, res) => {
 
     console.log('Profile found:', profile);
 
-    const weeklyPlan = await generateMealPlan(profile, userPrompt, true);
-    console.log('Weekly plan generated:', weeklyPlan);
+    const result = await generateMealPlan(profile, userPrompt, true);
+    console.log('Weekly plan generated:', result);
 
-    // Check if user already has a weekly plan
+    const weeklyPlan = result.weeklyPlan;
+    if (!weeklyPlan) {
+      console.error('No weeklyPlan in result:', result);
+      return res.status(500).json({ error: 'Failed to generate weekly meal plan structure' });
+    }
+
     const existingPlan = await MealPlan.findOne({
       userId,
       planType: 'weekly'

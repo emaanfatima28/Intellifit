@@ -67,7 +67,6 @@ export default function MealsPage() {
     { time: "19:00", type: "dinner", icon: "🌙", lucideIcon: ChefHat },
   ]
 
-  // Get meal for specific day and meal type from weekly plan
   const getMealForDay = (day: string, mealType: string) => {
     if (!currentMealPlan?.weeklyPlan) return null
 
@@ -77,14 +76,12 @@ export default function MealsPage() {
     return dayPlan.meals.find(meal => meal.type === mealType) || null
   }
 
-  // Open change plan dialog
   const openChangePlanDialog = (day: string, mealType: string, currentMeal: Meal) => {
     setSelectedMeal({ day, mealType, currentMeal })
     setUserPrompt("")
     setIsDialogOpen(true)
   }
 
-  // Update specific meal based on user prompt
   const updateSpecificMeal = async () => {
     if (!selectedMeal || !userPrompt.trim()) {
       setError("Please provide a prompt for the meal change")
@@ -134,11 +131,9 @@ export default function MealsPage() {
         setCurrentMealPlan(responseData.mealPlan)
         setSuccess(`Successfully updated ${selectedMeal.day}'s ${selectedMeal.mealType}!`)
 
-        // Track the updated meal for visual feedback
         const mealKey = `${selectedMeal.day}-${selectedMeal.mealType}`
         setUpdatedMeals(prev => new Set([...prev, mealKey]))
 
-        // Remove the highlight after 5 seconds
         setTimeout(() => {
           setUpdatedMeals(prev => {
             const newSet = new Set(prev)
@@ -147,12 +142,10 @@ export default function MealsPage() {
           })
         }, 5000)
 
-        // Close dialog and reset state
         setIsDialogOpen(false)
         setSelectedMeal(null)
         setUserPrompt("")
 
-        // Clear success message after 3 seconds
         setTimeout(() => {
           setSuccess("")
         }, 3000)
@@ -167,7 +160,6 @@ export default function MealsPage() {
     }
   }
 
-  // Generate new weekly meal plan
   const generateWeeklyMealPlan = async () => {
     if (!profile) {
       setError("Please complete your profile first")
@@ -195,7 +187,7 @@ export default function MealsPage() {
         let errorMessage = "Failed to generate meal plan"
         try {
           const errorData = await response.json()
-          errorMessage = errorData.error || errorMessage
+          errorMessage = errorData.error || errorData.message || errorMessage
         } catch (parseError) {
           console.error('Failed to parse error response:', parseError)
           const text = await response.text()
@@ -243,14 +235,12 @@ export default function MealsPage() {
     fetchData()
   }, [user, token, router])
 
-  // Debug effect to log meal plan changes
   useEffect(() => {
     console.log('Meal plan updated:', currentMealPlan)
   }, [currentMealPlan])
 
   const fetchData = async () => {
     try {
-      // Fetch profile to get user goals
       const profileResponse = await fetch("http://localhost:5000/profile", {
         headers: { Authorization: `Bearer ${token}` },
       })
@@ -262,7 +252,6 @@ export default function MealsPage() {
         setProfile(null)
       }
 
-      // Fetch current meal plan
       const mealResponse = await fetch("http://localhost:5000/meal/current", {
         headers: { Authorization: `Bearer ${token}` },
       })
@@ -285,7 +274,7 @@ export default function MealsPage() {
   return (
     <DashboardLayout>
       <div className="space-y-8">
-        {/* Hero Header Section - Enhanced */}
+        { }
         <motion.div
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -379,7 +368,7 @@ export default function MealsPage() {
           </div>
         </motion.div>
 
-        {/* Alerts */}
+        { }
         <AnimatePresence>
           {error && (
             <motion.div
