@@ -10,31 +10,20 @@ const generateMealPlan = async (profile, userPrompt = null, isWeekly = false) =>
     const { day, mealType, userPrompt: mealPrompt } = isSingleMealRequest;
 
     const singleMealPrompt = `
-Create a single meal for ${day}'s ${mealType} based on the user's request: "${mealPrompt}"
-
-User Profile:
-- Age: ${profile.age}
-- Gender: ${profile.gender}
-- Height: ${profile.height} cm
-- Weight: ${profile.weight} kg
-- Goal: ${profile.goal}
-- Activity Level: ${profile.activityLevel}
-
-Generate ONLY ONE meal that:
-1. Fits the user's specific request: "${mealPrompt}"
-2. Is appropriate for ${mealType}
-3. Maintains nutritional balance
-4. Suits the user's profile and goals
-
-Respond ONLY in the following JSON format:
+Create a single meal for ${day}'s ${mealType} that fulfills: "${mealPrompt}".
+Rules:
+- Name: concise (max 60 chars), Title Case, 4–7 words, DO NOT include words like "Custom" or "Placeholder" and DO NOT echo the request text.
+- Calories/macros: realistic values for ${mealType}.
+- Ingredients: 4–8 specific, real ingredients only (no generic phrases like "custom ingredients", "based on request", or restating the prompt).
+- Return STRICT JSON only with the following shape:
 {
   "meals": [
     {
       "type": "${mealType}",
-      "name": "Creative meal name",
+      "name": "Concise Title Case Name",
       "calories": 300,
       "macros": { "protein": 20, "carbs": 30, "fat": 15 },
-      "ingredients": ["ingredient1", "ingredient2", "ingredient3"]
+      "ingredients": ["ingredient1", "ingredient2", "ingredient3", "ingredient4"]
     }
   ]
 }

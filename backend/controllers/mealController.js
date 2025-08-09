@@ -124,7 +124,27 @@ const updateSpecificMeal = async (req, res) => {
 
       // Sanitize/validate
       const safeNumber = (v, fallback) => (Number.isFinite(Number(v)) ? Number(v) : fallback);
-      newMeal.name = String(newMeal.name || "").slice(0, 60).trim();
+
+      const forbidPhrases = [
+        'custom',
+        'placeholder',
+        'based on request',
+        'make it',
+        String(prompt).toLowerCase(),
+      ].filter(Boolean);
+
+      const cleanse = (text) => {
+        let s = String(text || '').trim();
+        const lower = s.toLowerCase();
+        forbidPhrases.forEach((p) => {
+          if (!p) return;
+          const re = new RegExp(p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+          s = s.replace(re, '').replace(/\s{2,}/g, ' ').trim();
+        });
+        return s;
+      };
+
+      newMeal.name = cleanse(newMeal.name).slice(0, 60);
       newMeal.type = mealType;
       newMeal.calories = safeNumber(newMeal.calories, 350);
       const macros = newMeal.macros || {};
@@ -134,11 +154,11 @@ const updateSpecificMeal = async (req, res) => {
         fat: safeNumber(macros.fat, 15),
       };
       newMeal.ingredients = (Array.isArray(newMeal.ingredients) ? newMeal.ingredients : [])
-        .map((i) => String(i).trim())
-        .filter(Boolean)
+        .map((i) => cleanse(i))
+        .filter((i) => i && !/custom|placeholder/i.test(i))
         .slice(0, 8);
 
-      if (!newMeal.name) {
+      if (!newMeal.name || newMeal.ingredients.length === 0) {
         return res.status(502).json({
           error: "Invalid generation",
           message: "Generated meal was invalid. Please try again.",
