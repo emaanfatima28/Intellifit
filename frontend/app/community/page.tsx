@@ -143,7 +143,7 @@ export default function CommunityPage() {
         maxParticipants: 100,
         endDate: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
         isJoined: true,
-        image: "/placeholder.jpg"
+        image: "/sports-2262083_1280.jpg"
       }
     ]
 
@@ -155,7 +155,7 @@ export default function CommunityPage() {
         members: 342,
         maxMembers: 500,
         isJoined: false,
-        image: "/placeholder.jpg"
+        image: "/man-1282232_1280.jpg"
       },
       {
         id: "2",
@@ -164,7 +164,7 @@ export default function CommunityPage() {
         members: 189,
         maxMembers: 300,
         isJoined: true,
-        image: "/placeholder.jpg"
+        image: "/woman-3053492_1280.jpg"
       }
     ]
 
