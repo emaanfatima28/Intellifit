@@ -100,9 +100,9 @@ export default function CommunityPage() {
       {
         id: "1",
         userId: "user1",
-        userName: "Sarah Johnson",
+        userName: "Sarah ",
         userAvatar: "/placeholder-user.jpg",
-        image: "/placeholder.jpg",
+        image: "/woman-1284656_1280.jpg",
         description: "Just completed my morning workout! 💪 30 minutes of HIIT training. Feeling energized and ready for the day!",
         likes: 24,
         isLiked: false,
@@ -133,7 +133,7 @@ export default function CommunityPage() {
         maxParticipants: 200,
         endDate: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000),
         isJoined: false,
-        image: "/placeholder.jpg"
+        image: "/man-2264825_1280.jpg"
       },
       {
         id: "2",
