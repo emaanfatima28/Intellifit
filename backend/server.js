@@ -43,17 +43,6 @@ app.use("/chatbot", chatbotRoutes);
 app.use("/admin", adminRoutes);
 
 // Error handling middleware
-app.use((err, req, res, next) => {
-  console.error("Error:", err);
-
-  const isDevelopment = process.env.NODE_ENV === "development";
-
-  res.status(err.status || 500).json({
-    error: err.name || "Internal server error",
-    message: err.message || "Something went wrong",
-    ...(isDevelopment && { stack: err.stack }),
-  });
-});
 
 // 404 handler for API
 app.use("/api/*", (req, res) => {
@@ -61,21 +50,14 @@ app.use("/api/*", (req, res) => {
 });
 
 // Prepare Next.js and start server
-appNext.prepare().then(() => {
-  // Handle all other routes with Next.js
-  app.all("*", (req, res) => {
-    return handle(req, res);
-  });
-
-  mongoose
-    .connect(process.env.MONGODB_URI)
-    .then(() => {
-      console.log("Connected to MongoDB");
-      app.listen(PORT, () => {
-        console.log(`Server running on http://localhost:${PORT}`);
-      });
-    })
-    .catch((err) => {
-      console.error("MongoDB connection error:", err);
+mongoose
+  .connect(process.env.MONGODB_URI)
+  .then(() => {
+    console.log("Connected to MongoDB");
+    app.listen(PORT, () => {
+      console.log(`Server running on http://localhost:${PORT}`);
     });
-});
+  })
+  .catch((err) => {
+    console.error("MongoDB connection error:", err);
+  });
