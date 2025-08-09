@@ -13,15 +13,18 @@ import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Edit, Save, User, Target, Settings } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
 
 export default function ProfilePage() {
   const { user, token } = useAuth()
+  const { toast } = useToast()
   const router = useRouter()
   const [profile, setProfile] = useState<any>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
+  const [activeTab, setActiveTab] = useState<string>("personal")
 
   const [formData, setFormData] = useState({
     age: "",
@@ -69,6 +72,10 @@ export default function ProfilePage() {
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
+    if (field === "weight") {
+      // Move to Fitness Goals tab after entering weight
+      setActiveTab("fitness")
+    }
   }
 
   const handleSave = async () => {
@@ -116,6 +123,7 @@ export default function ProfilePage() {
       setProfile(data)
       setIsEditing(false)
       setSuccess("Profile updated successfully!")
+      toast({ title: "Profile Updated", description: "Your profile has been saved." })
     } catch (err: any) {
       setError(err.message)
     } finally {
@@ -170,7 +178,7 @@ export default function ProfilePage() {
           </Alert>
         )}
 
-        <Tabs defaultValue="personal" className="space-y-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="bg-slate-800 border-slate-700">
             <TabsTrigger value="personal" className="data-[state=active]:bg-orange-500">
               <User className="h-4 w-4 mr-2" />
@@ -391,8 +399,8 @@ export default function ProfilePage() {
                             key={goal.value}
                             onClick={() => handleInputChange("goal", goal.value)}
                             className={`p-4 rounded-lg border cursor-pointer transition-colors ${formData.goal === goal.value
-                                ? "border-orange-500 bg-orange-500/10"
-                                : "border-slate-600 bg-slate-700 hover:border-slate-500"
+                              ? "border-orange-500 bg-orange-500/10"
+                              : "border-slate-600 bg-slate-700 hover:border-slate-500"
                               }`}
                           >
                             <div className="flex items-center space-x-3">
@@ -430,15 +438,15 @@ export default function ProfilePage() {
                             key={level.value}
                             onClick={() => handleInputChange("activityLevel", level.value)}
                             className={`p-4 rounded-lg border cursor-pointer transition-colors ${formData.activityLevel === level.value
-                                ? "border-orange-500 bg-orange-500/10"
-                                : "border-slate-600 bg-slate-700 hover:border-slate-500"
+                              ? "border-orange-500 bg-orange-500/10"
+                              : "border-slate-600 bg-slate-700 hover:border-slate-500"
                               }`}
                           >
                             <div className="flex items-center space-x-3">
                               <div
                                 className={`w-4 h-4 rounded-full border-2 ${formData.activityLevel === level.value
-                                    ? "border-orange-500 bg-orange-500"
-                                    : "border-slate-400"
+                                  ? "border-orange-500 bg-orange-500"
+                                  : "border-slate-400"
                                   }`}
                               />
                               <div>

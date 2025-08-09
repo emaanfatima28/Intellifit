@@ -25,14 +25,19 @@ export default function Dashboard() {
   const [profile, setProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [showProfileModal, setShowProfileModal] = useState(false)
+  const [progress, setProgress] = useState<any[]>([])
+  const [workoutPlan, setWorkoutPlan] = useState<any | null>(null)
+  const [streak, setStreak] = useState<number>(0)
+  const [workoutsThisWeek, setWorkoutsThisWeek] = useState<number>(0)
+  const [minutesThisWeek, setMinutesThisWeek] = useState<number>(0)
+  const [goalPct, setGoalPct] = useState<number>(0)
 
   useEffect(() => {
-    if (!user || !token) {
-      router.push("/auth/login")
-      return
-    }
+    if (!user || !token) return
     fetchProfile()
-  }, [user, token, router])
+    fetchProgress()
+    fetchWorkout()
+  }, [user, token])
 
   const fetchProfile = async () => {
     try {
@@ -60,6 +65,63 @@ export default function Dashboard() {
       setLoading(false)
     }
   }
+
+  const fetchProgress = async () => {
+    try {
+      const res = await fetch(`http://localhost:5000/progress?userId=${user?._id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (res.ok) {
+        const data = await res.json()
+        setProgress(data)
+        // naive streak: count last consecutive days with any progress entry
+        const dates = [...data]
+          .map((p: any) => new Date(p.date).toDateString())
+          .filter(Boolean)
+        let s = 0
+        const today = new Date()
+        for (let i = 0; i < 30; i++) {
+          const d = new Date(today)
+          d.setDate(today.getDate() - i)
+          if (dates.includes(d.toDateString())) s++
+          else break
+        }
+        setStreak(s)
+        // goal progress proxy: compare latest weight vs profile weight target (if goal is weight_loss just show 85% when trend improving)
+      }
+    } catch (e) { /* ignore */ }
+  }
+
+  const fetchWorkout = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/workouts/current", { headers: { Authorization: `Bearer ${token}` } })
+      if (res.ok) {
+        const { workoutPlan } = await res.json()
+        setWorkoutPlan(workoutPlan)
+        // compute weekly stats
+        const week = workoutPlan?.workoutDays || []
+        setWorkoutsThisWeek(week.filter((d: any) => (d.exercises || []).length > 0).length)
+        setMinutesThisWeek(week.reduce((acc: number, d: any) => acc + (d.exercises || []).length * 5, 0))
+      }
+    } catch (e) { /* ignore */ }
+  }
+
+  useEffect(() => {
+    // simple goal progress proxy from profile + progress trend
+    if (!profile) return
+    const latest = progress?.[progress.length - 1]
+    let pct = 0
+    if (profile.goal === 'weight_loss' && latest?.weight && profile?.weight) {
+      const delta = profile.weight - latest.weight
+      pct = Math.max(0, Math.min(100, Math.round((delta / Math.max(1, profile.weight * 0.1)) * 100)))
+    } else if (profile.goal === 'muscle_gain' && latest?.weight && profile?.weight) {
+      const delta = latest.weight - profile.weight
+      pct = Math.max(0, Math.min(100, Math.round((delta / Math.max(1, profile.weight * 0.1)) * 100)))
+    } else {
+      pct = 50
+    }
+    setGoalPct(pct)
+  }, [profile, progress])
 
   if (!user) return null
 
@@ -234,15 +296,15 @@ export default function Dashboard() {
                 {/* Motivational stats */}
                 <div className="grid grid-cols-3 gap-6 mt-6">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-orange-400">5</div>
+                    <div className="text-2xl font-bold text-orange-400">{streak}</div>
                     <div className="text-gray-300 text-sm">Day Streak</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-green-400">12</div>
+                    <div className="text-2xl font-bold text-green-400">{workoutsThisWeek}</div>
                     <div className="text-gray-300 text-sm">Workouts</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-400">85%</div>
+                    <div className="text-2xl font-bold text-blue-400">{goalPct}%</div>
                     <div className="text-gray-300 text-sm">Goal Progress</div>
                   </div>
                 </div>
@@ -291,7 +353,7 @@ export default function Dashboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-400 text-sm">Workouts This Week</p>
-                    <p className="text-2xl font-bold text-white">3/5</p>
+                    <p className="text-2xl font-bold text-white">{workoutsThisWeek}/7</p>
                   </div>
                   <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
                     <Calendar className="h-6 w-6 text-green-500" />
@@ -307,7 +369,7 @@ export default function Dashboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-400 text-sm">Total Time</p>
-                    <p className="text-2xl font-bold text-white">2.5h</p>
+                    <p className="text-2xl font-bold text-white">{(minutesThisWeek / 60).toFixed(1)}h</p>
                   </div>
                   <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
                     <Clock className="h-6 w-6 text-purple-500" />
@@ -336,7 +398,7 @@ export default function Dashboard() {
                     <div className="flex items-center justify-between p-4 bg-slate-700 rounded-lg">
                       <div>
                         <p className="text-white font-medium">Upper Body Strength</p>
-                        <p className="text-gray-400 text-sm">45 minutes • 8 exercises</p>
+                        <p className="text-gray-400 text-sm">{workoutPlan ? `${(workoutPlan.workoutDays?.[0]?.exercises?.length || 8)} exercises` : '—'}</p>
                       </div>
                       <Button className="bg-orange-500 hover:bg-orange-600 text-white">
                         Start Workout
@@ -391,7 +453,7 @@ export default function Dashboard() {
                         <p className="text-white font-medium">Calories Burned</p>
                         <p className="text-gray-400 text-sm">This week</p>
                       </div>
-                      <Badge className="bg-orange-500/20 text-orange-400">1,250 cal</Badge>
+                      <Badge className="bg-orange-500/20 text-orange-400">{minutesThisWeek * 5} cal</Badge>
                     </div>
                   </div>
                 </CardContent>

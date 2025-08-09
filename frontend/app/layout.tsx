@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { AuthProvider } from '@/contexts/AuthContext'
 import FooterWrapper from "@/components/FooterWrapper"
+import { Toaster } from "@/components/ui/toaster"
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -23,6 +24,7 @@ export default function RootLayout({
           <main className="flex-1">
             {children}
           </main>
+          <Toaster />
         </AuthProvider>
         <FooterWrapper />
       </body>
