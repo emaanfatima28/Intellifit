@@ -136,10 +136,10 @@ export default function Footer() {
                     Profile Settings
                   </span>
                 </Link>
-                <Link href="/community" className="block text-gray-300 hover:text-orange-400 transition-colors duration-200 group">
+                <Link href="/dashboard" className="block text-gray-300 hover:text-orange-400 transition-colors duration-200 group">
                   <span className="flex items-center">
                     <span className="w-2 h-2 bg-orange-400 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                    Community
+                    Dashboard
                   </span>
                 </Link>
               </div>

@@ -2,6 +2,83 @@ const axios = require("axios");
 require("dotenv").config();
 
 const generateMealPlan = async (profile, userPrompt = null, isWeekly = false) => {
+  // Check if this is a single meal request for updating
+  const isSingleMealRequest = profile.singleMealRequest;
+
+  if (isSingleMealRequest) {
+    // Generate a single meal based on the specific request
+    const { day, mealType, userPrompt: mealPrompt } = isSingleMealRequest;
+
+    const singleMealPrompt = `
+Create a single meal for ${day}'s ${mealType} based on the user's request: "${mealPrompt}"
+
+User Profile:
+- Age: ${profile.age}
+- Gender: ${profile.gender}
+- Height: ${profile.height} cm
+- Weight: ${profile.weight} kg
+- Goal: ${profile.goal}
+- Activity Level: ${profile.activityLevel}
+
+Generate ONLY ONE meal that:
+1. Fits the user's specific request: "${mealPrompt}"
+2. Is appropriate for ${mealType}
+3. Maintains nutritional balance
+4. Suits the user's profile and goals
+
+Respond ONLY in the following JSON format:
+{
+  "meals": [
+    {
+      "type": "${mealType}",
+      "name": "Creative meal name",
+      "calories": 300,
+      "macros": { "protein": 20, "carbs": 30, "fat": 15 },
+      "ingredients": ["ingredient1", "ingredient2", "ingredient3"]
+    }
+  ]
+}
+`;
+
+    try {
+      console.log('Generating single meal with prompt:', singleMealPrompt);
+
+      const response = await axios.post(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+        {
+          contents: [
+            {
+              parts: [{ text: singleMealPrompt }],
+            },
+          ],
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          timeout: 30000,
+        }
+      );
+
+      console.log('Single meal generation response received');
+      const text = response.data.candidates[0].content.parts[0].text;
+
+      // Extract JSON from the response
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        const mealData = JSON.parse(jsonMatch[0]);
+        console.log('Single meal generated successfully:', mealData);
+        return mealData;
+      } else {
+        throw new Error("Invalid JSON response from AI");
+      }
+    } catch (error) {
+      console.error('Single meal generation failed:', error);
+      throw error;
+    }
+  }
+
+  // Original weekly/daily meal plan generation logic
   let basePrompt = `
 Create a ${isWeekly ? 'weekly' : 'daily'} meal plan for a user with the following profile:
 - Age: ${profile.age}
@@ -78,7 +155,7 @@ ${isWeekly ? `
   try {
     console.log('Sending request to Gemini API...');
     console.log('API Key exists:', !!process.env.GEMINI_API_KEY);
-    
+
     const response = await axios.post(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
@@ -97,44 +174,33 @@ ${isWeekly ? `
     );
 
     console.log('Gemini API response received');
-    const text = response.data.candidates[0].content.parts[0].text;
-    console.log('Raw response text:', text.substring(0, 200) + '...');
+    const text = response.data.candidates?.[0]?.content?.parts?.[0]?.text || "";
 
-    const start = text.indexOf("{");
-    const end = text.lastIndexOf("}") + 1;
-    
-    if (start === -1 || end === 0) {
-      console.error('No JSON found in response');
-      throw new Error('Invalid response format from AI');
+    // Extract first JSON object from the response
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      throw new Error("Model did not return JSON");
     }
-    
-    const jsonText = text.slice(start, end);
-    console.log('Extracted JSON:', jsonText.substring(0, 200) + '...');
-    
-    const parsed = JSON.parse(jsonText);
 
+    const data = JSON.parse(jsonMatch[0]);
+
+    // Basic validation/coercion
     if (isWeekly) {
-      return parsed.weeklyPlan;
+      if (!Array.isArray(data.weeklyPlan)) throw new Error("Invalid weekly JSON");
     } else {
-      return parsed.meals;
+      if (!Array.isArray(data.meals)) throw new Error("Invalid daily JSON");
     }
 
-  } catch (error) {
-    console.error("Gemini API error:", error.message);
-    if (error.response) {
-      console.error("Response status:", error.response.status);
-      console.error("Response data:", error.response.data);
-    }
-    
-    // Return fallback meal plan if AI fails
-    console.log('Using fallback meal plan');
-    return generateFallbackMealPlan(profile, isWeekly);
+    return data;
+  } catch (err) {
+    console.error('Gemini parsing error:', err);
+    throw err;
   }
 };
 
 const generateFallbackMealPlan = (profile, isWeekly) => {
   console.log('Generating fallback meal plan');
-  
+
   const baseMeals = [
     {
       type: "breakfast",
@@ -176,13 +242,13 @@ const generateFallbackMealPlan = (profile, isWeekly) => {
         calories: meal.calories + (index * 10), // Slight variation
         ingredients: [...meal.ingredients, `day-${index + 1}-special`]
       }));
-      
+
       return {
         day,
         meals: dayMeals
       };
     });
-    
+
     return weeklyPlan;
   } else {
     return baseMeals;

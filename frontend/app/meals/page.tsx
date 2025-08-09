@@ -448,22 +448,42 @@ export default function MealsPage() {
                         <li
                           key={mIdx}
                           className={`rounded-lg p-4 shadow text-gray-900 font-bold border-l-4 relative group transition-all duration-300 ${isUpdated
-                              ? 'bg-green-50 border-green-400 shadow-lg scale-105'
-                              : 'bg-orange-50 border-orange-400'
+                            ? 'bg-green-50 border-green-400 shadow-lg scale-105'
+                            : 'bg-orange-50 border-orange-400'
                             }`}
                         >
-                          <span className="block text-lg mb-1">
-                            <span className={`font-extrabold ${isUpdated ? 'text-green-700' : 'text-orange-700'}`}>
-                              {meal.type.toUpperCase()}
-                            </span>: {meal.name}
+                          <div className="flex items-start justify-between gap-3">
+                            <span className="block text-lg leading-snug">
+                              <span className={`font-extrabold ${isUpdated ? 'text-green-700' : 'text-orange-700'}`}>
+                                {meal.type.toUpperCase()}
+                              </span>
+                              {": "}
+                              <span className="font-semibold text-gray-900 break-words">
+                                {meal.name}
+                              </span>
+                            </span>
                             {isUpdated && (
-                              <span className="ml-2 text-green-600 text-sm font-normal">
-                                ✓ Updated
+                              <span className="ml-2 shrink-0 h-6 px-2 rounded-full bg-green-100 text-green-700 text-xs flex items-center font-semibold">
+                                Updated
                               </span>
                             )}
-                          </span>
-                          <span className="block text-sm text-gray-700 font-semibold">Calories: {meal.calories}</span>
-                          <span className="block text-sm text-gray-700">{meal.ingredients?.join(", ")}</span>
+                          </div>
+
+                          <div className="mt-2 text-sm font-semibold text-gray-700">
+                            Calories: {meal.calories}
+                          </div>
+
+                          {meal.macros && (
+                            <div className="mt-1 text-sm text-gray-700 font-medium">
+                              Macros: P {meal.macros.protein}g • C {meal.macros.carbs}g • F {meal.macros.fat}g
+                            </div>
+                          )}
+
+                          {Array.isArray(meal.ingredients) && meal.ingredients.length > 0 && (
+                            <div className="mt-1 text-sm text-gray-700 font-medium break-words">
+                              Ingredients: {meal.ingredients.join(', ')}
+                            </div>
+                          )}
 
                           {/* Change Plan Button */}
                           <Button
@@ -471,8 +491,8 @@ export default function MealsPage() {
                             variant="outline"
                             size="sm"
                             className={`absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ${isUpdated
-                                ? 'bg-white/90 hover:bg-white border-green-300 text-green-600 hover:text-green-700'
-                                : 'bg-white/80 hover:bg-white border-orange-300 text-orange-600 hover:text-orange-700'
+                              ? 'bg-white/90 hover:bg-white border-green-300 text-green-600 hover:text-green-700'
+                              : 'bg-white/80 hover:bg-white border-orange-300 text-orange-600 hover:text-orange-700'
                               }`}
                           >
                             <Edit3 className="h-3 w-3 mr-1" />

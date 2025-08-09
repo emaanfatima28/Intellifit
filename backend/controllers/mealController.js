@@ -69,7 +69,7 @@ const updateSpecificMeal = async (req, res) => {
     if (!prompt || !day || !mealType) {
       return res.status(400).json({
         error: "Missing required fields",
-        message: "Prompt, day, and mealType are required"
+        message: "Prompt, day, and mealType are required",
       });
     }
 
@@ -77,123 +77,106 @@ const updateSpecificMeal = async (req, res) => {
     if (!profile) {
       return res.status(404).json({
         error: "User profile not found",
-        message: "Please complete your profile first"
+        message: "Please complete your profile first",
       });
     }
 
-    console.log(`Updating specific meal for user ${userId}: ${day} ${mealType}`);
-
-    // Find existing meal plan
-    const existingPlan = await MealPlan.findOne({ userId })
-      .sort({ createdAt: -1 })
-      .limit(1);
-
+    // Find latest plan
+    const existingPlan = await MealPlan.findOne({ userId }).sort({ createdAt: -1 }).limit(1);
     if (!existingPlan) {
       return res.status(404).json({
         error: "No meal plan found",
-        message: "Please generate a meal plan first"
+        message: "Please generate a meal plan first",
       });
     }
 
-    if (existingPlan.planType !== 'weekly') {
+    if (existingPlan.planType !== "weekly") {
       return res.status(400).json({
         error: "Invalid plan type",
-        message: "This feature is only available for weekly meal plans"
+        message: "This feature is only available for weekly meal plans",
       });
     }
 
-    // Generate a new meal for the specific day and meal type
-    const specificPrompt = `Generate ONLY ONE meal for ${day}'s ${mealType}. User request: ${prompt}. Please provide a new meal that fits the user's request while maintaining nutritional balance. The meal should be appropriate for ${mealType} and suitable for the user's profile.`;
+    // Build AI request for a single meal
+    const specificPrompt = `Generate ONLY ONE meal for ${day}'s ${mealType}. Keep name concise (max 60 chars, 4-7 words). Use realistic calories and macros. Ingredients should be 4-8 common items. User request: ${prompt}. Return strict JSON only.`;
 
     let newMeal;
-    
-    // For now, let's use a simple approach without AI to test the functionality
-    // This will help us identify if the issue is with the AI generation or the update logic
-    const customMeals = {
-      breakfast: {
-        type: "breakfast",
-        name: `Custom ${mealType} - ${prompt.substring(0, 30)}...`,
-        calories: 350,
-        macros: { protein: 15, carbs: 45, fat: 10 },
-        ingredients: ["custom ingredients", "based on request", prompt.substring(0, 20)]
-      },
-      lunch: {
-        type: "lunch",
-        name: `Custom ${mealType} - ${prompt.substring(0, 30)}...`,
-        calories: 450,
-        macros: { protein: 30, carbs: 35, fat: 20 },
-        ingredients: ["custom ingredients", "based on request", prompt.substring(0, 20)]
-      },
-      dinner: {
-        type: "dinner",
-        name: `Custom ${mealType} - ${prompt.substring(0, 30)}...`,
-        calories: 400,
-        macros: { protein: 25, carbs: 30, fat: 18 },
-        ingredients: ["custom ingredients", "based on request", prompt.substring(0, 20)]
-      },
-      snack: {
-        type: "snack",
-        name: `Custom ${mealType} - ${prompt.substring(0, 30)}...`,
-        calories: 150,
-        macros: { protein: 10, carbs: 15, fat: 8 },
-        ingredients: ["custom ingredients", "based on request", prompt.substring(0, 20)]
+    try {
+      const tempProfile = {
+        ...profile.toObject(),
+        singleMealRequest: { day, mealType, userPrompt: prompt },
+      };
+
+      const generated = await generateMealPlan(tempProfile, specificPrompt, false);
+
+      if (!generated || !Array.isArray(generated.meals) || generated.meals.length === 0) {
+        return res.status(502).json({
+          error: "Generation failed",
+          message: "Could not generate a new meal. Please try again.",
+        });
       }
-    };
 
-    newMeal = customMeals[mealType] || customMeals.breakfast;
-    console.log('Generated new meal:', newMeal);
+      // Prefer matching type; otherwise take first and coerce type
+      newMeal = generated.meals.find((m) => m.type === mealType) || {
+        ...generated.meals[0],
+        type: mealType,
+      };
 
-    // Update the specific meal in the weekly plan
-    console.log('Looking for day:', day);
-    console.log('Available days:', existingPlan.weeklyPlan.map(d => d.day));
-    
-    const dayIndex = existingPlan.weeklyPlan.findIndex(d => d.day === day);
-    console.log('Day index found:', dayIndex);
-    
+      // Sanitize/validate
+      const safeNumber = (v, fallback) => (Number.isFinite(Number(v)) ? Number(v) : fallback);
+      newMeal.name = String(newMeal.name || "").slice(0, 60).trim();
+      newMeal.type = mealType;
+      newMeal.calories = safeNumber(newMeal.calories, 350);
+      const macros = newMeal.macros || {};
+      newMeal.macros = {
+        protein: safeNumber(macros.protein, 20),
+        carbs: safeNumber(macros.carbs, 30),
+        fat: safeNumber(macros.fat, 15),
+      };
+      newMeal.ingredients = (Array.isArray(newMeal.ingredients) ? newMeal.ingredients : [])
+        .map((i) => String(i).trim())
+        .filter(Boolean)
+        .slice(0, 8);
+
+      if (!newMeal.name) {
+        return res.status(502).json({
+          error: "Invalid generation",
+          message: "Generated meal was invalid. Please try again.",
+        });
+      }
+    } catch (e) {
+      console.error("AI meal generation error:", e);
+      return res.status(502).json({
+        error: "Generation failed",
+        message: "We couldn't generate a new meal right now. Please try again in a moment.",
+      });
+    }
+
+    // Locate day/meal indices
+    const dayIndex = existingPlan.weeklyPlan.findIndex((d) => d.day === day);
     if (dayIndex === -1) {
-      return res.status(400).json({
-        error: "Invalid day",
-        message: "Specified day not found in meal plan"
-      });
+      return res.status(400).json({ error: "Invalid day", message: "Specified day not found in meal plan" });
     }
-
-    console.log('Looking for meal type:', mealType);
-    console.log('Available meals for this day:', existingPlan.weeklyPlan[dayIndex].meals.map(m => m.type));
-    
-    const mealIndex = existingPlan.weeklyPlan[dayIndex].meals.findIndex(m => m.type === mealType);
-    console.log('Meal index found:', mealIndex);
-    
+    const mealIndex = existingPlan.weeklyPlan[dayIndex].meals.findIndex((m) => m.type === mealType);
     if (mealIndex === -1) {
-      return res.status(400).json({
-        error: "Invalid meal type",
-        message: "Specified meal type not found for this day"
-      });
+      return res.status(400).json({ error: "Invalid meal type", message: "Specified meal type not found for this day" });
     }
 
-    console.log('Old meal:', existingPlan.weeklyPlan[dayIndex].meals[mealIndex]);
-    console.log('New meal:', newMeal);
-
-    // Update the specific meal
+    // Persist update
     existingPlan.weeklyPlan[dayIndex].meals[mealIndex] = newMeal;
     existingPlan.date = new Date();
-    
-    console.log('Saving updated meal plan...');
     await existingPlan.save();
-    console.log('Meal plan saved successfully');
 
-    console.log(`Specific meal updated successfully for user ${userId}`);
-
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: `Successfully updated ${day}'s ${mealType}`,
-      mealPlan: existingPlan
+      mealPlan: existingPlan,
     });
-
   } catch (error) {
-    console.error('Update specific meal error:', error);
-    res.status(500).json({
+    console.error("Update specific meal error:", error);
+    return res.status(500).json({
       error: "Internal server error",
-      message: "Failed to update meal. Please try again."
+      message: "Failed to update meal. Please try again.",
     });
   }
 };
